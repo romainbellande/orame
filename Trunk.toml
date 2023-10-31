@@ -1,0 +1,4 @@
+[[hooks]]
+stage = "pre_build"
+command = "sh"
+command_arguments = ["-c", "pnpm exec tailwindcss -i src/app.postcss -o style/output.css"]

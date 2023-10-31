@@ -1,0 +1,7 @@
+version: 3
+
+tasks:
+  serve:
+    desc: serve the app
+    cmds:
+      - trunk serve --open
