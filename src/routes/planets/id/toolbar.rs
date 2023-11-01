@@ -8,8 +8,10 @@ pub fn Toolbar() -> impl IntoView {
     view! {
       <div>
         <Show when=show_buildings>
-          <Window>
-            "buildings"
+          <Window title="Buildings" on_show=set_show_buildings>
+            <div class="text-white">
+              "buildings"
+            </div>
           </Window>
         </Show>
         <ul>
