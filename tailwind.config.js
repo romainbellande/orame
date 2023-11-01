@@ -5,7 +5,11 @@ module.exports = {
     './index.html'
   ],
   theme: {
-    extend: {},
+    extend: {
+      transitionProperty: {
+        'max-height': 'max-height',
+      }
+    },
   },
   variant: {},
   plugins: [require('@tailwindcss/forms')],
