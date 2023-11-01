@@ -1,9 +1,13 @@
-use crate::utils::{Drag, Classname, classnames};
-use leptos::{leptos_dom::logging::console_log, html::Div, ev::resize};
+use crate::utils::{classnames, Classname, Drag};
 pub use leptos::*;
+use leptos::{leptos_dom::logging::console_log};
 
 #[component]
-pub fn Window(children: Children, on_show: WriteSignal<bool>, title: &'static str) -> impl IntoView {
+pub fn Window(
+    children: Children,
+    on_show: WriteSignal<bool>,
+    title: &'static str,
+) -> impl IntoView {
     let (fullscreen, set_fullscreen) = create_signal(false);
     let (collapsed, set_collapsed) = create_signal(false);
     let drag = Drag::new();
@@ -36,18 +40,22 @@ pub fn Window(children: Children, on_show: WriteSignal<bool>, title: &'static st
 
     let root_classes = create_memo(move |_| {
         let fullscreen_class = if fullscreen() {
-          "fixed top-0 left-0 w-screen h-screen"
+            "fixed top-0 left-0 w-screen h-screen"
         } else {
-          "top-1/2 left-1/2 transform -translate-y/2 -translate-x-2"
+            "top-1/2 left-1/2 transform -translate-y/2 -translate-x-2"
         };
 
         let resize_class = if fullscreen() || collapsed() {
-          "resize-none"
+            "resize-none"
         } else {
-          "resize"
+            "resize"
         };
 
-        classnames(vec![Classname::String("fixed bg-black rounded-lg w-96 overflow-scroll ".to_string()), Classname::String(fullscreen_class.to_string()), Classname::String(resize_class.to_string())])
+        classnames(vec![
+            Classname::String("fixed bg-black rounded-lg w-96 overflow-scroll ".to_string()),
+            Classname::String(fullscreen_class.to_string()),
+            Classname::String(resize_class.to_string()),
+        ])
     });
 
     let content_classes = create_memo(move |_| {
@@ -57,7 +65,10 @@ pub fn Window(children: Children, on_show: WriteSignal<bool>, title: &'static st
             "h-56 p-4"
         };
 
-        classnames(vec![Classname::String("transition-max-height duration-300 overflow-hidden".to_string()), Classname::String(collapsed_class.to_string())])
+        classnames(vec![
+            Classname::String("transition-max-height duration-300 overflow-hidden".to_string()),
+            Classname::String(collapsed_class.to_string()),
+        ])
     });
 
     view! {
