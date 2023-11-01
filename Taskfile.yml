@@ -5,3 +5,19 @@ tasks:
     desc: serve the app
     cmds:
       - trunk serve --open
+
+  lint:fix:
+    desc: lint server and fix if possible
+    cmds:
+      - cargo clippy --fix --allow-dirty
+
+  format:
+    desc: format
+    cmds:
+      - cargo fmt
+
+  fix:all:
+    desc: fill format and lint issues when it is possible
+    cmds:
+      - task: format
+      - task: lint:fix
