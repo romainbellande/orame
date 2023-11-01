@@ -8,7 +8,6 @@ pub fn Window(children: Children) -> impl IntoView {
     let node_ref = create_node_ref::<Div>();
     let header_node = create_node_ref::<Div>();
 
-    // let document = document();
     let (pos1, set_pos1) = create_signal(0);
     let (pos2, set_pos2) = create_signal(0);
     let (pos3, set_pos3) = create_signal(0);

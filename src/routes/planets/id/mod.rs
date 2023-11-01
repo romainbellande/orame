@@ -11,7 +11,6 @@ pub fn PageID() -> impl IntoView {
 
     view! {
       <div>
-        { format!("planet {:?}", id()) }
         <Toolbar />
       </div>
     }
