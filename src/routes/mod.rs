@@ -1,23 +1,18 @@
+use futures::StreamExt;
 use leptos::*;
-use leptos::leptos_dom::logging::console_log;
 use leptos_meta::*;
 use leptos_router::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use futures::StreamExt;
 
 mod home;
 mod planets;
 
 use crate::components::{header::Header, sidenav::SideNav};
 
+use crate::socket::Socket;
 use home::Home;
 use ogame_core::{game::Game, protocol::Protocol};
 use planets::PageID;
-use crate::socket::Socket;
-
-fn bytes_to_protocol(bytes: &[u8]) -> Protocol {
-    serde_cbor::from_slice(bytes).unwrap()
-}
 
 fn set_tick_interval(game: RwSignal<Game>) {
     let cb = Closure::wrap(Box::new(move || {
