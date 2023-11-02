@@ -1,7 +1,7 @@
-use leptos::html::{Canvas};
+use leptos::html::Canvas;
 use leptos::wasm_bindgen::JsCast;
 use leptos::*;
-use web_sys::{wasm_bindgen::JsValue};
+use web_sys::wasm_bindgen::JsValue;
 
 #[component]
 pub fn Galaxy() -> impl IntoView {
