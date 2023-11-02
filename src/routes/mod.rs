@@ -9,7 +9,7 @@ mod planets;
 
 use crate::components::{header::Header, sidenav::SideNav};
 
-use crate::socket::Socket;
+use crate::utils::Socket;
 use home::Home;
 use ogame_core::{game::Game, protocol::Protocol};
 use planets::PageID;
