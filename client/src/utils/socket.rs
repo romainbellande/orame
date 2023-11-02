@@ -1,17 +1,12 @@
-
-
-
-use {
-    futures::stream::StreamExt, pharos::*, crate::wasm_bindgen::UnwrapThrowExt,
-    wasm_bindgen_futures::spawn_local, ws_stream_wasm::*,
-};
 use futures::{
     channel::mpsc::{UnboundedReceiver, UnboundedSender},
     SinkExt,
 };
 use serde::{de::DeserializeOwned, Serialize};
-
-
+use {
+    crate::wasm_bindgen::UnwrapThrowExt, futures::stream::StreamExt, pharos::*,
+    wasm_bindgen_futures::spawn_local, ws_stream_wasm::*,
+};
 
 fn protocol_from_bytes<P: 'static + Serialize + DeserializeOwned>(bytes: &[u8]) -> P {
     serde_cbor::from_slice(bytes).unwrap()
@@ -30,14 +25,8 @@ impl<P: 'static + Serialize + DeserializeOwned> Socket<P>
 where
     Self: 'static,
 {
-    fn new(
-        tx: UnboundedSender<P>,
-        rx: Option<UnboundedReceiver<P>>,
-    ) -> Self {
-        Self {
-            tx,
-            rx,
-        }
+    fn new(tx: UnboundedSender<P>, rx: Option<UnboundedReceiver<P>>) -> Self {
+        Self { tx, rx }
     }
 
     pub async fn connect(url: &str) -> Self {
@@ -55,12 +44,14 @@ where
 
         let input_loop = async move {
             while let Some(msg) = in_rx.next().await {
-                ws_tx.send(WsMessage::Binary(protocol_to_bytes(msg))).await.unwrap();
+                ws_tx
+                    .send(WsMessage::Binary(protocol_to_bytes(msg)))
+                    .await
+                    .unwrap();
             }
         };
 
         spawn_local(input_loop);
-
 
         let output_loop = async move {
             while let Some(msg) = ws_rx.next().await {
@@ -79,7 +70,7 @@ where
         Self::new(in_tx, Some(out_rx))
     }
 
-     pub async fn send(&mut self, packet: P) {
+    pub async fn send(&mut self, packet: P) {
         self.tx.send(packet).await.unwrap();
     }
 
@@ -87,4 +78,3 @@ where
         self.rx.take()
     }
 }
-

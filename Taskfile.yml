@@ -1,0 +1,6 @@
+version: 3
+
+includes:
+  client:
+    taskfile: ./client/Taskfile.yml
+    dir: ./client
