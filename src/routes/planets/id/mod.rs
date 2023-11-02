@@ -5,6 +5,7 @@ mod toolbar;
 use toolbar::Toolbar;
 
 use crate::components::galaxy::Galaxy;
+use crate::components::planets::Planets;
 
 #[component]
 pub fn PageID() -> impl IntoView {
@@ -16,6 +17,7 @@ pub fn PageID() -> impl IntoView {
         <section>
           <div>"My Planet"</div>
           <Galaxy />
+          <Planets />
         </section>
         <Toolbar />
       </div>
