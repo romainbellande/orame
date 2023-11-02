@@ -1,5 +1,4 @@
 use leptos::*;
-
 mod components;
 mod routes;
 mod utils;

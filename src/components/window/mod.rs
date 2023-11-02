@@ -51,10 +51,17 @@ pub fn Window(
             "resize"
         };
 
+        let collapsed_class = if collapsed() {
+            ""
+        } else {
+            "overflow-scroll"
+        };
+
         classnames(vec![
-            Classname::String("fixed bg-black rounded-lg w-96 overflow-scroll ".to_string()),
+            Classname::String("fixed bg-black rounded-lg w-96".to_string()),
             Classname::String(fullscreen_class.to_string()),
             Classname::String(resize_class.to_string()),
+            Classname::String(collapsed_class.to_string()),
         ])
     });
 
@@ -73,8 +80,8 @@ pub fn Window(
 
     view! {
       <div node_ref=node_ref class=root_classes>
-        <div node_ref=handler_node class="cursor-move h-6 border-b border-solid border-s-slate-200 rounded-tr-lg rounded-tl-lg p-1 bg-slate-300 space-x-1 flex justify-between items-center">
-          <div>{ title }</div>
+        <div node_ref=handler_node class="cursor-move border-b border-solid border-s-slate-200 rounded-tr-lg rounded-tl-lg p-1 bg-slate-300 space-x-1 flex justify-between items-center">
+          <div class="text-black">{ title }</div>
           <div>
             <button class="rounded-full bg-green-500 h-4 w-4" on:click=on_collapsed></button>
             <button class="rounded-full bg-yellow-500 h-4 w-4" on:click=on_fullscreen_toggle></button>
