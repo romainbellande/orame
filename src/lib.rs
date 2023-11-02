@@ -1,6 +1,8 @@
 use leptos::*;
 mod components;
+mod error;
 mod routes;
+mod socket;
 mod utils;
 
 use routes::AppRouter;

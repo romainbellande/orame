@@ -1,8 +1,6 @@
 use crate::components::window::Window;
-use leptos::wasm_bindgen::JsCast;
 use leptos::{leptos_dom::logging::console_log, *};
 use ogame_core::{building_type::BuildingType, game::Game};
-use wasm_bindgen::prelude::Closure;
 
 #[component]
 pub fn Toolbar() -> impl IntoView {
@@ -16,11 +14,10 @@ pub fn Toolbar() -> impl IntoView {
     let upgrade_cb = move |planet: ogame_core::planet::Planet, building: BuildingType| {
         move |_| {
             state.update(|state| {
-                state
-                    .upgrade_building(planet.id(), building.clone())
-                    .unwrap();
+                if let Err(e) = state.upgrade_building(planet.id(), building.clone()) {
+                    console_log(format!("Error upgrade building: {:?}", e).as_str());
+                }
             });
-            console_log(format!("{:#?}", state().planets).as_str());
         }
     };
 

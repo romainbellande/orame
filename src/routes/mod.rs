@@ -1,7 +1,9 @@
 use leptos::*;
+use leptos::leptos_dom::logging::console_log;
 use leptos_meta::*;
 use leptos_router::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
+use futures::StreamExt;
 
 mod home;
 mod planets;
@@ -9,8 +11,13 @@ mod planets;
 use crate::components::{header::Header, sidenav::SideNav};
 
 use home::Home;
-use ogame_core::game::Game;
+use ogame_core::{game::Game, protocol::Protocol};
 use planets::PageID;
+use crate::socket::Socket;
+
+fn bytes_to_protocol(bytes: &[u8]) -> Protocol {
+    serde_cbor::from_slice(bytes).unwrap()
+}
 
 fn set_tick_interval(game: RwSignal<Game>) {
     let cb = Closure::wrap(Box::new(move || {
@@ -26,12 +33,25 @@ fn set_tick_interval(game: RwSignal<Game>) {
     cb.forget(); // leak the closure
 }
 
+pub async fn connect_socket(game: RwSignal<Game>) {
+    let mut ws: Socket<Protocol> = Socket::connect("ws://localhost:8080/ws").await;
+
+    let mut recv = ws.take_receiver().unwrap();
+
+    while let Some(msg) = recv.next().await {
+        game.update(|game| {
+            game.process_message(msg).unwrap();
+        });
+    }
+}
+
 #[component]
 pub fn AppRouter() -> impl IntoView {
     provide_meta_context();
 
     let context = create_rw_signal(Game::new());
     set_tick_interval(context);
+    spawn_local(connect_socket(context));
     provide_context(context);
 
     view! {
