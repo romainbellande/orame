@@ -1,4 +1,3 @@
-
 use leptos::{leptos_dom::logging::console_log, *};
 use ogame_core::{building_type::BuildingType, game::Game};
 
