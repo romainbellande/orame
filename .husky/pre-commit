@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "fix all with clippy and fmt";
 cargo clippy --fix --allow-dirty --allow-staged;
 cargo fmt;
+echo "fix done";
