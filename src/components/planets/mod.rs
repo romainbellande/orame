@@ -1,10 +1,10 @@
-use crate::components::window::Window;
+
 use leptos::{leptos_dom::logging::console_log, *};
 use ogame_core::{building_type::BuildingType, game::Game};
 
 #[component]
 pub fn Planets() -> impl IntoView {
-    let (show_buildings, set_show_buildings) = create_signal(false);
+    let (_show_buildings, _set_show_buildings) = create_signal(false);
     let state = expect_context::<RwSignal<Game>>();
 
     state.update(|state| {
