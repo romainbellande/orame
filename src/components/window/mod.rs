@@ -1,6 +1,6 @@
 use crate::utils::{classnames, Classname, Drag};
+use leptos::leptos_dom::logging::console_log;
 pub use leptos::*;
-use leptos::{leptos_dom::logging::console_log};
 
 #[component]
 pub fn Window(
@@ -51,11 +51,7 @@ pub fn Window(
             "resize"
         };
 
-        let collapsed_class = if collapsed() {
-            ""
-        } else {
-            "overflow-scroll"
-        };
+        let collapsed_class = if collapsed() { "" } else { "overflow-scroll" };
 
         classnames(vec![
             Classname::String("fixed bg-black rounded-lg w-96".to_string()),
