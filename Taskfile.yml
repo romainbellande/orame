@@ -4,3 +4,13 @@ includes:
   client:
     taskfile: ./client/Taskfile.yml
     dir: ./client
+
+tasks:
+  serve:
+    desc: Serve the app
+    cmds:
+      - go-task client:build
+      - cargo prisma generate --schema=./server/prisma/schema.prisma
+      - cargo prisma db push --schema=./server/prisma/schema.prisma
+      - cargo run
+    

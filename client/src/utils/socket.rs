@@ -1,7 +1,10 @@
+use std::fmt::Debug;
+
 use futures::{
     channel::mpsc::{UnboundedReceiver, UnboundedSender},
     SinkExt,
 };
+use leptos::leptos_dom::logging::console_log;
 use serde::{de::DeserializeOwned, Serialize};
 use {
     crate::wasm_bindgen::UnwrapThrowExt, futures::stream::StreamExt, pharos::*,
@@ -16,12 +19,12 @@ fn protocol_to_bytes<P: 'static + Serialize + DeserializeOwned>(packet: P) -> Ve
     serde_cbor::to_vec(&packet).unwrap()
 }
 
-pub struct Socket<P: 'static + Serialize + DeserializeOwned> {
+pub struct Socket<P: 'static + Serialize + DeserializeOwned + Debug> {
     tx: UnboundedSender<P>,
     rx: Option<UnboundedReceiver<P>>,
 }
 
-impl<P: 'static + Serialize + DeserializeOwned> Socket<P>
+impl<P: 'static + Serialize + DeserializeOwned + Debug> Socket<P>
 where
     Self: 'static,
 {
@@ -58,6 +61,7 @@ where
                 if let WsMessage::Binary(blob) = msg {
                     let msg = protocol_from_bytes(&blob);
 
+                    console_log(&format!("Received message: {:#?}", msg));
                     out_tx.send(msg).await.unwrap();
                 } else {
                     // bad message type
