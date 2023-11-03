@@ -1,0 +1,9 @@
+version: 3
+
+tasks:
+
+  prisma:gen:
+    desc: generate prisma client
+    cmds:
+      - cargo prisma generate --schema=./prisma/schema.prisma
+      - cargo prisma db push --schema=./prisma/schema.prisma

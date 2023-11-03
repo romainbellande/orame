@@ -1,0 +1,15 @@
+version: 3
+
+tasks:
+  start:
+    desc: serve the app
+    cmds:
+      - cargo prisma generate --schema=./prisma/schema.prisma
+      - cargo prisma db push --schema=./prisma/schema.prisma
+      - cargo watch -x run
+
+  prisma:gen:
+    desc: generate prisma client
+    dir: ./core
+    cmds:
+      - cargo prisma generate

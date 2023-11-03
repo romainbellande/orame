@@ -1,0 +1,7 @@
+version: 3
+
+tasks:
+  gen:fixtures:
+    desc: generate fixtures
+    cmds:
+      - cargo cli --gen-fixtures --database-url=${DATABASE_URL}

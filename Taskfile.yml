@@ -1,6 +1,29 @@
 version: 3
 
+dotenv: ['.env']
+
 includes:
   client:
     taskfile: ./client/Taskfile.yml
     dir: ./client
+  server:
+    taskfile: ./server/Taskfile.yml
+    dir: ./server
+  cli:
+    taskfile: ./cli/Taskfile.yml
+    dir: ./cli
+
+tasks:
+  start:
+    desc: Serve the app
+    deps:
+      - task: server:start
+      - task: start:db
+      - task: client:build
+
+  start:db:
+    desc: start database
+    cmds:
+      - docker compose up -d
+
+
