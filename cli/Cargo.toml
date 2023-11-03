@@ -1,0 +1,14 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.4.7", features = ["derive"] }
+rand = "0.8.5"
+prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9" }
+prisma-client = { path = "../prisma-client" }
+uuid = { version = "1.5.0", features = ["v4", "fast-rng"] }
+tokio = "1.33.0"
+dotenv = "0.15.0"

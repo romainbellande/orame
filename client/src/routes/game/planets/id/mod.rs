@@ -8,7 +8,7 @@ use crate::components::galaxy::Galaxy;
 use crate::components::planets::Planets;
 
 #[component]
-pub fn PageID() -> impl IntoView {
+pub fn PlanetIDPage() -> impl IntoView {
     let params = use_params_map();
     let _id = move || params.with(|params| params.get("id").cloned().unwrap_or_default());
 

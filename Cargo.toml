@@ -14,7 +14,10 @@ resolver = "2"
 
 members = [
   "server",
+  "prisma-cli",
   "client",
+  "cli",
+  "prisma-client",
 ]
 
 

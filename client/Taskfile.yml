@@ -1,10 +1,15 @@
 version: 3
 
 tasks:
-  serve:
+  start:
     desc: serve the app
     cmds:
       - trunk serve --open
+
+  build:
+    desc: build the app
+    cmds:
+      - trunk watch
 
   lint:fix:
     desc: lint server and fix if possible

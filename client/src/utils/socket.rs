@@ -2,7 +2,11 @@ use futures::{
     channel::mpsc::{UnboundedReceiver, UnboundedSender},
     SinkExt,
 };
-use serde::{de::DeserializeOwned, Serialize};
+use leptos::leptos_dom::logging::console_log;
+use leptos_router::use_navigate;
+use ogame_core::{game::Game, protocol::Protocol};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use std::fmt::Debug;
 use {
     crate::wasm_bindgen::UnwrapThrowExt, futures::stream::StreamExt, pharos::*,
     wasm_bindgen_futures::spawn_local, ws_stream_wasm::*,
@@ -16,12 +20,18 @@ fn protocol_to_bytes<P: 'static + Serialize + DeserializeOwned>(packet: P) -> Ve
     serde_cbor::to_vec(&packet).unwrap()
 }
 
-pub struct Socket<P: 'static + Serialize + DeserializeOwned> {
+#[derive(Serialize, Deserialize)]
+pub struct Credentials {
+    username: String,
+    password: String,
+}
+
+pub struct Socket<P: 'static + Serialize + DeserializeOwned + Debug> {
     tx: UnboundedSender<P>,
     rx: Option<UnboundedReceiver<P>>,
 }
 
-impl<P: 'static + Serialize + DeserializeOwned> Socket<P>
+impl<P: 'static + Serialize + DeserializeOwned + Debug> Socket<P>
 where
     Self: 'static,
 {
@@ -30,15 +40,23 @@ where
     }
 
     pub async fn connect(url: &str) -> Self {
+        let navigate = use_navigate();
         // in to the socket or out of the socket
         let (in_tx, mut in_rx) = futures::channel::mpsc::unbounded::<P>();
         let (mut out_tx, out_rx) = futures::channel::mpsc::unbounded();
 
         let (mut ws, wsio) = WsMeta::connect(url, None)
             .await
-            .expect_throw("assume the connection succeeds");
+            .map_err(|_| {
+                navigate("/portal", Default::default());
+            })
+            .expect_throw("socket error");
 
-        let _evts = ws.observe(ObserveConfig::default()).await.unwrap();
+        let evts = ws.observe(ObserveConfig::default()).await.unwrap();
+
+        let _ = evts.for_each(|evt| async move {
+            console_log(&format!("Event: {:#?}", evt));
+        });
 
         let (mut ws_tx, mut ws_rx) = wsio.split();
 
@@ -58,6 +76,7 @@ where
                 if let WsMessage::Binary(blob) = msg {
                     let msg = protocol_from_bytes(&blob);
 
+                    console_log(&format!("Received message: {:#?}", msg));
                     out_tx.send(msg).await.unwrap();
                 } else {
                     // bad message type
