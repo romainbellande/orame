@@ -1,23 +1,16 @@
 use super::Claims;
-use axum::{extract::FromRequest, http::Request, middleware::Next, response::IntoResponse};
+use axum::{extract::FromRequestParts, http::Request, middleware::Next, response::IntoResponse};
 
-pub async fn auth_bearer_middleware<B, S>(
-    req: Request<B>,
-    next: Next<B>,
-    state: S,
-) -> impl IntoResponse
+pub async fn auth_bearer_middleware<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse
 where
-    B: Send + 'static,
-    S: Send + Sync,
+    B: Send + Sync + 'static,
 {
-    // let mut request_parts = Request::new(req);
-    let result = Claims::from_request(req, &state).await;
+    let (mut request_parts, body) = req.into_parts();
+    let result = Claims::from_request_parts(&mut request_parts, &body).await;
 
     match result {
         Ok(claims) => {
-            format!("Found claims: {:?}", claims);
-
-            // let mut req = request_parts.try_into_request().expect("body extracted");
+            let mut req = Request::from_parts(request_parts, body);
 
             req.extensions_mut().insert(claims);
 

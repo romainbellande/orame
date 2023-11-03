@@ -1,5 +1,7 @@
 use super::errors::WebError;
 use super::{errors::AuthError, keys::KEYS};
+use axum::extract::FromRequestParts;
+use axum::http::request::Parts;
 use axum::{
     async_trait,
     extract::{FromRequest, TypedHeader},
@@ -17,17 +19,16 @@ pub struct Claims {
 }
 
 #[async_trait]
-impl<S, B> FromRequest<S, B> for Claims
+impl<S> FromRequestParts<S> for Claims
 where
-    B: Send + 'static,
-    S: Send + Sync,
+    S: Send + Sync + 'static,
 {
     type Rejection = WebError;
 
-    async fn from_request(req: Request<B>, state: &S) -> Result<Self, Self::Rejection> {
+    async fn from_request_parts(req: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
         // Extract the token from the authorization header
         let TypedHeader(Authorization(bearer)) =
-            TypedHeader::<Authorization<Bearer>>::from_request(req, state)
+            TypedHeader::<Authorization<Bearer>>::from_request_parts(req, state)
                 .await
                 .map_err(|_| AuthError::InvalidToken.into())?;
         // Decode the user data

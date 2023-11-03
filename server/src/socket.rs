@@ -2,6 +2,7 @@ use std::{fmt::Debug, sync::Arc};
 
 use std::net::SocketAddr;
 
+use axum::middleware;
 use axum::{
     extract::{
         ws::{WebSocket, WebSocketUpgrade},
@@ -12,6 +13,9 @@ use axum::{
     Extension, Router,
 };
 use tower_http::services::{ServeDir, ServeFile};
+
+use crate::auth::middleware::auth_bearer_middleware;
+use crate::auth::Claims;
 
 use super::db::PrismaClient;
 use prisma_client_rust::NewClientError;
@@ -28,8 +32,11 @@ use log::*;
 
 async fn handler<P: Serialize + DeserializeOwned + Debug + 'static>(
     ws: WebSocketUpgrade,
+    Extension(claims): Extension<Claims>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
 ) -> Response {
+    println!("New connection from {}", addr);
+    println!("Claims: {:#?}", claims);
     debug!("New connection from {}", addr);
     ws.on_upgrade(move |socket| handle_socket::<P>(socket, addr))
 }
@@ -70,6 +77,7 @@ pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() {
     let db = Arc::new(db.unwrap());
     let app = Router::new()
         .route("/ws", get(handler::<P>))
+        .route_layer(middleware::from_fn(auth_bearer_middleware))
         .nest("/auth", crate::auth::router())
         .layer(Extension(db))
         .fallback_service(

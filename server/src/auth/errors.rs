@@ -19,22 +19,22 @@ impl Into<WebError> for AuthError {
         match self {
             Self::WrongCredentials => WebError {
                 code: 1,
-                status: StatusCode::UNAUTHORIZED,
+                status: HyperStatusCode::UNAUTHORIZED,
                 message: "Wrong credentials".to_string(),
             },
             Self::MissingCredentials => WebError {
                 code: 2,
-                status: StatusCode::BAD_REQUEST,
+                status: HyperStatusCode::BAD_REQUEST,
                 message: "Missing credentials".to_string(),
             },
             Self::TokenCreation => WebError {
                 code: 3,
-                status: StatusCode::INTERNAL_SERVER_ERROR,
+                status: HyperStatusCode::INTERNAL_SERVER_ERROR,
                 message: "Token creation error".to_string(),
             },
             Self::InvalidToken => WebError {
                 code: 4,
-                status: StatusCode::BAD_REQUEST,
+                status: HyperStatusCode::BAD_REQUEST,
                 message: "Invalid token".to_string(),
             },
         }
@@ -62,5 +62,27 @@ impl IntoResponse for WebError {
     fn into_response(self) -> Response {
         let file = std::file!();
         (self.status, self.into_json()).into_response()
+    }
+}
+
+pub enum UserError {
+    CouldNotSaveUser,
+    NotFound { email: String },
+}
+
+impl Into<WebError> for UserError {
+    fn into(self) -> WebError {
+        match self {
+            Self::CouldNotSaveUser => WebError {
+                code: 500,
+                status: HyperStatusCode::INTERNAL_SERVER_ERROR,
+                message: "could not save user".to_string(),
+            },
+            Self::NotFound { email } => WebError {
+                code: 404,
+                status: HyperStatusCode::NOT_FOUND,
+                message: format!("user with email {} not found", email),
+            },
+        }
     }
 }
