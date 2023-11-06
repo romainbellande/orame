@@ -19,7 +19,7 @@ tasks:
     deps:
       - task: server:start
       - task: start:db
-      - task: client:build
+      - task: client:watch
 
   start:db:
     desc: start database

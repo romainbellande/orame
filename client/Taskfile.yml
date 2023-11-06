@@ -6,10 +6,15 @@ tasks:
     cmds:
       - trunk serve --open
 
+  watch:
+    desc: watch the app
+    cmds:
+      - trunk watch
+
   build:
     desc: build the app
     cmds:
-      - trunk watch
+      - trunk build
 
   lint:fix:
     desc: lint server and fix if possible
