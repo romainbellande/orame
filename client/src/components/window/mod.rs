@@ -3,9 +3,9 @@ use leptos::leptos_dom::logging::console_log;
 pub use leptos::*;
 
 #[component]
-pub fn Window(
+pub fn Window<F: Fn(bool) -> () + 'static>(
     children: Children,
-    on_show: WriteSignal<bool>,
+    on_show: F,
     title: &'static str,
 ) -> impl IntoView {
     let (fullscreen, set_fullscreen) = create_signal(false);
@@ -31,7 +31,7 @@ pub fn Window(
     };
 
     let on_close = move |_| {
-        on_show.set(false);
+        on_show(false);
     };
 
     let on_collapsed = move |_| {
@@ -65,7 +65,7 @@ pub fn Window(
         let collapsed_class = if collapsed() {
             "max-h-0 p-0"
         } else {
-            "h-56 p-4"
+            "h-min-content p-4"
         };
 
         classnames(vec![
@@ -76,8 +76,8 @@ pub fn Window(
 
     view! {
       <div node_ref=node_ref class=root_classes>
-        <div node_ref=handler_node class="cursor-move border-b border-solid border-s-slate-200 rounded-tr-lg rounded-tl-lg p-1 bg-slate-300 space-x-1 flex justify-between items-center">
-          <div class="text-black">{ title }</div>
+        <div node_ref=handler_node class="cursor-move border-b border-solid border-s-slate-900 rounded-tr-lg rounded-tl-lg p-1 bg-slate-900 space-x-1 flex justify-between items-center">
+          <div class="text-slate-300">{ title }</div>
           <div>
             <button class="rounded-full bg-green-500 h-4 w-4" on:click=on_collapsed></button>
             <button class="rounded-full bg-yellow-500 h-4 w-4" on:click=on_fullscreen_toggle></button>

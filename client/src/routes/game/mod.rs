@@ -56,12 +56,12 @@ pub fn GamePage() -> impl IntoView {
     provide_context(game_context);
 
     view! {
-      <div>
-      <Header />
-      <SideNav />
-      <main class="pt-28 pl-72 min-h-screen flex flex-col w-screen space-y-4">
-        <Outlet />
-      </main>
-    </div>
+         <div class="max-w-full max-h-full">
+            <Header />
+            <SideNav />
+            <main class="pt-28 pl-72 min-h-screen flex flex-col w-screen space-y-4">
+                <Outlet />
+            </main>
+        </div>
     }
 }

@@ -34,6 +34,7 @@ pub fn Planets() -> impl IntoView {
     };
 
     view! {
+        <div class="text-white">
         <For
             each=planets
             key=|planet| planet.last_update
@@ -104,5 +105,6 @@ pub fn Planets() -> impl IntoView {
                 }
             }
         </For>
+        </div>
     }
 }
