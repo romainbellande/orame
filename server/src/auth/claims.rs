@@ -3,13 +3,7 @@ use super::{errors::AuthError, keys::KEYS};
 use axum::extract::rejection::TypedHeaderRejectionReason;
 use axum::extract::FromRequestParts;
 // use axum::http::request::Parts;
-use axum::{
-    async_trait,
-    extract::{FromRequest, TypedHeader},
-    headers::{authorization::Bearer, Authorization, Cookie},
-    http::request::Request,
-    RequestPartsExt,
-};
+use axum::{async_trait, extract::TypedHeader, headers::Cookie, RequestPartsExt};
 use http::{header::COOKIE, request::Parts};
 use jsonwebtoken::{decode, Validation};
 use serde::{Deserialize, Serialize};
@@ -28,7 +22,7 @@ where
 {
     type Rejection = WebError;
 
-    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         let cookies =
             parts
                 .extract::<TypedHeader<Cookie>>()

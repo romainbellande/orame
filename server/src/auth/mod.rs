@@ -8,34 +8,15 @@ mod service;
 
 use std::sync::Arc;
 
-use axum::{response::IntoResponse, routing::post, Extension, Json, Router};
+use axum::{routing::post, Extension, Json, Router};
 pub use claims::Claims;
 use credentials::Credentials;
-// use sea_orm::{DatabaseConnection, EntityTrait};
 use prisma_client::PrismaClient;
 
 use axum::http::{header::SET_COOKIE, HeaderMap};
-use axum::response::{Redirect, Response};
+use axum::response::Redirect;
 use errors::WebError;
-use hyper::StatusCode;
-use serde::Serialize;
 
-pub fn map_response<T: Serialize>(
-    response: Result<T, WebError>,
-    status: Option<StatusCode>,
-) -> Response {
-    match response {
-        Ok(result) => {
-            let final_status = match status {
-                Some(status) => status,
-                None => StatusCode::OK,
-            };
-
-            (final_status, Json(result)).into_response()
-        }
-        Err(web_error) => web_error.into_response(),
-    }
-}
 pub async fn login(
     Extension(conn): Extension<Arc<PrismaClient>>,
     Json(credentials): Json<Credentials>,
@@ -54,9 +35,7 @@ pub async fn register(
     Extension(conn): Extension<Arc<PrismaClient>>,
     Json(credentials): Json<Credentials>,
 ) -> Result<(HeaderMap, Redirect), WebError> {
-    println!("REGISTER {:#?}", credentials);
     let body: body::AuthBody = service::register(conn, credentials).await?;
-    println!("BODY {:#?}", body);
 
     let cookie = format!("access_token={}; SameSite=Lax; Path=/", body.access_token);
     let mut headers = HeaderMap::new();

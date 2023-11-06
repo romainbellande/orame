@@ -1,5 +1,4 @@
 use axum::{
-    http::StatusCode,
     response::{IntoResponse, Response},
     Json,
 };
@@ -66,24 +65,17 @@ impl WebError {
 
 impl IntoResponse for WebError {
     fn into_response(self) -> Response {
-        let file = std::file!();
         (self.status, self.into_json()).into_response()
     }
 }
 
 pub enum UserError {
-    CouldNotSaveUser,
     NotFound { email: String },
 }
 
 impl Into<WebError> for UserError {
     fn into(self) -> WebError {
         match self {
-            Self::CouldNotSaveUser => WebError {
-                code: 500,
-                status: HyperStatusCode::INTERNAL_SERVER_ERROR,
-                message: "could not save user".to_string(),
-            },
             Self::NotFound { email } => WebError {
                 code: 404,
                 status: HyperStatusCode::NOT_FOUND,

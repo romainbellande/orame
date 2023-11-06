@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use prisma_client::{coordinates, planet, user, PrismaClient};
+use prisma_client::{planet, user, PrismaClient};
 
 use super::errors::{UserError, WebError};
 use super::{
     body::AuthBody, claims::Claims, credentials::Credentials, errors::AuthError, keys::KEYS,
 };
-use axum_extra::extract::cookie::{Cookie, PrivateCookieJar};
+
 use hyper::StatusCode;
 use jsonwebtoken::{encode, Header};
 
@@ -58,6 +58,10 @@ pub async fn login(
         }
         .into()
     })?;
+
+    if credentials.password != my_user.password {
+        return Err(AuthError::WrongCredentials.into());
+    }
 
     println!("USER: {:#?}", my_user);
 
