@@ -4,7 +4,7 @@ use futures::{
 };
 use leptos::leptos_dom::logging::console_log;
 use leptos_router::use_navigate;
-use ogame_core::{game::Game, protocol::Protocol};
+
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt::Debug;
 use {
