@@ -9,3 +9,495 @@
 .capitalize-first::first-letter {
   text-transform: capitalize;
 }
+
+/* ~~~~~~~~ SCROLLBAR ~~~~~~~~ */
+::-webkit-scrollbar {
+  @apply bg-transparent;
+  width: 0px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    @apply bg-transparent;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-transparent;
+}
+
+/********************************************************
+ ********************************************************
+ ******************* SPRITE IMAGES **********************
+ ********************************************************
+ ********************************************************/
+ .sprite_before::before,
+.sprite_after::after,
+.sprite {
+    /* background-image: url('//gf3.geo.gfsrv.net/cdn53/7a9861be0c38bf7de05a57c56d73cf.jpg'); */
+    background-image: url('/public/images/buildings.jpg');
+}
+
+/********************************************************
+ ************** *  SIZES AND MODES  * *******************
+ ********************************************************/
+.sprite_before.sprite_large::before,
+.sprite_after.sprite_large::after,
+.sprite.sprite_large {
+    width: 200px;
+    height: 200px;
+    /*background-size: 4000px 6000px;*/
+}
+
+.sprite_before.sprite_medium::before,
+.sprite_after.sprite_medium::after,
+.sprite.sprite_medium {
+    width: 100px;
+    height: 100px;
+    background-size: 2000px 3000px;
+}
+
+.sprite_before.sprite_small::before,
+.sprite_after.sprite_small::after,
+.sprite.sprite_small {
+    width: 80px;
+    height: 80px;
+    background-size: 1600px 2400px;
+}
+
+.sprite_before.sprite_tiny::before,
+.sprite_after.sprite_tiny::after,
+.sprite.sprite_tiny {
+    width: 28px;
+    height: 28px;
+    background-size: 550px 840px;
+}
+
+/* ~~~~~ BUILDINGS ~~~~~ */
+.sprite_before.metalMine::before,
+.sprite_after.metalMine::after,
+.sprite.metalMine {
+    background-position: 0 0;
+}
+
+.sprite_before.crystalMine::before,
+.sprite_after.crystalMine::after,
+.sprite.crystalMine {
+    background-position: 5.25% 0;
+}
+
+.sprite_before.deuteriumSynthesizer::before,
+.sprite_after.deuteriumSynthesizer::after,
+.sprite.deuteriumSynthesizer {
+    background-position: 10.52% 0;
+}
+
+.sprite_before.solarPlant::before,
+.sprite_after.solarPlant::after,
+.sprite.solarPlant {
+    background-position: 15.78% 0;
+}
+
+.sprite_before.fusionPlant::before,
+.sprite_after.fusionPlant::after,
+.sprite.fusionPlant {
+    background-position: 21.05% 0;
+}
+
+.sprite_before.roboticsFactory::before,
+.sprite_after.roboticsFactory::after,
+.sprite.roboticsFactory {
+    background-position: 0 17.24%;
+}
+
+.sprite_before.naniteFactory::before,
+.sprite_after.naniteFactory::after,
+.sprite.naniteFactory {
+    background-position: 26.31% 17.24%;
+}
+
+.sprite_before.shipyard::before,
+.sprite_after.shipyard::after,
+.sprite.shipyard {
+    background-position: 5.25% 17.24%;
+}
+
+.sprite_before.metalStorage::before,
+.sprite_after.metalStorage::after,
+.sprite.metalStorage {
+    background-position: 31.57% 0;
+}
+
+.sprite_before.crystalStorage::before,
+.sprite_after.crystalStorage::after,
+.sprite.crystalStorage {
+    background-position: 36.84% 0;
+}
+
+.sprite_before.deuteriumStorage::before,
+.sprite_after.deuteriumStorage::after,
+.sprite.deuteriumStorage {
+    background-position: 42.1% 0;
+}
+
+.sprite_before.researchLaboratory::before,
+.sprite_after.researchLaboratory::after,
+.sprite.researchLaboratory {
+    background-position: 10.52% 17.24%;
+}
+
+.sprite_before.terraformer::before,
+.sprite_after.terraformer::after,
+.sprite.terraformer {
+    background-position: 31.57% 17.24%;
+}
+
+.sprite_before.allianceDepot::before,
+.sprite_after.allianceDepot::after,
+.sprite.allianceDepot {
+    background-position: 15.78% 17.24%;
+}
+
+.sprite_before.moonbase::before,
+.sprite_after.moonbase::after,
+.sprite.moonbase {
+    background-position: 36.84% 17.24%;
+}
+
+.sprite_before.sensorPhalanx::before,
+.sprite_after.sensorPhalanx::after,
+.sprite.sensorPhalanx {
+    background-position: 42.1% 17.24%;
+}
+
+.sprite_before.jumpGate::before,
+.sprite_after.jumpGate::after,
+.sprite.jumpGate {
+    background-position: 47.36% 17.24%;
+}
+
+.sprite_before.missileSilo::before,
+.sprite_after.missileSilo::after,
+.sprite.missileSilo {
+    background-position: 21.05% 17.24%;
+}
+
+.sprite_before.repairDock::before,
+.sprite_after.repairDock::after,
+.sprite.repairDock {
+    background-position: 52.62% 17.24%;
+}
+
+
+/* ~~~~~ RESEARCHES ~~~~~ */
+/* ~~ BASICS ~~ */
+.sprite_before.energyTechnology::before,
+.sprite_after.energyTechnology::after,
+.sprite.energyTechnology {
+    background-position: 0 68.96%;
+}
+
+.sprite_before.laserTechnology::before,
+.sprite_after.laserTechnology::after,
+.sprite.laserTechnology {
+    background-position: 5.25% 68.96%;
+}
+
+.sprite_before.ionTechnology::before,
+.sprite_after.ionTechnology::after,
+.sprite.ionTechnology {
+    background-position: 10.52% 68.96%;
+}
+
+.sprite_before.hyperspaceTechnology::before,
+.sprite_after.hyperspaceTechnology::after,
+.sprite.hyperspaceTechnology {
+    background-position: 15.78% 68.96%;
+}
+
+.sprite_before.plasmaTechnology::before,
+.sprite_after.plasmaTechnology::after,
+.sprite.plasmaTechnology {
+    background-position: 21.05% 68.96%;
+}
+
+
+/* ~~ DRIVES ~~ */
+.sprite_before.combustionDriveTechnology::before,
+.sprite_after.combustionDriveTechnology::after,
+.sprite.combustionDriveTechnology {
+    background-position: 26.31% 68.96%;
+}
+
+.sprite_before.impulseDriveTechnology::before,
+.sprite_after.impulseDriveTechnology::after,
+.sprite.impulseDriveTechnology {
+    background-position: 31.57% 68.96%;
+}
+
+.sprite_before.hyperspaceDriveTechnology::before,
+.sprite_after.hyperspaceDriveTechnology::after,
+.sprite.hyperspaceDriveTechnology {
+    background-position: 36.84% 68.96%;
+}
+
+
+/* ~~ ADVANCED~~ */
+.sprite_before.espionageTechnology::before,
+.sprite_after.espionageTechnology::after,
+.sprite.espionageTechnology {
+    background-position: 42.1% 68.96%;
+}
+
+.sprite_before.computerTechnology::before,
+.sprite_after.computerTechnology::after,
+.sprite.computerTechnology {
+    background-position: 47.36% 68.96%;
+}
+
+.sprite_before.astrophysicsTechnology::before,
+.sprite_after.astrophysicsTechnology::after,
+.sprite.astrophysicsTechnology {
+    background-position: 52.62% 68.96%;
+}
+
+.sprite_before.researchNetworkTechnology::before,
+.sprite_after.researchNetworkTechnology::after,
+.sprite.researchNetworkTechnology {
+    background-position: 57.88% 68.96%;
+}
+
+.sprite_before.gravitonTechnology::before,
+.sprite_after.gravitonTechnology::after,
+.sprite.gravitonTechnology {
+    background-position: 63.15% 68.96%;
+}
+
+/* ~~ COMBAT ~~ */
+.sprite_before.weaponsTechnology::before,
+.sprite_after.weaponsTechnology::after,
+.sprite.weaponsTechnology {
+    background-position: 73.68% 68.96%;
+}
+
+.sprite_before.shieldingTechnology::before,
+.sprite_after.shieldingTechnology::after,
+.sprite.shieldingTechnology {
+    background-position: 78.94% 68.96%;
+}
+
+.sprite_before.armorTechnology::before,
+.sprite_after.armorTechnology::after,
+.sprite.armorTechnology {
+    background-position: 68.42% 68.96%;
+}
+
+/* ~~~~~ SHIPS ~~~~~ */
+/* ~~ CIVIL ~~ */
+.sprite_before.transporterSmall::before,
+.sprite_after.transporterSmall::after,
+.sprite.transporterSmall {
+    background-position: 42.1% 51.72%;
+}
+
+.sprite_before.transporterLarge::before,
+.sprite_after.transporterLarge::after,
+.sprite.transporterLarge {
+    background-position: 47.36% 51.72%;
+}
+
+.sprite_before.colonyShip::before,
+.sprite_after.colonyShip::after,
+.sprite.colonyShip {
+    background-position: 52.62% 51.72%;
+}
+
+.sprite_before.recycler::before,
+.sprite_after.recycler::after,
+.sprite.recycler {
+    background-position: 57.89% 51.72%;
+}
+
+.sprite_before.espionageProbe::before,
+.sprite_after.espionageProbe::after,
+.sprite.espionageProbe {
+    background-position: 63.15% 51.72%;
+}
+
+.sprite_before.solarSatellite::before,
+.sprite_after.solarSatellite::after,
+.sprite.solarSatellite {
+    background-position: 26.31% 0;
+}
+
+.sprite_before.resbuggy::before,
+.sprite_after.resbuggy::after,
+.sprite.resbuggy {
+    background-position: 84.20% 51.72%;
+}
+
+.sprite_before.explorer::before,
+.sprite_after.explorer::after,
+.sprite.explorer {
+    background-position: 78.94% 51.72%;
+}
+
+.sprite_before.reaper::before,
+.sprite_after.reaper::after,
+.sprite.reaper {
+    background-position: 73.68% 51.72%;
+}
+
+/* ~~ MILITARY ~~ */
+.sprite_before.fighterLight::before,
+.sprite_after.fighterLight::after,
+.sprite.fighterLight {
+    background-position: 0 51.72%;
+}
+
+.sprite_before.fighterHeavy::before,
+.sprite_after.fighterHeavy::after,
+.sprite.fighterHeavy {
+    background-position: 5.25% 51.72%;
+}
+
+.sprite_before.cruiser::before,
+.sprite_after.cruiser::after,
+.sprite.cruiser {
+    background-position: 10.53% 51.72%;
+}
+
+.sprite_before.battleship::before,
+.sprite_after.battleship::after,
+.sprite.battleship {
+    background-position: 15.78% 51.72%;
+}
+
+.sprite_before.interceptor::before,
+.sprite_after.interceptor::after,
+.sprite.interceptor {
+    background-position: 21.05% 51.72%;
+}
+
+.sprite_before.bomber::before,
+.sprite_after.bomber::after,
+.sprite.bomber {
+    background-position: 26.31% 51.72%;
+}
+
+.sprite_before.destroyer::before,
+.sprite_after.destroyer::after,
+.sprite.destroyer {
+    background-position: 31.57% 51.72%;
+}
+
+.sprite_before.deathstar::before,
+.sprite_after.deathstar::after,
+.sprite.deathstar {
+    background-position: 36.84% 51.72%;
+}
+
+/* ~~~~~ DEFENSES ~~~~~ */
+.sprite_before.rocketLauncher::before,
+.sprite_after.rocketLauncher::after,
+.sprite.rocketLauncher {
+    background-position: 0 34.48%;
+}
+
+.sprite_before.laserCannonLight::before,
+.sprite_after.laserCannonLight::after,
+.sprite.laserCannonLight {
+    background-position: 5.25% 34.48%;
+}
+
+.sprite_before.laserCannonHeavy::before,
+.sprite_after.laserCannonHeavy::after,
+.sprite.laserCannonHeavy {
+    background-position: 10.52% 34.48%;
+}
+
+.sprite_before.gaussCannon::before,
+.sprite_after.gaussCannon::after,
+.sprite.gaussCannon {
+    background-position: 15.78% 34.48%;
+}
+
+.sprite_before.ionCannon::before,
+.sprite_after.ionCannon::after,
+.sprite.ionCannon {
+    background-position: 21.05% 34.48%;
+}
+
+.sprite_before.plasmaCannon::before,
+.sprite_after.plasmaCannon::after,
+.sprite.plasmaCannon {
+    background-position: 26.31% 34.48%;
+}
+
+.sprite_before.shieldDomeSmall::before,
+.sprite_after.shieldDomeSmall::after,
+.sprite.shieldDomeSmall {
+    background-position: 31.57% 34.48%;
+}
+
+.sprite_before.shieldDomeLarge::before,
+.sprite_after.shieldDomeLarge::after,
+.sprite.shieldDomeLarge {
+    background-position: 36.84% 34.48%;
+}
+
+/* ~~~~~ MISSILES ~~~~~ */
+.sprite_before.missileInterceptor::before,
+.sprite_after.missileInterceptor::after,
+.sprite.missileInterceptor {
+    background-position: 42.1% 34.48%;
+}
+
+.sprite_before.missileInterplanetary::before,
+.sprite_after.missileInterplanetary::after,
+.sprite.missileInterplanetary {
+    background-position: 47.36% 34.48%;
+}
+/********************************************************
+ ********************************************************
+ **************** END SPRITE IMAGES *********************
+ ********************************************************
+ ********************************************************/
+
+/* ~~~~~~~~ Resources ~~~~~~~~ */
+
+.resourceIcon {
+    background: transparent url("/public/images/resources.png") 0 0 no-repeat;
+    width: 48px;
+    height: 32px;
+    float: left;
+}
+
+.resourceIconSmall {
+    background: transparent url("/public/images/resources-small.png") 0 0 no-repeat;
+    width: 30px;
+    height: 20px;
+    float: left;
+}
+
+
+.resourceIcon.metal { background-position: 0 -160px;}
+.resourceIcon.crystal { background-position: -48px -160px;}
+.resourceIcon.deuterium { background-position: -96px -160px;}
+.resourceIcon.energy { background-position: -144px -160px;}
+.resourceIcon.darkmatter { background-position: -192px -160px;}
+.resourceIcon.food { background-position: -288px -160px;}
+.resourceIcon.population { background-position: -336px -160px;}
+
+
+.resourceIconSmall.metal { background-position: 0 0;}
+.resourceIconSmall.crystal { background-position: -30px 0;}
+.resourceIconSmall.deuterium { background-position: -60px 0;}
+.resourceIconSmall.energy { background-position: -90px 0;}
+.resourceIconSmall.darkmatter { background-position: -120px 0;}
+.resourceIconSmall.food { background-position: -150px 0;}
+.resourceIconSmall.population { background-position: -180px 0;}
