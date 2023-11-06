@@ -27,7 +27,15 @@ pub fn PlanetIDPage() -> impl IntoView {
     let _id = move || params.with(|params| params.get("id").cloned().unwrap_or_default());
     let planets = move || state().planets;
 
-    let planet = Signal::derive(move || state.with(|state| state.planets.get(0).expect("must have at least one planet").clone()));
+    let planet = Signal::derive(move || {
+        state.with(|state| {
+            state
+                .planets
+                .get(0)
+                .expect("must have at least one planet")
+                .clone()
+        })
+    });
 
     view! {
       <div class="flex-grow flex flex-col justify-between bg-slate-800">
