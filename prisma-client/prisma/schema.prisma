@@ -1,17 +1,84 @@
 datasource db {
-    provider = "postgres"
-    url      = env("DATABASE_URL")
+  provider = "postgres"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
-    provider      = "cargo prisma"
-    output        = "../src/lib.rs"
+  provider = "cargo prisma"
+  output   = "../src/db.rs"
 }
 
 model User {
-    id          String  @id @default(cuid())
-    name        String
-    email       String  @unique
-    password    String
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String
+  planets  Planet[]
+}
+
+model Planet {
+  id          String       @id @default(cuid())
+  user_id     String
+  user          User   @relation(fields: [user_id], references: [id])
+
+  coordinates Coordinates?
+  resources   Resources?
+  buildings   Buildings?
+  ships       Ships?
+  build_queue String
+  ship_queue  String
+  last_update Int
+}
+
+model Coordinates {
+  id        String   @id @default(cuid())
+  planet_id String   @unique
+  Planet    Planet  @relation(fields: [planet_id], references: [id])
+
+  galaxy    Int
+  system    Int
+  position  Int
+}
+
+model Resources {
+  id        String   @id @default(cuid())
+  planet_id String   @unique
+  Planet    Planet  @relation(fields: [planet_id], references: [id])
+
+  metal     Float
+  crystal   Float
+  deuterium Float
+}
+
+model Buildings {
+  id        String @id @default(cuid())
+  planet_id String @unique
+  planet    Planet @relation(fields: [planet_id], references: [id])
+
+  metal     Int
+  crystal   Int
+  deuterium Int
+  shipyard  Int
+}
+
+model Ships {
+  id        String @id @default(cuid())
+  planet_id String @unique
+  planet    Planet @relation(fields: [planet_id], references: [id])
+
+  smallCargo Int
+  largeCargo Int
+  colonyShip Int
+  recycler   Int
+  espionageProbe Int
+  solarSatellite Int
+  lightFighter Int
+  heavyFighter Int
+  cruiser Int
+  battleship Int
+  bomber Int
+  destroyer Int
+  battlecruiser Int
+  deathstar Int
 }
 

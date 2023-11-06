@@ -12,6 +12,7 @@ pub enum AuthError {
     MissingCredentials,
     TokenCreation,
     InvalidToken,
+    UserAlreadyExists,
 }
 
 impl Into<WebError> for AuthError {
@@ -36,6 +37,11 @@ impl Into<WebError> for AuthError {
                 code: 4,
                 status: HyperStatusCode::BAD_REQUEST,
                 message: "Invalid token".to_string(),
+            },
+            Self::UserAlreadyExists => WebError {
+                code: 5,
+                status: HyperStatusCode::BAD_REQUEST,
+                message: "User already exists".to_string(),
             },
         }
     }

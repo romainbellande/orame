@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use prisma_client::{user, PrismaClient};
+use prisma_client::{coordinates, planet, user, PrismaClient};
 
 use super::errors::{UserError, WebError};
 use super::{
@@ -10,7 +10,21 @@ use axum_extra::extract::cookie::{Cookie, PrivateCookieJar};
 use hyper::StatusCode;
 use jsonwebtoken::{encode, Header};
 
-pub async fn authorize(
+pub fn authorize(user_id: String) -> Result<AuthBody, WebError> {
+    let claims = Claims {
+        sub: user_id,
+        company: "orame".to_owned(),
+        exp: 2000000000, // May 2033
+    };
+
+    // Create the authorization token
+    let token = encode(&Header::default(), &claims, &KEYS.encoding)
+        .map_err(|_| AuthError::TokenCreation.into())?;
+
+    Ok(AuthBody::new(token))
+}
+
+pub async fn login(
     conn: Arc<PrismaClient>,
     credentials: Credentials,
 ) -> Result<AuthBody, WebError> {
@@ -22,6 +36,13 @@ pub async fn authorize(
     let my_user = conn
         .user()
         .find_first(vec![user::email::equals(credentials.email.clone())])
+        .with(
+            user::planets::fetch(vec![])
+                .with(planet::coordinates::fetch())
+                .with(planet::resources::fetch())
+                .with(planet::buildings::fetch())
+                .with(planet::ships::fetch()),
+        )
         .exec()
         .await;
 
@@ -38,22 +59,131 @@ pub async fn authorize(
         .into()
     })?;
 
-    // Here you can check the user credentials from a database
-    /* if !my_user.verify_password(credentials.password) {
-        return Err(AuthError::WrongCredentials.into());
-    } */
+    println!("USER: {:#?}", my_user);
 
-    let claims = Claims {
-        sub: my_user.id.to_string().to_owned(),
-        company: "orame".to_owned(),
-        // TODO: add roles here
-        // Mandatory expiry time as UTC timestamp
-        exp: 2000000000, // May 2033
-    };
+    Ok(authorize(my_user.id)?)
+}
 
-    // Create the authorization token
-    let token = encode(&Header::default(), &claims, &KEYS.encoding)
-        .map_err(|_| AuthError::TokenCreation.into())?;
+pub async fn register(
+    conn: Arc<PrismaClient>,
+    credentials: Credentials,
+) -> Result<AuthBody, WebError> {
+    // Check if the user sent the credentials
+    if credentials.email.is_empty() || credentials.password.is_empty() {
+        return Err(AuthError::MissingCredentials.into());
+    }
 
-    Ok(AuthBody::new(token))
+    if let Ok(Some(_)) = conn
+        .user()
+        .find_first(vec![user::email::equals(credentials.email.clone())])
+        .exec()
+        .await
+    {
+        return Err(AuthError::UserAlreadyExists.into());
+    }
+
+    let my_user = conn
+        .user()
+        .create(
+            "EMPTY_NAME".to_owned(),
+            credentials.email.clone(),
+            credentials.password.clone(),
+            vec![],
+        )
+        .exec()
+        .await
+        .map_err(|err| WebError {
+            code: 1,
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: err.to_string(),
+        })?;
+
+    let new_planet = conn
+        .planet()
+        .create(
+            user::id::equals(my_user.id.clone()),
+            "[]".to_owned(),
+            "[]".to_owned(),
+            0,
+            vec![],
+        )
+        .exec()
+        .await
+        .map_err(|err| WebError {
+            code: 1,
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: err.to_string(),
+        })?;
+
+    conn.coordinates()
+        .create(planet::id::equals(new_planet.id.clone()), 0, 0, 0, vec![])
+        .exec()
+        .await
+        .map_err(|err| WebError {
+            code: 1,
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: err.to_string(),
+        })?;
+
+    conn.resources()
+        .create(
+            planet::id::equals(new_planet.id.clone()),
+            2500.0,
+            1000.0,
+            0.0,
+            vec![],
+        )
+        .exec()
+        .await
+        .map_err(|err| WebError {
+            code: 1,
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: err.to_string(),
+        })?;
+
+    conn.buildings()
+        .create(
+            planet::id::equals(new_planet.id.clone()),
+            0,
+            0,
+            0,
+            0,
+            vec![],
+        )
+        .exec()
+        .await
+        .map_err(|err| WebError {
+            code: 1,
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: err.to_string(),
+        })?;
+
+    conn.ships()
+        .create(
+            planet::id::equals(new_planet.id.clone()),
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            vec![],
+        )
+        .exec()
+        .await
+        .map_err(|err| WebError {
+            code: 1,
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: err.to_string(),
+        })?;
+
+    Ok(authorize(my_user.id)?)
 }
