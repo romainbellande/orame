@@ -1,7 +1,5 @@
 use leptos::*;
 mod components;
-mod error;
-mod global_state;
 mod routes;
 mod utils;
 
