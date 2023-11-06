@@ -2,15 +2,15 @@ use ogame_core::building_type::BuildingType;
 
 #[derive(Clone)]
 pub struct BuildingConfig {
-  pub name: &'static str,
-  pub class: &'static str,
-  pub description: &'static str,
-  pub building_type: BuildingType,
+    pub name: &'static str,
+    pub class: &'static str,
+    pub description: &'static str,
+    pub building_type: BuildingType,
 }
 
 impl From<BuildingType> for BuildingConfig {
-  fn from(value: BuildingType) -> Self {
-      match value {
+    fn from(value: BuildingType) -> Self {
+        match value {
         BuildingType::Metal => Self {
           name: "Metal Mine",
           class: "metalMine",
@@ -30,5 +30,5 @@ impl From<BuildingType> for BuildingConfig {
           building_type: BuildingType::Deuterium
         },
       }
-  }
+    }
 }

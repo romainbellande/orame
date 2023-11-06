@@ -1,23 +1,29 @@
-use crate::{components::window::Window};
-use leptos::{*, leptos_dom::logging::console_log};
-use ogame_core::{building_type::BuildingType, planet::Planet, game::Game};
+use super::building::{Building, BuildingTile, BuildingWindow};
+use crate::components::window::Window;
+use leptos::{leptos_dom::logging::console_log, *};
+use ogame_core::{building_type::BuildingType, game::Game, planet::Planet};
 use uuid::Uuid;
-use super::building::{BuildingTile, BuildingWindow, Building};
 
 #[component]
 pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
     let state = expect_context::<RwSignal<Game>>();
     let (show_buildings, set_show_buildings) = create_signal(false);
 
-    let initial_buildings = Signal::derive(move || planet.with(|planet| {
-      vec![
-          Building::from(BuildingType::Metal).set_level(planet.building_level(BuildingType::Metal)),
-          Building::from(BuildingType::Crystal).set_level(planet.building_level(BuildingType::Crystal)),
-          Building::from(BuildingType::Deuterium).set_level(planet.building_level(BuildingType::Deuterium)),
-        ].into_iter()
-        .map(|building| (Uuid::new_v4(), create_signal(building)))
-        .collect::<Vec<_>>()
-    }));
+    let initial_buildings = Signal::derive(move || {
+        planet.with(|planet| {
+            vec![
+                Building::from(BuildingType::Metal)
+                    .set_level(planet.building_level(BuildingType::Metal)),
+                Building::from(BuildingType::Crystal)
+                    .set_level(planet.building_level(BuildingType::Crystal)),
+                Building::from(BuildingType::Deuterium)
+                    .set_level(planet.building_level(BuildingType::Deuterium)),
+            ]
+            .into_iter()
+            .map(|building| (Uuid::new_v4(), create_signal(building)))
+            .collect::<Vec<_>>()
+        })
+    });
 
     let (buildings, _) = create_signal(initial_buildings);
 

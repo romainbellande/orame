@@ -1,24 +1,24 @@
 use leptos::*;
-use uuid::Uuid;
 use ogame_core::planet::Planet;
+use uuid::Uuid;
 
 enum ResourceItem {
-  Metal,
-  Crystal,
-  Deuterium,
+    Metal,
+    Crystal,
+    Deuterium,
 }
 
 #[derive(Clone)]
 struct ResourceConfig {
-  name: &'static str,
-  class: &'static str,
-  description: &'static str,
-  amount: usize,
+    name: &'static str,
+    class: &'static str,
+    description: &'static str,
+    amount: usize,
 }
 
 impl From<ResourceItem> for ResourceConfig {
-  fn from(value: ResourceItem) -> Self {
-      match value {
+    fn from(value: ResourceItem) -> Self {
+        match value {
           ResourceItem::Metal => Self {
             name: "Metal",
             class: "metal",
@@ -38,48 +38,50 @@ impl From<ResourceItem> for ResourceConfig {
             amount: 0,
           },
       }
-  }
+    }
 }
 
 impl ResourceConfig {
-  pub fn set_amount(&mut self, amount: usize) -> Self {
-    self.amount = amount;
-    self.clone()
-  }
+    pub fn set_amount(&mut self, amount: usize) -> Self {
+        self.amount = amount;
+        self.clone()
+    }
 }
 
 #[component]
 fn ResourceTile(resource: ReadSignal<ResourceConfig>) -> impl IntoView {
-  view! {
-    <li class="space-y-2 flex flex-col justify-center">
-      <div class=format!("resourceIcon {}", resource().class)></div>
-      <span class="text-xs text-center text-slate-300">{ resource().amount }</span>
-    </li>
-  }
+    view! {
+      <li class="space-y-2 flex flex-col justify-center">
+        <div class=format!("resourceIcon {}", resource().class)></div>
+        <span class="text-xs text-center text-slate-300">{ resource().amount }</span>
+      </li>
+    }
 }
 
 #[component]
 pub fn ResourceBar(planet: Signal<Planet>) -> impl IntoView {
-  let initial_resources = vec![
-    ResourceConfig::from(ResourceItem::Metal).set_amount(planet().resources().metal),
-    ResourceConfig::from(ResourceItem::Crystal).set_amount(planet().resources().crystal),
-    ResourceConfig::from(ResourceItem::Deuterium).set_amount(planet().resources().deuterium),
-  ].into_iter() .map(|resource| (Uuid::new_v4(), create_signal(resource)))
-  .collect::<Vec<_>>();
+    let initial_resources = vec![
+        ResourceConfig::from(ResourceItem::Metal).set_amount(planet().resources().metal),
+        ResourceConfig::from(ResourceItem::Crystal).set_amount(planet().resources().crystal),
+        ResourceConfig::from(ResourceItem::Deuterium).set_amount(planet().resources().deuterium),
+    ]
+    .into_iter()
+    .map(|resource| (Uuid::new_v4(), create_signal(resource)))
+    .collect::<Vec<_>>();
 
-  let (resources, _) = create_signal(initial_resources);
+    let (resources, _) = create_signal(initial_resources);
 
-  view! {
-    <ul class="resourcesbarcomponent flex space-x-4">
-      <For
-        each=resources
-        key=|resource| resource.0
-        children=move |(id, (resource, _))| {
-          view! {
-            <ResourceTile resource=resource />
+    view! {
+      <ul class="resourcesbarcomponent flex space-x-4">
+        <For
+          each=resources
+          key=|resource| resource.0
+          children=move |(id, (resource, _))| {
+            view! {
+              <ResourceTile resource=resource />
+            }
           }
-        }
-      />
-    </ul>
-  }
+        />
+      </ul>
+    }
 }
