@@ -1,13 +1,14 @@
 use leptos::{leptos_dom::logging::console_log, *};
 use ogame_core::{
     build_cost_trait::BuildCost, build_time_trait::BuildTime, building_type::BuildingType,
-    game::Game,
 };
+
+use crate::utils::GameWrapper;
 
 #[component]
 pub fn Planets() -> impl IntoView {
     let (_show_buildings, _set_show_buildings) = create_signal(false);
-    let state = expect_context::<RwSignal<Game>>();
+    let state = expect_context::<RwSignal<GameWrapper>>();
 
     let upgrade_cb = move |planet: ogame_core::planet::Planet, building: BuildingType| {
         move |_| {
@@ -95,7 +96,7 @@ pub fn Planets() -> impl IntoView {
                                 let:item
                             >
                                 <li>
-                                    {item.r#type.to_string()} {item.finish_date - now()}s
+                                    {item.r#type.to_string()} {item.finish_date as i32 - now() as i32}s
                                 </li>
                             </For>
                         }

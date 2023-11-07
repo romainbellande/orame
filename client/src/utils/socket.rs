@@ -5,6 +5,7 @@ use futures::{
 use leptos::leptos_dom::logging::console_log;
 use leptos_router::use_navigate;
 
+use crate::utils::error::*;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt::Debug;
 use {
@@ -89,8 +90,10 @@ where
         Self::new(in_tx, Some(out_rx))
     }
 
-    pub async fn send(&mut self, packet: P) {
-        self.tx.send(packet).await.unwrap();
+    pub async fn send(&mut self, packet: P) -> Result<()> {
+        self.tx.send(packet).await?;
+
+        Ok(())
     }
 
     pub fn take_receiver(&mut self) -> Option<UnboundedReceiver<P>> {

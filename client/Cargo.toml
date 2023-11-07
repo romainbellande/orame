@@ -11,8 +11,8 @@ leptos_meta = { version = "0.5.2", features = ["csr", "nightly"] }
 leptos_router = { version = "0.5.2", features = ["csr", "nightly"] }
 plotters = "0.3.5"
 web-sys = { version = "0.3.65", features = ["CanvasRenderingContext2d", "HtmlCanvasElement", "HtmlElement"] }
-ogame_core = { git = "https://github.com/Champii/ogame_core", branch = "release" }
-# ogame_core = { path = "../../ogame_core" }
+# ogame_core = { git = "https://github.com/Champii/ogame_core", branch = "release" }
+ogame_core = { path = "../../ogame_core" }
 web-time = "0.2.3"
 serde_cbor = "0.11.2"
 
