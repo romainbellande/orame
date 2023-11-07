@@ -1,16 +1,17 @@
+use futures::channel::mpsc::Receiver;
 use leptos::*;
 use leptos_router::Outlet;
 mod home;
 mod planets;
 use crate::components::{header::Header, sidenav::SideNav};
-use crate::utils::Socket;
+use crate::utils::{GameWrapper, Socket};
 use futures::StreamExt;
 pub use home::HomePage;
 use ogame_core::{game::Game, protocol::Protocol};
 pub use planets::PlanetIDPage;
 use wasm_bindgen::{prelude::Closure, JsCast};
 
-fn set_tick_interval(game: RwSignal<Game>) {
+fn set_tick_interval(game: RwSignal<GameWrapper>) {
     let cb = Closure::wrap(Box::new(move || {
         game.update(|game| {
             game.tick().unwrap();
@@ -24,23 +25,33 @@ fn set_tick_interval(game: RwSignal<Game>) {
     cb.forget(); // leak the closure
 }
 
-pub async fn connect_socket(game: RwSignal<Game>) {
+pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<Protocol>) {
     let mut ws: Socket<Protocol> = Socket::connect("ws://localhost:8080/ws").await;
 
     let mut recv = ws.take_receiver().unwrap();
 
-    while let Some(msg) = recv.next().await {
-        game.update(|game| {
-            game.process_message(msg).unwrap();
-        });
+    spawn_local(async move {
+        while let Some(msg) = recv.next().await {
+            game.update(|game| {
+                game.process_message(msg).unwrap();
+            });
+        }
+    });
+
+    while let Some(msg) = game_rx.next().await {
+        ws.send(msg).await.unwrap();
     }
 }
 
 #[component]
 pub fn GamePage() -> impl IntoView {
-    let game_context = create_rw_signal(Game::new());
+    let (tx, rx) = futures::channel::mpsc::channel(1);
+
+    let game_context = create_rw_signal(crate::utils::GameWrapper::new(Game::new(), tx));
+
     set_tick_interval(game_context);
-    spawn_local(connect_socket(game_context));
+
+    spawn_local(connect_socket(game_context, rx));
 
     provide_context(game_context);
 

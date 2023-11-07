@@ -94,6 +94,22 @@ impl From<ships::Data> for ogame_core::ship_hangar::ShipHangar {
             db_ships.large_cargo as usize,
         );
         ships.insert(
+            ogame_core::ship_type::ShipType::ColonyShip,
+            db_ships.colony_ship as usize,
+        );
+        ships.insert(
+            ogame_core::ship_type::ShipType::Recycler,
+            db_ships.recycler as usize,
+        );
+        ships.insert(
+            ogame_core::ship_type::ShipType::EspionageProbe,
+            db_ships.espionage_probe as usize,
+        );
+        ships.insert(
+            ogame_core::ship_type::ShipType::SolarSatellite,
+            db_ships.solar_satellite as usize,
+        );
+        ships.insert(
             ogame_core::ship_type::ShipType::LightFighter,
             db_ships.light_fighter as usize,
         );
@@ -108,18 +124,6 @@ impl From<ships::Data> for ogame_core::ship_hangar::ShipHangar {
         ships.insert(
             ogame_core::ship_type::ShipType::Battleship,
             db_ships.battleship as usize,
-        );
-        ships.insert(
-            ogame_core::ship_type::ShipType::ColonyShip,
-            db_ships.colony_ship as usize,
-        );
-        ships.insert(
-            ogame_core::ship_type::ShipType::Recycler,
-            db_ships.recycler as usize,
-        );
-        ships.insert(
-            ogame_core::ship_type::ShipType::EspionageProbe,
-            db_ships.espionage_probe as usize,
         );
         ships.insert(
             ogame_core::ship_type::ShipType::Bomber,
