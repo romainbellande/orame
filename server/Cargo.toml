@@ -20,7 +20,6 @@ ogame_core = { git = "https://github.com/Champii/ogame_core", branch = "release"
 tower = { version = "0.4", features = ["util"] }
 tower-http = { version = "0.4.4", features = ["fs", "trace"] }
 
-prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9" }
 serde_json = "1.0.108"
 jsonwebtoken = "9.1.0"
 hyper = "0.14.27"
