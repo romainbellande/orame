@@ -20,7 +20,6 @@ use crate::auth::middleware::auth_bearer_middleware;
 use crate::auth::Claims;
 
 use prisma_client::*;
-use prisma_client_rust::NewClientError;
 
 use ogame_core::game::Game;
 use ogame_core::protocol::Protocol;

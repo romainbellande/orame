@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9" }
+prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9",  default-features = false, features = ["postgresql"] }
 serde = { version = "1.0.147", features = ["derive"] }
 ogame_core = { git = "https://github.com/champii/ogame_core", branch = "release" }
 # ogame_core = { path = "../../ogame_core" }

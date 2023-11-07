@@ -22,13 +22,17 @@ impl GameWrapper {
         planet_id: String,
         building_type: BuildingType,
     ) -> Result<()> {
-        let message = Protocol::UpgradeBuilding {
+        self.action(Protocol::UpgradeBuilding {
             planet_id,
             building_type,
-        };
+        })
+    }
 
+    fn action(&mut self, message: Protocol) -> Result<()> {
         self.game.process_message(message.clone())?;
+
         let mut socket_sender = self.socket_sender.clone();
+
         spawn_local(async move {
             socket_sender.send(message).await.unwrap();
         });

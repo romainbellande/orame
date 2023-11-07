@@ -10,5 +10,4 @@ pub use socket::Socket;
 mod game_wrapper;
 pub use game_wrapper::GameWrapper;
 
-mod error;
-pub use error::{Error, Result};
+pub mod error;
