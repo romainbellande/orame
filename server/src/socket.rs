@@ -20,6 +20,7 @@ use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::RwLock;
 use tower_http::services::{ServeDir, ServeFile};
 
+use crate::apply_to_game::{apply_msg_to_game, apply_to_game_with_async};
 use crate::auth::middleware::auth_bearer_middleware;
 use crate::auth::Claims;
 
@@ -53,7 +54,7 @@ fn protocol_to_bytes(packet: Protocol) -> Vec<u8> {
     serde_cbor::to_vec(&packet).unwrap()
 }
 
-async fn handle_flight(
+pub async fn handle_flight(
     game: &mut Game,
     message: Protocol,
     connected_users: ConnectedUsers,
@@ -124,50 +125,6 @@ async fn handle_flight(
     }
 }
 
-async fn apply_to_game_with_<F: FnMut(&mut Game) -> ()>(
-    user_id: String,
-    conn: &Arc<PrismaClient>,
-    mut cb: F,
-) {
-    let mut game = fetch_game(user_id, conn).await;
-
-    cb(&mut game);
-
-    save_game(game, conn).await;
-}
-
-async fn apply_to_game_with_async<Fut: Future<Output = Game>, F: FnMut(Game) -> Fut>(
-    user_id: String,
-    conn: &Arc<PrismaClient>,
-    mut cb: F,
-) {
-    let mut game = fetch_game(user_id, conn).await;
-
-    let game = cb(game).await;
-
-    save_game(game, conn).await;
-}
-
-async fn apply_to_game(
-    user_id: String,
-    message: Protocol,
-    connected_users: ConnectedUsers,
-    conn: &Arc<PrismaClient>,
-) {
-    let message2 = message.clone();
-    let connected_users2 = connected_users.clone();
-    apply_to_game_with_async(user_id, conn, move |mut game| {
-        let message3 = message2.clone();
-        let connected_users3 = connected_users2.clone();
-        async move {
-            handle_flight(&mut game, message3.clone(), connected_users3, conn).await;
-            game.process_message(message3).unwrap();
-            game
-        }
-    })
-    .await;
-}
-
 async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
     socket: WebSocket,
     _addr: SocketAddr,
@@ -215,7 +172,7 @@ async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
 
         let msg = protocol_from_bytes(&msg_tmp);
 
-        apply_to_game(user_id.clone(), msg, connected_users.clone(), &conn).await;
+        apply_msg_to_game(user_id.clone(), msg, connected_users.clone(), &conn).await;
     }
 
     // client disconnected
