@@ -4,14 +4,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Resources {
+    pub id: String,
     pub metal: f64,
     pub crystal: f64,
     pub deuterium: f64,
 }
 
 impl Resources {
-    pub fn new(metal: f64, crystal: f64, deuterium: f64) -> Self {
+    pub fn new(id: String, metal: f64, crystal: f64, deuterium: f64) -> Self {
         Resources {
+            id,
             metal,
             crystal,
             deuterium,
@@ -58,6 +60,7 @@ impl Mul<f64> for Resources {
 
     fn mul(self, rhs: f64) -> Self::Output {
         Resources {
+            id: self.id,
             metal: self.metal * rhs,
             crystal: self.crystal * rhs,
             deuterium: self.deuterium * rhs,

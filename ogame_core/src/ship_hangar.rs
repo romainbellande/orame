@@ -6,12 +6,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ShipHangar {
+    pub id: String,
     pub ships: BTreeMap<ShipType, usize>,
 }
 
 impl ShipHangar {
-    pub fn new(ships: BTreeMap<ShipType, usize>) -> Self {
-        Self { ships }
+    pub fn new(id: String, ships: BTreeMap<ShipType, usize>) -> Self {
+        Self { id, ships }
     }
     pub(crate) fn assert_ships_amount(&mut self, ships: &BTreeMap<ShipType, usize>) -> Result<()> {
         // TODO: implement deuterium consumption based on distance

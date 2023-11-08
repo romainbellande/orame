@@ -50,71 +50,85 @@ impl BuildCost for ShipType {
     fn cost(&self, _level: usize) -> Resources {
         match self {
             ShipType::SmallCargo => Resources {
+                id: "".to_string(),
                 metal: 2000.0,
                 crystal: 2000.0,
                 deuterium: 0.0,
             },
             ShipType::LargeCargo => Resources {
+                id: "".to_string(),
                 metal: 6000.0,
                 crystal: 6000.0,
                 deuterium: 0.0,
             },
             ShipType::ColonyShip => Resources {
+                id: "".to_string(),
                 metal: 10000.0,
                 crystal: 20000.0,
                 deuterium: 10000.0,
             },
             ShipType::Recycler => Resources {
+                id: "".to_string(),
                 metal: 10000.0,
                 crystal: 6000.0,
                 deuterium: 2000.0,
             },
             ShipType::EspionageProbe => Resources {
+                id: "".to_string(),
                 metal: 0.0,
                 crystal: 1000.0,
                 deuterium: 0.0,
             },
             ShipType::SolarSatellite => Resources {
+                id: "".to_string(),
                 metal: 0.0,
                 crystal: 2000.0,
                 deuterium: 500.0,
             },
             ShipType::LightFighter => Resources {
+                id: "".to_string(),
                 metal: 3000.0,
                 crystal: 1000.0,
                 deuterium: 0.0,
             },
             ShipType::HeavyFighter => Resources {
+                id: "".to_string(),
                 metal: 6000.0,
                 crystal: 4000.0,
                 deuterium: 0.0,
             },
             ShipType::Cruiser => Resources {
+                id: "".to_string(),
                 metal: 20000.0,
                 crystal: 7000.0,
                 deuterium: 2000.0,
             },
             ShipType::Battleship => Resources {
+                id: "".to_string(),
                 metal: 45000.0,
                 crystal: 15000.0,
                 deuterium: 0.0,
             },
             ShipType::Bomber => Resources {
+                id: "".to_string(),
                 metal: 50000.0,
                 crystal: 25000.0,
                 deuterium: 15000.0,
             },
             ShipType::Destroyer => Resources {
+                id: "".to_string(),
                 metal: 60000.0,
                 crystal: 50000.0,
                 deuterium: 15000.0,
             },
             ShipType::Battlecruiser => Resources {
+                id: "".to_string(),
                 metal: 30000.0,
                 crystal: 40000.0,
                 deuterium: 15000.0,
             },
             ShipType::Deathstar => Resources {
+                id: "".to_string(),
                 metal: 5000000.0,
                 crystal: 4000000.0,
                 deuterium: 1000000.0,
