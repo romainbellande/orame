@@ -6,7 +6,7 @@ mod portal;
 use portal::Portal;
 
 mod game;
-use game::{GamePage, HomePage, PlanetIDPage};
+use game::{GamePage, HomePage, PlanetIDPage, PlanetsPage};
 
 #[component]
 pub fn AppRouter() -> impl IntoView {
@@ -20,6 +20,7 @@ pub fn AppRouter() -> impl IntoView {
           <Route path="/portal" view=Portal />
           <Route path="/" view=GamePage>
             <Route path="" view=HomePage />
+            <Route path="/planets" view=PlanetsPage />
             <Route path="/planets/:id" view=PlanetIDPage />
           </Route>
           <Route path="/*any" view=|| view! { <h1>"Not Found"</h1> }/>

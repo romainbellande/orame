@@ -8,7 +8,7 @@ use crate::utils::{GameWrapper, Socket};
 use futures::StreamExt;
 pub use home::HomePage;
 use ogame_core::{game::Game, protocol::Protocol};
-pub use planets::PlanetIDPage;
+pub use planets::{PlanetIDPage, PlanetsPage};
 use wasm_bindgen::{prelude::Closure, JsCast};
 
 fn set_tick_interval(game: RwSignal<GameWrapper>) {
@@ -59,7 +59,7 @@ pub fn GamePage() -> impl IntoView {
          <div class="max-w-full max-h-full">
             <Header />
             <SideNav />
-            <main class="pt-28 pl-72 min-h-screen flex flex-col w-screen space-y-4">
+            <main class="pt-28 pl-72 min-h-screen flex flex-col w-screen space-y-4 bg-slate-800">
                 <Outlet />
             </main>
         </div>
