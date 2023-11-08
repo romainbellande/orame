@@ -24,16 +24,7 @@ pub struct Planet {
     pub build_queue: BuildQueue<BuildingType>,
     pub ship_queue: BuildQueue<ShipType>,
     pub last_update: usize,
-}
-
-impl PartialEq for Planet {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
-
-    fn ne(&self, other: &Self) -> bool {
-        self.id != other.id
-    }
+    pub flights: Vec<Flight>,
 }
 
 impl Planet {
@@ -46,6 +37,7 @@ impl Planet {
         build_queue: BuildQueue<BuildingType>,
         ship_queue: BuildQueue<ShipType>,
         last_update: usize,
+        flights: Vec<Flight>,
     ) -> Self {
         Planet {
             id,
@@ -56,6 +48,7 @@ impl Planet {
             build_queue,
             ship_queue,
             last_update,
+            flights,
         }
     }
 
@@ -160,7 +153,7 @@ impl Planet {
 
         if let Some(return_time) = flight.return_time {
             if return_time < now {
-                self.ships.add_ships(&flight.ships)?;
+                self.ships.add_ships(&flight.ships.ships)?;
 
                 return Ok(());
             }
@@ -175,7 +168,7 @@ impl Planet {
                 self.resources += flight.resources;
             }
             MissionType::Station => {
-                self.ships.add_ships(&flight.ships)?;
+                self.ships.add_ships(&flight.ships.ships)?;
                 self.resources += flight.resources;
             }
             _ => unimplemented!(),
