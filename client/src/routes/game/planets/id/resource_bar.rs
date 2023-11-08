@@ -59,17 +59,20 @@ fn ResourceTile(resource: ReadSignal<ResourceConfig>) -> impl IntoView {
 }
 
 #[component]
-pub fn ResourceBar(planet: Signal<Planet>) -> impl IntoView {
-    let initial_resources = vec![
-        ResourceConfig::from(ResourceItem::Metal).set_amount(planet().resources().metal),
-        ResourceConfig::from(ResourceItem::Crystal).set_amount(planet().resources().crystal),
-        ResourceConfig::from(ResourceItem::Deuterium).set_amount(planet().resources().deuterium),
-    ]
-    .into_iter()
-    .map(|resource| (Uuid::new_v4(), create_signal(resource)))
-    .collect::<Vec<_>>();
-
-    let (resources, _) = create_signal(initial_resources);
+pub fn ResourceBar(planet: Memo<Planet>) -> impl IntoView {
+    let resources = move || {
+        planet.with(|planet| {
+            vec![
+                ResourceConfig::from(ResourceItem::Metal).set_amount(planet.resources().metal),
+                ResourceConfig::from(ResourceItem::Crystal).set_amount(planet.resources().crystal),
+                ResourceConfig::from(ResourceItem::Deuterium)
+                    .set_amount(planet.resources().deuterium),
+            ]
+            .into_iter()
+            .map(|resource| (Uuid::new_v4(), create_signal(resource)))
+            .collect::<Vec<_>>()
+        })
+    };
 
     view! {
       <ul class="resourcesbarcomponent flex space-x-4">

@@ -1,3 +1,4 @@
+use leptos::leptos_dom::logging::console_log;
 use ogame_core::game::Game;
 
 use leptos::*;
@@ -8,9 +9,6 @@ use toolbar::Toolbar;
 
 mod resource_bar;
 use resource_bar::ResourceBar;
-use web_sys::wasm_bindgen::UnwrapThrowExt;
-
-mod building;
 
 use crate::components::galaxy::Galaxy;
 use crate::components::planets::Planets;
@@ -25,9 +23,9 @@ pub fn PlanetIDPage() -> impl IntoView {
 
     let params = use_params_map();
     let _id = move || params.with(|params| params.get("id").cloned().unwrap_or_default());
-    let planets = move || state().planets;
 
-    let planet = Signal::derive(move || {
+    let planet = create_memo(move |planet| {
+        console_log(format!("planet: {:?}", planet).as_str());
         state.with(|state| {
             state
                 .planets
