@@ -1,6 +1,10 @@
 use std::sync::Arc;
 
-use prisma_client::{planet, user, PrismaClient};
+use ogame_core::resources::Resources;
+use prisma_client::{
+    create_buildings, create_coordinates, create_planet, create_resources, create_ships,
+    create_user, planet, user, PrismaClient,
+};
 
 use super::errors::{UserError, WebError};
 use super::{
@@ -86,108 +90,60 @@ pub async fn register(
         return Err(AuthError::UserAlreadyExists.into());
     }
 
-    let my_user = conn
-        .user()
-        .create(
-            "EMPTY_NAME".to_owned(),
-            credentials.email.clone(),
-            credentials.password.clone(),
-            vec![],
-        )
-        .exec()
-        .await
-        .map_err(|err| WebError {
-            code: 1,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: err.to_string(),
-        })?;
+    let new_user = create_user(
+        "EMPTY_NAME".to_owned(),
+        credentials.email.clone(),
+        credentials.password.clone(),
+        &conn,
+    )
+    .await;
 
-    let new_planet = conn
-        .planet()
-        .create(
-            user::id::equals(my_user.id.clone()),
-            "[]".to_owned(),
-            "[]".to_owned(),
-            0,
-            vec![],
-        )
-        .exec()
-        .await
-        .map_err(|err| WebError {
-            code: 1,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: err.to_string(),
-        })?;
+    let new_coordinates = create_coordinates(0, 0, 0, &conn).await;
 
-    conn.coordinates()
-        .create(planet::id::equals(new_planet.id.clone()), 0, 0, 0, vec![])
-        .exec()
-        .await
-        .map_err(|err| WebError {
-            code: 1,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: err.to_string(),
-        })?;
+    let new_resources = create_resources(
+        &Resources {
+            id: "".to_owned(),
+            metal: 2500.0,
+            crystal: 1000.0,
+            deuterium: 0.0,
+        },
+        &conn,
+    )
+    .await;
 
-    conn.resources()
-        .create(
-            planet::id::equals(new_planet.id.clone()),
-            2500.0,
-            1000.0,
-            0.0,
-            vec![],
-        )
-        .exec()
-        .await
-        .map_err(|err| WebError {
-            code: 1,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: err.to_string(),
-        })?;
+    let new_ships = create_ships(
+        &vec![
+            (ogame_core::ship_type::ShipType::SmallCargo, 0 as usize),
+            (ogame_core::ship_type::ShipType::LargeCargo, 0),
+            (ogame_core::ship_type::ShipType::ColonyShip, 0),
+            (ogame_core::ship_type::ShipType::Recycler, 0),
+            (ogame_core::ship_type::ShipType::EspionageProbe, 0),
+            (ogame_core::ship_type::ShipType::SolarSatellite, 0),
+            (ogame_core::ship_type::ShipType::LightFighter, 0),
+            (ogame_core::ship_type::ShipType::HeavyFighter, 0),
+            (ogame_core::ship_type::ShipType::Cruiser, 0),
+            (ogame_core::ship_type::ShipType::Battleship, 0),
+            (ogame_core::ship_type::ShipType::Bomber, 0),
+            (ogame_core::ship_type::ShipType::Destroyer, 0),
+            (ogame_core::ship_type::ShipType::Battlecruiser, 0),
+            (ogame_core::ship_type::ShipType::Deathstar, 0),
+        ]
+        .into_iter()
+        .collect(),
+        &conn,
+    )
+    .await;
+    let new_planet = create_planet(
+        new_user.id.clone(),
+        new_coordinates.id,
+        new_resources.id,
+        // new_buildings.id,
+        new_ships.id,
+        &conn,
+    )
+    .await;
 
-    conn.buildings()
-        .create(
-            planet::id::equals(new_planet.id.clone()),
-            0,
-            0,
-            0,
-            0,
-            vec![],
-        )
-        .exec()
-        .await
-        .map_err(|err| WebError {
-            code: 1,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: err.to_string(),
-        })?;
+    create_buildings(new_planet.id.clone(), &conn).await;
 
-    conn.ships()
-        .create(
-            planet::id::equals(new_planet.id.clone()),
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            vec![],
-        )
-        .exec()
-        .await
-        .map_err(|err| WebError {
-            code: 1,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: err.to_string(),
-        })?;
-
-    Ok(authorize(my_user.id)?)
+    Ok(authorize(new_user.id)?)
 }

@@ -1,8 +1,8 @@
 use std::{collections::BTreeMap, sync::Arc};
 
-use ogame_core::game::Game;
+use ogame_core::{game::Game, planet::Planet, ship_hangar::ShipHangar};
 
-use crate::{buildings, coordinates, planet, resources, ships, user, PrismaClient};
+use crate::{buildings, coordinates, flight, planet, resources, ships, user, PrismaClient};
 
 pub async fn fetch_game(user_id: String, conn: &Arc<PrismaClient>) -> Game {
     let user_game = conn
@@ -13,7 +13,9 @@ pub async fn fetch_game(user_id: String, conn: &Arc<PrismaClient>) -> Game {
                 .with(planet::coordinates::fetch())
                 .with(planet::resources::fetch())
                 .with(planet::buildings::fetch())
-                .with(planet::ships::fetch()),
+                .with(planet::ships::fetch())
+                .with(planet::out_flights::fetch(vec![]).with(flight::ships::fetch()))
+                .with(planet::in_flights::fetch(vec![]).with(flight::ships::fetch())),
         )
         .exec()
         .await
@@ -21,6 +23,24 @@ pub async fn fetch_game(user_id: String, conn: &Arc<PrismaClient>) -> Game {
         .unwrap();
 
     user_game.into()
+}
+
+pub async fn fetch_planet(planet_id: String, conn: &Arc<PrismaClient>) -> planet::Data {
+    let planet = conn
+        .planet()
+        .find_first(vec![planet::id::equals(planet_id.clone())])
+        .with(planet::coordinates::fetch())
+        .with(planet::resources::fetch())
+        .with(planet::buildings::fetch())
+        .with(planet::ships::fetch())
+        .with(planet::out_flights::fetch(vec![]).with(flight::ships::fetch()))
+        .with(planet::in_flights::fetch(vec![]).with(flight::ships::fetch()))
+        .exec()
+        .await
+        .unwrap()
+        .unwrap();
+
+    planet
 }
 
 impl From<user::Data> for ogame_core::game::Game {
@@ -41,10 +61,10 @@ impl From<planet::Data> for ogame_core::planet::Planet {
     fn from(db_planet: planet::Data) -> Self {
         ogame_core::planet::Planet::new(
             db_planet.id,
-            (*db_planet.coordinates.unwrap().unwrap()).into(),
-            (*db_planet.resources.unwrap().unwrap()).into(),
+            (*db_planet.coordinates.unwrap()).into(),
+            (*db_planet.resources.unwrap()).into(),
             (*db_planet.buildings.unwrap().unwrap()).into(),
-            (*db_planet.ships.unwrap().unwrap()).into(),
+            (*db_planet.ships.unwrap()).into(),
             ogame_core::build_queue::BuildQueue::new(
                 serde_json::from_str(&db_planet.build_queue).unwrap(),
             ),
@@ -52,6 +72,30 @@ impl From<planet::Data> for ogame_core::planet::Planet {
                 serde_json::from_str(&db_planet.ship_queue).unwrap(),
             ),
             db_planet.last_update as usize,
+            db_planet
+                .out_flights
+                .unwrap()
+                .into_iter()
+                .chain(db_planet.in_flights.unwrap().into_iter())
+                .map(|f| f.into())
+                .collect(),
+        )
+    }
+}
+
+impl From<flight::Data> for ogame_core::flight::Flight {
+    fn from(flight: flight::Data) -> Self {
+        ogame_core::flight::Flight::new(
+            flight.id,
+            flight.player_id,
+            flight.from_planet_id,
+            flight.to_planet_id,
+            (*flight.ships.unwrap()).into(),
+            (*flight.resources.unwrap()).into(),
+            flight.mission.into(),
+            flight.speed as usize,
+            flight.arrival_time as usize,
+            flight.return_time.map(|t| t as usize),
         )
     }
 }
@@ -69,6 +113,7 @@ impl From<coordinates::Data> for ogame_core::coordinates::Coordinates {
 impl From<resources::Data> for ogame_core::resources::Resources {
     fn from(db_resources: resources::Data) -> Self {
         ogame_core::resources::Resources::new(
+            db_resources.id,
             db_resources.metal,
             db_resources.crystal,
             db_resources.deuterium,
@@ -100,7 +145,7 @@ impl From<buildings::Data> for BTreeMap<ogame_core::building_type::BuildingType,
     }
 }
 
-impl From<ships::Data> for ogame_core::ship_hangar::ShipHangar {
+impl From<ships::Data> for ShipHangar {
     fn from(db_ships: ships::Data) -> Self {
         let mut ships = BTreeMap::new();
         ships.insert(
@@ -160,6 +205,6 @@ impl From<ships::Data> for ogame_core::ship_hangar::ShipHangar {
             db_ships.deathstar as usize,
         );
 
-        ogame_core::ship_hangar::ShipHangar::new(ships)
+        ShipHangar::new(db_ships.id, ships)
     }
 }
