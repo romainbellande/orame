@@ -8,7 +8,7 @@ use leptos::{leptos_dom::logging::console_log, *};
 use ogame_core::{building_type::BuildingType, planet::Planet};
 
 #[component]
-pub fn Toolbar(planet: Memo<Planet>) -> impl IntoView {
+pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
     let (show_buildings, set_show_buildings) = create_signal(false);
 
     let (toolbar_ui, _) = create_signal(ToolbarUI::new());
@@ -39,7 +39,7 @@ pub fn Toolbar(planet: Memo<Planet>) -> impl IntoView {
           children=move |(id, (building, _))| {
             view! {
               <Show when=move || toolbar_ui().is_building_visible(building().get_type()).get()>
-                <BuildingWindow building=building planet=planet />
+                <BuildingWindow building=building planet=planet ui=toolbar_ui/>
               </Show>
             }
           }

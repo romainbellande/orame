@@ -15,7 +15,7 @@ serde = { version = "1.0.147", features = ["derive"] }
 serde_cbor = "0.11.2"
 derive_more = "0.99.17"
 log = "0.4.17"
-ogame_core = { git = "https://github.com/Champii/ogame_core", branch = "release" }
+ogame_core = { path= "../ogame_core" }
 # ogame_core = { path = "../../ogame_core" }
 tower = { version = "0.4", features = ["util"] }
 tower-http = { version = "0.4.4", features = ["fs", "trace"] }

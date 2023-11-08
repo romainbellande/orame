@@ -18,6 +18,7 @@ members = [
   "client",
   "cli",
   "prisma-client",
+  "ogame_core"
 ]
 
 

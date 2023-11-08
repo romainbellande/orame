@@ -26,4 +26,9 @@ impl ToolbarUI {
         let building = self.buildings.get(&building_type).unwrap();
         building.set(!building.get());
     }
+
+    pub fn set_building_visibility(&self, building_type: BuildingType, visible: bool) {
+        let building = self.buildings.get(&building_type).unwrap();
+        building.set(visible);
+    }
 }
