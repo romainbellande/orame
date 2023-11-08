@@ -39,13 +39,17 @@ impl Building {
         self.clone()
     }
 
+    pub fn get_level_from_planet(&self, planet: &Planet) -> usize {
+        planet.building_level(self.config.building_type.clone())
+    }
+
     pub fn get_type(&self) -> BuildingType {
         self.config.building_type.clone()
     }
 }
 
 #[component]
-pub fn BuildingWindow(building: ReadSignal<Building>, planet: Signal<Planet>) -> impl IntoView {
+pub fn BuildingWindow(building: ReadSignal<Building>, planet: Memo<Planet>) -> impl IntoView {
     let state = expect_context::<RwSignal<Game>>();
 
     let on_upgrade = move |building: Building, planet: Planet| {
@@ -59,11 +63,12 @@ pub fn BuildingWindow(building: ReadSignal<Building>, planet: Signal<Planet>) ->
         }
     };
 
+    let level = move || with!(|building, planet| building.get_level_from_planet(planet));
+
     view! {
-      <Show when=building().show>
           <Window title="Building" on_show=building().set_show>
             <div class="space-y-4">
-              <h3><span>{ building().config.name }</span><span>"level" {building.get().level}</span></h3>
+              <h3><span>{ building().config.name }</span><span>"level " {level}</span></h3>
               <div class=format!("sprite sprite_large building {}", building().config.class)></div>
               <p class="text-xs">{ building().config.description }</p>
               <div class="flex justify-end">
@@ -72,14 +77,16 @@ pub fn BuildingWindow(building: ReadSignal<Building>, planet: Signal<Planet>) ->
               </div>
             </div>
           </Window>
-        </Show>
     }
 }
 
 #[component]
-pub fn BuildingTile(building: ReadSignal<Building>) -> impl IntoView {
+pub fn BuildingTile(
+    building: ReadSignal<Building>,
+    #[prop(into)] on_toggle: Callback<MouseEvent>,
+) -> impl IntoView {
     view! {
-      <li class=format!("w-24 h-24 relative hover:brightness-125 cursor-pointer icon sprite sprite_medium medium {}", building.get().config.class) on:click=move |_| { building.get().toggle_show()  }>
+      <li class=format!("w-24 h-24 relative hover:brightness-125 cursor-pointer icon sprite sprite_medium medium {}", building.get().config.class) on:click=on_toggle >
       </li>
     }
 }
