@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::{fmt::Debug, sync::Arc};
 
 use std::net::SocketAddr;
@@ -14,6 +15,9 @@ use axum::{
 };
 use ogame_core::planet::Planet;
 use ogame_core::resources::Resources;
+use ogame_core::ship_hangar::ShipHangar;
+use tokio::sync::mpsc::{Receiver, Sender};
+use tokio::sync::RwLock;
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::auth::middleware::auth_bearer_middleware;
@@ -36,8 +40,9 @@ async fn handler<P: Serialize + DeserializeOwned + Debug + 'static>(
     Extension(claims): Extension<Claims>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Extension(conn): Extension<Arc<PrismaClient>>,
+    Extension(connected_users): Extension<ConnectedUsers>,
 ) -> Response {
-    ws.on_upgrade(move |socket| handle_socket::<P>(socket, addr, claims.sub, conn))
+    ws.on_upgrade(move |socket| handle_socket::<P>(socket, addr, claims.sub, connected_users, conn))
 }
 
 fn protocol_from_bytes(bytes: &[u8]) -> Protocol {
@@ -48,41 +53,119 @@ fn protocol_to_bytes(packet: Protocol) -> Vec<u8> {
     serde_cbor::to_vec(&packet).unwrap()
 }
 
-async fn fetch_game(user_id: String, conn: &Arc<PrismaClient>) -> Game {
-    use prisma_client::{coordinates, planet, user, PrismaClient};
+async fn handle_flight(
+    game: &mut Game,
+    message: Protocol,
+    connected_users: ConnectedUsers,
+    conn: &Arc<PrismaClient>,
+) {
+    // special case for flight
+    if let Protocol::SendShips {
+        from_planet_id,
+        to_planet_id,
+        ships,
+        mission,
+        resources,
+        speed,
+    } = message
+    {
+        // fetch to_planet from db
+        let to_planet = conn
+            .planet()
+            .find_unique(prisma_client::planet::id::equals(to_planet_id.clone()))
+            .exec()
+            .await
+            .unwrap()
+            .unwrap();
 
-    let user_game = conn
-        .user()
-        .find_first(vec![user::id::equals(user_id)])
-        .with(
-            user::planets::fetch(vec![])
-                .with(planet::coordinates::fetch())
-                .with(planet::resources::fetch())
-                .with(planet::buildings::fetch())
-                .with(planet::ships::fetch()),
-        )
-        .exec()
-        .await
-        .unwrap()
-        .unwrap();
+        // create flight
+        let flight = game
+            .create_flight(
+                "".to_string(),
+                from_planet_id,
+                to_planet_id.clone(),
+                &((*to_planet.coordinates.unwrap()).into()),
+                ShipHangar::new("".to_string(), ships),
+                resources,
+                mission,
+                speed,
+            )
+            .unwrap();
 
-    user_game.into()
+        // save it in db
+        let ships = create_ships(&flight.ships.ships, conn).await;
+        let resources = create_resources(&flight.resources, conn).await;
+        let db_flight = create_flight(flight, ships.id, resources.id, conn).await;
+
+        // send it to the two players
+        let msg = Protocol::InboundFleet(db_flight.into());
+
+        // get player id from to_planet
+        let target_planet = fetch_planet(to_planet_id, conn).await;
+
+        connected_users
+            .send(game.player_id.clone(), msg.clone())
+            .await;
+
+        // if target player is different from current player then send it to him
+        if target_planet.user_id != game.player_id {
+            connected_users
+                .send(target_planet.user_id, msg.clone())
+                .await;
+        }
+    }
+}
+
+async fn apply_to_game(
+    user_id: String,
+    message: Protocol,
+    connected_users: ConnectedUsers,
+    conn: &Arc<PrismaClient>,
+) {
+    let mut game = fetch_game(user_id, conn).await;
+
+    handle_flight(&mut game, message.clone(), connected_users.clone(), conn).await;
+
+    game.process_message(message.clone()).unwrap();
+
+    save_game(game, conn).await;
 }
 
 async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
     socket: WebSocket,
     _addr: SocketAddr,
     user_id: String,
+    connected_users: ConnectedUsers,
     conn: Arc<PrismaClient>,
 ) {
     let (mut tx, mut rx) = socket.split();
+
+    let mut user_rx = connected_users.add(user_id.clone()).await;
+
+    let connected_users2 = connected_users.clone();
+    let user_id2 = user_id.clone();
+    let conn2 = conn.clone();
+    tokio::task::spawn(async move {
+        while let Some(msg) = user_rx.recv().await {
+            let msg = protocol_to_bytes(msg);
+            apply_to_game(
+                user_id2.clone(),
+                protocol_from_bytes(&msg),
+                connected_users2.clone(),
+                &conn2,
+            )
+            .await;
+            tx.send(msg.into()).await.unwrap();
+        }
+    });
 
     {
         let mut game = fetch_game(user_id.clone(), &conn).await;
         game.tick().unwrap();
 
-        let game_packet = protocol_to_bytes(Protocol::Game(game.clone()));
-        tx.send(game_packet.into()).await.unwrap();
+        connected_users
+            .send(user_id.clone(), Protocol::Game(game.clone()))
+            .await;
 
         save_game(game, &conn).await;
     }
@@ -93,6 +176,7 @@ async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
         } else {
             break;
         };
+
         let msg_tmp = msg.into_data();
 
         if msg_tmp.is_empty() {
@@ -101,18 +185,39 @@ async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
 
         let msg = protocol_from_bytes(&msg_tmp);
 
-        apply_to_game(user_id.clone(), msg, &conn).await;
+        apply_to_game(user_id.clone(), msg, connected_users.clone(), &conn).await;
     }
 
     // client disconnected
 }
 
-async fn apply_to_game(user_id: String, message: Protocol, conn: &Arc<PrismaClient>) {
-    let mut game = fetch_game(user_id, conn).await;
+#[derive(Clone)]
+pub struct ConnectedUsers {
+    pub users: Arc<RwLock<HashMap<String, Sender<Protocol>>>>,
+}
 
-    game.process_message(message).unwrap();
+impl ConnectedUsers {
+    pub fn empty() -> Self {
+        Self {
+            users: Arc::new(RwLock::new(HashMap::new())),
+        }
+    }
 
-    save_game(game, conn).await;
+    pub async fn add(&self, user_id: String) -> Receiver<Protocol> {
+        let (tx, rx) = tokio::sync::mpsc::channel(100);
+        self.users.write().await.insert(user_id, tx);
+        rx
+    }
+
+    pub async fn remove(&self, user_id: String) {
+        self.users.write().await.remove(&user_id);
+    }
+
+    pub async fn send(&self, user_id: String, message: Protocol) {
+        if let Some(sender) = self.users.write().await.get_mut(&user_id) {
+            sender.try_send(message).unwrap();
+        }
+    }
 }
 
 pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() {
@@ -126,6 +231,7 @@ pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() {
         .nest("/ws", ws_router)
         .nest("/auth", crate::auth::router())
         .layer(Extension(db))
+        .layer(Extension(ConnectedUsers::empty()))
         .fallback_service(
             ServeDir::new("public").not_found_service(ServeFile::new("public/index.html")),
         );
