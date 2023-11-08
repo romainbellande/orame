@@ -32,7 +32,7 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 use futures::stream::StreamExt;
-use futures::SinkExt;
+use futures::{Future, SinkExt};
 use log::*;
 
 async fn handler<P: Serialize + DeserializeOwned + Debug + 'static>(
@@ -107,13 +107,45 @@ async fn handle_flight(
             .send(game.player_id.clone(), msg.clone())
             .await;
 
+        game.process_message(msg.clone()).unwrap();
+
         // if target player is different from current player then send it to him
         if target_planet.user_id != game.player_id {
             connected_users
-                .send(target_planet.user_id, msg.clone())
+                .send(target_planet.user_id.clone(), msg.clone())
                 .await;
+
+            apply_to_game_with_async(target_planet.user_id.clone(), conn, move |mut game| {
+                game.process_message(msg.clone()).unwrap();
+                async move { game }
+            })
+            .await;
         }
     }
+}
+
+async fn apply_to_game_with_<F: FnMut(&mut Game) -> ()>(
+    user_id: String,
+    conn: &Arc<PrismaClient>,
+    mut cb: F,
+) {
+    let mut game = fetch_game(user_id, conn).await;
+
+    cb(&mut game);
+
+    save_game(game, conn).await;
+}
+
+async fn apply_to_game_with_async<Fut: Future<Output = Game>, F: FnMut(Game) -> Fut>(
+    user_id: String,
+    conn: &Arc<PrismaClient>,
+    mut cb: F,
+) {
+    let mut game = fetch_game(user_id, conn).await;
+
+    let game = cb(game).await;
+
+    save_game(game, conn).await;
 }
 
 async fn apply_to_game(
@@ -122,13 +154,18 @@ async fn apply_to_game(
     connected_users: ConnectedUsers,
     conn: &Arc<PrismaClient>,
 ) {
-    let mut game = fetch_game(user_id, conn).await;
-
-    handle_flight(&mut game, message.clone(), connected_users.clone(), conn).await;
-
-    game.process_message(message.clone()).unwrap();
-
-    save_game(game, conn).await;
+    let message2 = message.clone();
+    let connected_users2 = connected_users.clone();
+    apply_to_game_with_async(user_id, conn, move |mut game| {
+        let message3 = message2.clone();
+        let connected_users3 = connected_users2.clone();
+        async move {
+            handle_flight(&mut game, message3.clone(), connected_users3, conn).await;
+            game.process_message(message3).unwrap();
+            game
+        }
+    })
+    .await;
 }
 
 async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
@@ -148,13 +185,6 @@ async fn handle_socket<P: Serialize + DeserializeOwned + Debug + 'static>(
     tokio::task::spawn(async move {
         while let Some(msg) = user_rx.recv().await {
             let msg = protocol_to_bytes(msg);
-            apply_to_game(
-                user_id2.clone(),
-                protocol_from_bytes(&msg),
-                connected_users2.clone(),
-                &conn2,
-            )
-            .await;
             tx.send(msg.into()).await.unwrap();
         }
     });
