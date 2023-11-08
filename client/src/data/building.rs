@@ -29,6 +29,12 @@ impl From<BuildingType> for BuildingConfig {
           description: "Deuterium is a stable isotope of hydrogen with a natural abundance in the oceans of colonies of approximately one atom in 6500 of hydrogen (~154 PPM). Deuterium thus accounts for approximately 0.015% (on a weight basis, 0.030%) of all water. Deuterium is processed by special synthesizers which can separate the water from the Deuterium using specially designed centrifuges. The upgrade of the synthesizer allows for increasing the amount of Deuterium deposits processed. Deuterium is used when carrying out sensor phalanx scans, viewing galaxies, as fuel for ships, and performing specialized research upgrades.",
           building_type: BuildingType::Deuterium
         },
+        BuildingType::Shipyard => Self {
+          name: "Shipyard",
+          class: "shipyard",
+          description: "The shipyard is the center of ship construction. The higher the level of the shipyard, the faster the ships are built. The shipyard also allows you to build new types of ships. The shipyard is also required to repair damaged ships. The shipyard is also required to build and repair defense systems.",
+          building_type: BuildingType::Shipyard
+        }
       }
     }
 }

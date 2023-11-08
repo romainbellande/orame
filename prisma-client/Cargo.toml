@@ -8,7 +8,6 @@ edition = "2021"
 [dependencies]
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9",  default-features = false, features = ["postgresql"] }
 serde = { version = "1.0.147", features = ["derive"] }
-ogame_core = { git = "https://github.com/champii/ogame_core", branch = "release" }
-# ogame_core = { path = "../../ogame_core" }
+ogame_core = { path = "../ogame_core" }
 serde_json = "1.0.108"
 
