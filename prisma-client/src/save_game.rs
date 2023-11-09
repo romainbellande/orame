@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, sync::Arc};
 
 use crate::{
     buildings, coordinates,
-    flight::{self, from_planet},
+    flight::{self},
     planet, resources, ships, user,
 };
 use ogame_core::{
@@ -222,7 +222,7 @@ pub async fn create_flight(
             resources::id::equals(resources_id.clone()),
             flight.arrival_time as i32,
             flight.mission.to_string(),
-            flight.speed as i32,
+            flight.speed_ratio as i32,
             vec![],
         )
         .exec()

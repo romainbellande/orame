@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, sync::Arc};
 
-use ogame_core::{game::Game, planet::Planet, ship_hangar::ShipHangar};
+use ogame_core::{fleet::Fleet, game::Game};
 
 use crate::{buildings, coordinates, flight, planet, resources, ships, user, PrismaClient};
 
@@ -93,7 +93,7 @@ impl From<flight::Data> for ogame_core::flight::Flight {
             (*flight.ships.unwrap()).into(),
             (*flight.resources.unwrap()).into(),
             flight.mission.into(),
-            flight.speed as usize,
+            flight.speed_ratio as usize,
             flight.arrival_time as usize,
             flight.return_time.map(|t| t as usize),
         )
@@ -145,7 +145,7 @@ impl From<buildings::Data> for BTreeMap<ogame_core::building_type::BuildingType,
     }
 }
 
-impl From<ships::Data> for ShipHangar {
+impl From<ships::Data> for Fleet {
     fn from(db_ships: ships::Data) -> Self {
         let mut ships = BTreeMap::new();
         ships.insert(
@@ -205,6 +205,6 @@ impl From<ships::Data> for ShipHangar {
             db_ships.deathstar as usize,
         );
 
-        ShipHangar::new(db_ships.id, ships)
+        Fleet::new(db_ships.id, ships)
     }
 }

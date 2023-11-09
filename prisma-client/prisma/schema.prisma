@@ -25,8 +25,8 @@ model Planet {
   coordinates_id String @unique
   coordinates Coordinates @relation(fields: [coordinates_id], references: [id])
 
-  resouces_id   String @unique
-  resources   Resources  @relation(fields: [resouces_id], references: [id])
+  resources_id   String @unique
+  resources   Resources  @relation(fields: [resources_id], references: [id])
 
   buildings   Buildings?
 
@@ -109,5 +109,5 @@ model Flight {
   arrival_time Int
   return_time  Int?
   mission      String
-  speed        Int
+  speed_ratio  Int
 }

@@ -133,11 +133,11 @@ pub async fn register(
         &conn,
     )
     .await;
+
     let new_planet = create_planet(
         new_user.id.clone(),
         new_coordinates.id,
         new_resources.id,
-        // new_buildings.id,
         new_ships.id,
         &conn,
     )

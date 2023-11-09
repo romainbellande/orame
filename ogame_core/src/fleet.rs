@@ -5,12 +5,12 @@ use crate::ship_type::ShipType;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ShipHangar {
+pub struct Fleet {
     pub id: String,
     pub ships: BTreeMap<ShipType, usize>,
 }
 
-impl ShipHangar {
+impl Fleet {
     pub fn new(id: String, ships: BTreeMap<ShipType, usize>) -> Self {
         Self { id, ships }
     }

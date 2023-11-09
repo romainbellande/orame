@@ -32,6 +32,6 @@ pub enum Protocol {
         ships: BTreeMap<ShipType, usize>,
         mission: MissionType,
         resources: Resources,
-        speed: usize,
+        speed_ratio: usize,
     },
 }
