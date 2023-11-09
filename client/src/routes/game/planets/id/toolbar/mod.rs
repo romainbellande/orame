@@ -62,7 +62,7 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
         />
         <Show when=show_buildings>
           <Window title="Buildings" on_show=set_show_buildings>
-            <ul class="text-white flex space-x-4">
+            <ul class="text-white flex flex-wrap">
               <For
                 each=buildings
                 key=|building| building.0

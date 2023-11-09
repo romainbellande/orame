@@ -7,7 +7,7 @@ use crate::{
     resources::{ResourceType, Resources},
 };
 
-#[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
+#[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug, Serialize, Deserialize, Hash)]
 pub enum ShipType {
     // Utility
     SmallCargo,
