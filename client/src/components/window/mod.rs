@@ -7,6 +7,8 @@ pub fn Window<F: Fn(bool) + 'static>(
     children: Children,
     on_show: F,
     title: &'static str,
+    #[prop(default = 24)]
+    width: usize
 ) -> impl IntoView {
     let (fullscreen, set_fullscreen) = create_signal(false);
     let (collapsed, set_collapsed) = create_signal(false);
@@ -53,7 +55,7 @@ pub fn Window<F: Fn(bool) + 'static>(
         let collapsed_class = if collapsed() { "" } else { "overflow-scroll" };
 
         classnames(vec![
-            Classname::String("fixed bg-black rounded-lg w-96".to_string()),
+            Classname::String("fixed bg-black rounded-lg".to_string()),
             Classname::String(fullscreen_class.to_string()),
             Classname::String(resize_class.to_string()),
             Classname::String(collapsed_class.to_string()),
@@ -64,7 +66,7 @@ pub fn Window<F: Fn(bool) + 'static>(
         let collapsed_class = if collapsed() {
             "max-h-0 p-0"
         } else {
-            "h-min-content p-4"
+            "p-4"
         };
 
         classnames(vec![
@@ -74,7 +76,7 @@ pub fn Window<F: Fn(bool) + 'static>(
     });
 
     view! {
-      <div node_ref=node_ref class=root_classes>
+      <div node_ref=node_ref class=root_classes style:width=format!("{width}rem")>
         <div node_ref=handler_node class="cursor-move border-b border-solid border-s-slate-900 rounded-tr-lg rounded-tl-lg p-1 bg-slate-900 space-x-1 flex justify-between items-center">
           <div class="text-slate-300">{ title }</div>
           <div class="space-x-2">

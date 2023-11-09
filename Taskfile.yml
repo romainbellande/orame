@@ -26,6 +26,13 @@ tasks:
     cmds:
       - docker compose up -d
 
+  drop:db:
+    desc: drop database
+    cmds:
+      - docker compose down
+      - docker volume rm orame_pg-data
+      - task: start:db
+
 
   fix:all:
     desc: fix lint & format
