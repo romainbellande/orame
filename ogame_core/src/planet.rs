@@ -8,9 +8,9 @@ use crate::{
     building_type::BuildingType,
     coordinates::Coordinates,
     error::*,
+    fleet::Fleet,
     flight::{Flight, MissionType},
     resources::Resources,
-    ship_hangar::ShipHangar,
     ship_type::ShipType,
 };
 
@@ -20,7 +20,7 @@ pub struct Planet {
     pub coordinates: Coordinates,
     pub resources: Resources,
     pub buildings: BTreeMap<BuildingType, usize>,
-    pub ships: ShipHangar,
+    pub ships: Fleet,
     pub build_queue: BuildQueue<BuildingType>,
     pub ship_queue: BuildQueue<ShipType>,
     pub last_update: usize,
@@ -33,7 +33,7 @@ impl Planet {
         coordinates: Coordinates,
         resources: Resources,
         buildings: BTreeMap<BuildingType, usize>,
-        ships: ShipHangar,
+        ships: Fleet,
         build_queue: BuildQueue<BuildingType>,
         ship_queue: BuildQueue<ShipType>,
         last_update: usize,
@@ -142,7 +142,7 @@ impl Planet {
         *self.buildings.get(&building_type).unwrap_or(&0)
     }
 
-    pub fn ships(&self) -> &ShipHangar {
+    pub fn ships(&self) -> &Fleet {
         &self.ships
     }
     pub fn received_flight(&mut self, flight: Flight) -> Result<()> {

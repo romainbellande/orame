@@ -7,11 +7,11 @@ use crate::{
     building_type::BuildingType,
     coordinates::Coordinates,
     error::*,
+    fleet::Fleet,
     flight::{Flight, MissionType},
     planet::Planet,
     protocol::Protocol,
     resources::Resources,
-    ship_hangar::ShipHangar,
     ship_type::ShipType,
 };
 
@@ -158,10 +158,10 @@ impl Game {
         from_planet_id: String,
         to_planet_id: String,
         to_planet_coordinates: &Coordinates,
-        ships: ShipHangar,
+        ships: Fleet,
         resources: Resources,
         mission: MissionType,
-        speed: usize,
+        speed_ratio: usize,
     ) -> Result<Flight> {
         let flight = Flight::create(
             id,
@@ -172,7 +172,7 @@ impl Game {
             ships,
             resources,
             mission,
-            speed,
+            speed_ratio,
         );
 
         Ok(flight)

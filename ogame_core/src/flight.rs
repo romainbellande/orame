@@ -1,14 +1,8 @@
-use std::{
-    collections::BTreeMap,
-    fmt::{Display, Formatter},
-};
+use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    coordinates::Coordinates, planet::Planet, resources::Resources, ship_hangar::ShipHangar,
-    ship_type::ShipType,
-};
+use crate::{coordinates::Coordinates, fleet::Fleet, planet::Planet, resources::Resources};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum MissionType {
@@ -50,10 +44,10 @@ pub struct Flight {
     pub player_id: String,
     pub from_planet_id: String,
     pub to_planet_id: String,
-    pub ships: ShipHangar,
+    pub ships: Fleet,
     pub resources: Resources,
     pub mission: MissionType,
-    pub speed: usize, // between 0 and 100,
+    pub speed_ratio: usize, // between 0 and 100,
     pub arrival_time: usize,
     pub return_time: Option<usize>,
 }
@@ -64,10 +58,10 @@ impl Flight {
         player_id: String,
         from_planet_id: String,
         to_planet_id: String,
-        ships: ShipHangar,
+        ships: Fleet,
         resources: Resources,
         mission: MissionType,
-        speed: usize,
+        speed_ratio: usize,
         arrival_time: usize,
         return_time: Option<usize>,
     ) -> Self {
@@ -79,7 +73,7 @@ impl Flight {
             ships,
             resources,
             mission,
-            speed,
+            speed_ratio,
             arrival_time,
             return_time,
         }
@@ -90,12 +84,13 @@ impl Flight {
         from_planet: &Planet,
         to_planet_id: String,
         to_coordinates: &Coordinates,
-        ships: ShipHangar,
+        ships: Fleet,
         resources: Resources,
         mission: MissionType,
-        speed: usize,
+        speed_ratio: usize,
     ) -> Self {
-        let duration = Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed);
+        let duration =
+            Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed_ratio);
         let now = web_time::SystemTime::now()
             .duration_since(web_time::UNIX_EPOCH)
             .unwrap()
@@ -117,15 +112,15 @@ impl Flight {
             return_time,
             mission,
             resources,
-            speed,
+            speed_ratio,
         }
     }
 
-    fn calc_flight_duration(from: &Coordinates, to: &Coordinates, speed: usize) -> usize {
+    fn calc_flight_duration(from: &Coordinates, to: &Coordinates, speed_ratio: usize) -> usize {
         let distance = from.distance(to);
 
         // FIXME: the 1 is a placeholder for the speed of the slowest ship
-        ((10 + (3500 / speed) * (10 * distance / 1)) as f64)
+        ((10 + (3500 / speed_ratio) * (10 * distance / 1)) as f64)
             .sqrt()
             .floor() as usize
     }

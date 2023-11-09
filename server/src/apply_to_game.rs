@@ -4,9 +4,10 @@ use futures::Future;
 use ogame_core::{game::Game, protocol::Protocol};
 use prisma_client::{fetch_game, save_game, PrismaClient};
 
-use crate::socket::{handle_flight, ConnectedUsers};
+use crate::connected_users::ConnectedUsers;
+use crate::socket::handle_flight;
 
-pub async fn apply_to_game_with_<F: FnMut(&mut Game) -> ()>(
+pub async fn apply_to_game_with<F: FnMut(&mut Game) -> ()>(
     user_id: String,
     conn: &Arc<PrismaClient>,
     mut cb: F,

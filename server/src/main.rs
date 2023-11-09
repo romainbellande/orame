@@ -1,8 +1,8 @@
+mod apply_to_game;
 mod auth;
 mod config;
-#[allow(warnings, unused)]
+mod connected_users;
 mod socket;
-mod apply_to_game;
 use dotenv::dotenv;
 
 #[tokio::main]
