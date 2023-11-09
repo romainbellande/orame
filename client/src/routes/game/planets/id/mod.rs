@@ -9,6 +9,9 @@ use resource_bar::ResourceBar;
 
 use crate::components::galaxy::Galaxy;
 use crate::utils::GameWrapper;
+pub mod buildings;
+pub mod shipyard;
+pub mod ui;
 
 #[component]
 pub fn PlanetIDPage() -> impl IntoView {

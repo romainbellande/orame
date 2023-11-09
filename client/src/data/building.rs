@@ -1,4 +1,6 @@
-use ogame_core::building_type::BuildingType;
+use leptos::*;
+use ogame_core::{building_type::BuildingType, planet::Planet};
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct BuildingConfig {
@@ -36,5 +38,47 @@ impl From<BuildingType> for BuildingConfig {
           building_type: BuildingType::Shipyard
         }
       }
+    }
+}
+
+#[derive(Clone)]
+pub struct Building {
+    pub id: Uuid,
+    pub show: ReadSignal<bool>,
+    pub set_show: WriteSignal<bool>,
+    pub config: BuildingConfig,
+    pub level: usize,
+}
+
+impl From<BuildingType> for Building {
+    fn from(value: BuildingType) -> Self {
+        let config = BuildingConfig::from(value);
+        let (show, set_show) = create_signal(false);
+        Self {
+            id: Uuid::new_v4(),
+            show,
+            set_show,
+            config,
+            level: 0,
+        }
+    }
+}
+
+impl Building {
+    pub fn toggle_show(&self) {
+        self.set_show.set(!self.show.get_untracked());
+    }
+
+    pub fn set_level(&mut self, level: usize) -> Self {
+        self.level = level;
+        self.clone()
+    }
+
+    pub fn get_level_from_planet(&self, planet: &Planet) -> usize {
+        planet.building_level(self.config.building_type.clone())
+    }
+
+    pub fn get_type(&self) -> BuildingType {
+        self.config.building_type.clone()
     }
 }
