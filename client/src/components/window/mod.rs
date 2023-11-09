@@ -7,8 +7,7 @@ pub fn Window<F: Fn(bool) + 'static>(
     children: Children,
     on_show: F,
     title: &'static str,
-    #[prop(default = 24)]
-    width: usize
+    #[prop(default = 24)] width: usize,
 ) -> impl IntoView {
     let (fullscreen, set_fullscreen) = create_signal(false);
     let (collapsed, set_collapsed) = create_signal(false);
@@ -63,11 +62,7 @@ pub fn Window<F: Fn(bool) + 'static>(
     });
 
     let content_classes = create_memo(move |_| {
-        let collapsed_class = if collapsed() {
-            "max-h-0 p-0"
-        } else {
-            "p-4"
-        };
+        let collapsed_class = if collapsed() { "max-h-0 p-0" } else { "p-4" };
 
         classnames(vec![
             Classname::String("transition-max-height duration-300 overflow-hidden".to_string()),
