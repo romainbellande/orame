@@ -4,7 +4,7 @@ use crate::{
     components::window::Window,
     data::building::Building,
     routes::game::planets::id::{
-        buildings::{self, BuildingTile, BuildingWindow},
+        buildings::{BuildingTile, BuildingWindow},
         shipyard::ShipyardWindow,
         ui::PlanetUI,
     },

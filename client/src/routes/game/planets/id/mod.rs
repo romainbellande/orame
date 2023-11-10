@@ -20,8 +20,9 @@ pub fn PlanetIDPage() -> impl IntoView {
     let params = use_params_map();
     let id = move || params.with(|params| params.get("id").cloned().unwrap_or_default());
 
-    let planet: Signal<Option<Planet>> =
-        Signal::derive(move || game_wrapper.with(|state| state.planets.get(&id()).cloned()));
+    let planet: Signal<Option<Planet>> = Signal::derive(move || {
+        game_wrapper.with(|state| state.planets.clone().get(&id()).cloned())
+    });
 
     view! {
       <Show when=move || planet().is_some()>
