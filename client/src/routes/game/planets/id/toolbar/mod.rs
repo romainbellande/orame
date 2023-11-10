@@ -4,7 +4,7 @@ use ui::ToolbarUI;
 mod building;
 use crate::components::window::Window;
 use building::{Building, BuildingTile, BuildingWindow};
-use leptos::{leptos_dom::logging::console_log, *};
+use leptos::*;
 use ogame_core::{building_type::BuildingType, planet::Planet};
 
 #[component]
@@ -14,7 +14,6 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
     let (toolbar_ui, _) = create_signal(ToolbarUI::new());
 
     let buildings = create_memo(move |_| {
-        console_log("triggered");
         vec![
             Building::from(BuildingType::Metal)
                 .set_level(planet.get_untracked().building_level(BuildingType::Metal)),
@@ -36,7 +35,7 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
       <For
           each=buildings
           key=|building| building.0
-          children=move |(id, (building, _))| {
+          children=move |(_id, (building, _))| {
             view! {
               <Show when=move || toolbar_ui().is_building_visible(building().get_type()).get()>
                 <BuildingWindow building=building planet=planet ui=toolbar_ui/>
@@ -50,7 +49,7 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
               <For
                 each=buildings
                 key=|building| building.0
-                children=move |(id, (building, _))| {
+                children=move |(_id, (building, _))| {
                   view! {
                       <BuildingTile building=building on_toggle=move |_| { toolbar_ui().toggle_building_window(building().get_type()); } />
                   }

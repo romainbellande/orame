@@ -6,7 +6,11 @@ use crate::{
     planet, resources, ships, user,
 };
 use ogame_core::{
-    building_type::BuildingType, flight::Flight, game::Game, planet::Planet, resources::Resources,
+    building_type::BuildingType,
+    flight::Flight,
+    game::Game,
+    planet::Planet,
+    resources::{ResourceType, Resources},
 };
 
 use crate::PrismaClient;
@@ -31,9 +35,9 @@ pub async fn save_resources(resources_id: String, resources: &Resources, conn: &
         .update(
             resources::id::equals(resources_id.clone()),
             vec![
-                resources::metal::set(resources.metal),
-                resources::crystal::set(resources.crystal),
-                resources::deuterium::set(resources.deuterium),
+                resources::metal::set(resources.get(ResourceType::Metal)),
+                resources::crystal::set(resources.get(ResourceType::Crystal)),
+                resources::deuterium::set(resources.get(ResourceType::Deuterium)),
             ],
         )
         .exec()
@@ -170,9 +174,9 @@ pub async fn create_coordinates(
 pub async fn create_resources(resources: &Resources, conn: &Arc<PrismaClient>) -> resources::Data {
     conn.resources()
         .create(
-            resources.metal,
-            resources.crystal,
-            resources.deuterium,
+            resources.get(ResourceType::Metal),
+            resources.get(ResourceType::Crystal),
+            resources.get(ResourceType::Deuterium),
             vec![],
         )
         .exec()

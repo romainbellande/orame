@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
-use ogame_core::resources::Resources;
+use ogame_core::resources::{ResourceType, Resources};
+use ogame_core::ship_type::ShipType;
 use prisma_client::{
     create_buildings, create_coordinates, create_planet, create_resources, create_ships,
     create_user, planet, user, PrismaClient,
@@ -101,32 +102,31 @@ pub async fn register(
     let new_coordinates = create_coordinates(0, 0, 0, &conn).await;
 
     let new_resources = create_resources(
-        &Resources {
-            id: "".to_owned(),
-            metal: 2500.0,
-            crystal: 1000.0,
-            deuterium: 0.0,
-        },
+        &Resources::from([
+            (ResourceType::Metal, 2500.0),
+            (ResourceType::Crystal, 1000.0),
+            (ResourceType::Deuterium, 0.0),
+        ]),
         &conn,
     )
     .await;
 
     let new_ships = create_ships(
         &vec![
-            (ogame_core::ship_type::ShipType::SmallCargo, 0 as usize),
-            (ogame_core::ship_type::ShipType::LargeCargo, 0),
-            (ogame_core::ship_type::ShipType::ColonyShip, 0),
-            (ogame_core::ship_type::ShipType::Recycler, 0),
-            (ogame_core::ship_type::ShipType::EspionageProbe, 0),
-            (ogame_core::ship_type::ShipType::SolarSatellite, 0),
-            (ogame_core::ship_type::ShipType::LightFighter, 0),
-            (ogame_core::ship_type::ShipType::HeavyFighter, 0),
-            (ogame_core::ship_type::ShipType::Cruiser, 0),
-            (ogame_core::ship_type::ShipType::Battleship, 0),
-            (ogame_core::ship_type::ShipType::Bomber, 0),
-            (ogame_core::ship_type::ShipType::Destroyer, 0),
-            (ogame_core::ship_type::ShipType::Battlecruiser, 0),
-            (ogame_core::ship_type::ShipType::Deathstar, 0),
+            (ShipType::SmallCargo, 0 as usize),
+            (ShipType::LargeCargo, 0),
+            (ShipType::ColonyShip, 0),
+            (ShipType::Recycler, 0),
+            (ShipType::EspionageProbe, 0),
+            (ShipType::SolarSatellite, 0),
+            (ShipType::LightFighter, 0),
+            (ShipType::HeavyFighter, 0),
+            (ShipType::Cruiser, 0),
+            (ShipType::Battleship, 0),
+            (ShipType::Bomber, 0),
+            (ShipType::Destroyer, 0),
+            (ShipType::Battlecruiser, 0),
+            (ShipType::Deathstar, 0),
         ]
         .into_iter()
         .collect(),

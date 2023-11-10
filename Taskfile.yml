@@ -27,3 +27,8 @@ tasks:
       - docker compose up -d
 
 
+  fix:all:
+    desc: fix lint & format
+    cmds:
+      - cargo clippy --fix --allow-dirty --allow-staged --all
+      - cargo fmt --all;

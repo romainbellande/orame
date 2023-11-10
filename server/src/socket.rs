@@ -144,7 +144,10 @@ async fn send_initial_game(
 fn msg_to_protocol(msg: Result<Message, axum::Error>) -> Result<Protocol, ()> {
     let msg = match msg {
         Ok(msg) => msg,
-        Err(_) => return Err(()),
+        Err(err) => {
+            println!("Unknown message: {:?}", err);
+            return Err(());
+        }
     };
 
     let msg_tmp = msg.into_data();
@@ -163,9 +166,11 @@ async fn message_loop(
     conn: &Arc<PrismaClient>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     while let Some(msg) = rx.next().await {
-        let protocol = msg_to_protocol(msg).unwrap();
+        let protocol = msg_to_protocol(msg);
 
-        apply_msg_to_game(user_id.clone(), protocol, connected_users.clone(), conn).await;
+        if let Ok(protocol) = protocol {
+            apply_msg_to_game(user_id.clone(), protocol, connected_users.clone(), conn).await;
+        }
     }
 
     Ok(())
