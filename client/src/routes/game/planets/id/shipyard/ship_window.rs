@@ -11,14 +11,8 @@ pub fn ShipWindow(
     ship: ReadSignal<Ship>,
     planet: Signal<Planet>,
 ) -> impl IntoView {
-    let amount = move || {
-        with!(|ship, planet| planet
-            .ships
-            .ships
-            .get(&ship.ship_type)
-            .unwrap_or(&0)
-            .clone())
-    };
+    let amount =
+        move || with!(|ship, planet| *planet.ships.ships.get(&ship.ship_type).unwrap_or(&0));
 
     view! {
       <Show when=move || ui().is_ship_visible(ship().get_type()).get()>

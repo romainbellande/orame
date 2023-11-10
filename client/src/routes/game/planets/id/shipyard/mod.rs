@@ -11,7 +11,7 @@ use ship_window::ShipWindow;
 
 use super::ui::PlanetUI;
 
-pub fn create_ship(ship_type: ShipType, planet: Signal<Planet>) -> Ship {
+pub fn create_ship(ship_type: ShipType, _planet: Signal<Planet>) -> Ship {
     Ship::from(ship_type.clone())
 }
 
@@ -31,7 +31,7 @@ pub fn ShipyardWindow(ui: ReadSignal<PlanetUI>, planet: Signal<Planet>) -> impl 
     view! {
       <For
         each=ships
-        key=|ship| ship.0.clone()
+        key=|ship| ship.0
         children=move |(_id, (ship, _))| {
           view! {
             <ShipWindow ship=ship ui=ui planet=planet />
@@ -44,7 +44,7 @@ pub fn ShipyardWindow(ui: ReadSignal<PlanetUI>, planet: Signal<Planet>) -> impl 
           <ul class="flex flex-wrap">
             <For
               each=ships
-              key=|ship| ship.0.clone()
+              key=|ship| ship.0
               children=move |(_id, (ship, _))| {
                 view! {
                   <ShipTile ship=ship on_toggle=move |_| {  ui().toggle_ship_window(ship().get_type()); } />

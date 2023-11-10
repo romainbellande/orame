@@ -33,6 +33,11 @@ tasks:
       - docker volume rm orame_pg-data
       - task: start:db
 
+  fix:all:
+    desc: fix lint & format
+    cmds:
+      - cargo clippy --fix --allow-dirty --allow-staged --all
+      - cargo fmt --all;
 
   fix:all:
     desc: fix lint & format
