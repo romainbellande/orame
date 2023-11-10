@@ -4,7 +4,6 @@ use uuid::Uuid;
 use web_sys::MouseEvent;
 
 use crate::{components::window::Window, data::building::BuildingConfig, utils::GameWrapper};
-use ogame_core::game::Game;
 
 use super::ui::ToolbarUI;
 

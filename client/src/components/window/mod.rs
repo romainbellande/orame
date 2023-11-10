@@ -1,9 +1,9 @@
 use crate::utils::{classnames, Classname, Drag};
-use leptos::leptos_dom::logging::console_log;
+
 pub use leptos::*;
 
 #[component]
-pub fn Window<F: Fn(bool) -> () + 'static>(
+pub fn Window<F: Fn(bool) + 'static>(
     children: Children,
     on_show: F,
     title: &'static str,
@@ -16,7 +16,6 @@ pub fn Window<F: Fn(bool) -> () + 'static>(
     let handler_node = drag.get_handler_ref();
 
     let on_fullscreen_toggle = move |_| {
-        console_log("on_fullscreen_toggle");
         if !fullscreen() {
             let _ = node_ref
                 .get_untracked()

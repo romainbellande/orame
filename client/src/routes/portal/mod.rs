@@ -2,7 +2,6 @@ use leptos::{leptos_dom::logging::console_log, *};
 use leptos_router::use_navigate;
 use web_sys::{Event, SubmitEvent};
 
-use reqwest;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen_futures::spawn_local;
 
@@ -19,7 +18,7 @@ pub fn Portal() -> impl IntoView {
     let (error, set_error) = create_signal("".to_string());
     let (is_register, set_is_register) = create_signal(false);
     let is_login = move || !is_register();
-    let has_error = move || with!(|error| error.len() > 0);
+    let has_error = move || with!(|error| !error.is_empty());
 
     let on_email_input = move |ev: Event| {
         let value = event_target_value::<Event>(&ev);
@@ -33,8 +32,6 @@ pub fn Portal() -> impl IntoView {
 
     let send_auth = move |method: String, email: String, password: String| {
         let credentials = Credentials { email, password };
-
-        console_log(format!("credentials: {:?}", credentials).as_str());
 
         spawn_local(async move {
             set_error("".to_string());

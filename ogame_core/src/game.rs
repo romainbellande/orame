@@ -21,6 +21,12 @@ pub struct Game {
     pub planets: BTreeMap<String, Planet>,
 }
 
+impl Default for Game {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Game {
     pub fn new() -> Self {
         Game {

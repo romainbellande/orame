@@ -2,6 +2,6 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 echo "fix all with clippy and fmt";
-cargo clippy --fix --allow-dirty --allow-staged;
-cargo fmt;
+cargo clippy --fix --allow-dirty --allow-staged --all;
+cargo fmt --all;
 echo "fix done";

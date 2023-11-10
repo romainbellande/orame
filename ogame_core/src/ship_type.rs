@@ -2,7 +2,10 @@ use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{build_cost_trait::BuildCost, resources::Resources};
+use crate::{
+    build_cost_trait::BuildCost,
+    resources::{ResourceType, Resources},
+};
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
 pub enum ShipType {
@@ -49,90 +52,76 @@ impl Display for ShipType {
 impl BuildCost for ShipType {
     fn cost(&self, _level: usize) -> Resources {
         match self {
-            ShipType::SmallCargo => Resources {
-                id: "".to_string(),
-                metal: 2000.0,
-                crystal: 2000.0,
-                deuterium: 0.0,
-            },
-            ShipType::LargeCargo => Resources {
-                id: "".to_string(),
-                metal: 6000.0,
-                crystal: 6000.0,
-                deuterium: 0.0,
-            },
-            ShipType::ColonyShip => Resources {
-                id: "".to_string(),
-                metal: 10000.0,
-                crystal: 20000.0,
-                deuterium: 10000.0,
-            },
-            ShipType::Recycler => Resources {
-                id: "".to_string(),
-                metal: 10000.0,
-                crystal: 6000.0,
-                deuterium: 2000.0,
-            },
-            ShipType::EspionageProbe => Resources {
-                id: "".to_string(),
-                metal: 0.0,
-                crystal: 1000.0,
-                deuterium: 0.0,
-            },
-            ShipType::SolarSatellite => Resources {
-                id: "".to_string(),
-                metal: 0.0,
-                crystal: 2000.0,
-                deuterium: 500.0,
-            },
-            ShipType::LightFighter => Resources {
-                id: "".to_string(),
-                metal: 3000.0,
-                crystal: 1000.0,
-                deuterium: 0.0,
-            },
-            ShipType::HeavyFighter => Resources {
-                id: "".to_string(),
-                metal: 6000.0,
-                crystal: 4000.0,
-                deuterium: 0.0,
-            },
-            ShipType::Cruiser => Resources {
-                id: "".to_string(),
-                metal: 20000.0,
-                crystal: 7000.0,
-                deuterium: 2000.0,
-            },
-            ShipType::Battleship => Resources {
-                id: "".to_string(),
-                metal: 45000.0,
-                crystal: 15000.0,
-                deuterium: 0.0,
-            },
-            ShipType::Bomber => Resources {
-                id: "".to_string(),
-                metal: 50000.0,
-                crystal: 25000.0,
-                deuterium: 15000.0,
-            },
-            ShipType::Destroyer => Resources {
-                id: "".to_string(),
-                metal: 60000.0,
-                crystal: 50000.0,
-                deuterium: 15000.0,
-            },
-            ShipType::Battlecruiser => Resources {
-                id: "".to_string(),
-                metal: 30000.0,
-                crystal: 40000.0,
-                deuterium: 15000.0,
-            },
-            ShipType::Deathstar => Resources {
-                id: "".to_string(),
-                metal: 5000000.0,
-                crystal: 4000000.0,
-                deuterium: 1000000.0,
-            },
+            ShipType::SmallCargo => Resources::from([
+                (ResourceType::Metal, 2000.0),
+                (ResourceType::Crystal, 2000.0),
+                (ResourceType::Deuterium, 0.0),
+            ]),
+            ShipType::LargeCargo => Resources::from([
+                (ResourceType::Metal, 6000.0),
+                (ResourceType::Crystal, 6000.0),
+                (ResourceType::Deuterium, 0.0),
+            ]),
+            ShipType::ColonyShip => Resources::from([
+                (ResourceType::Metal, 10000.0),
+                (ResourceType::Crystal, 20000.0),
+                (ResourceType::Deuterium, 10000.0),
+            ]),
+            ShipType::Recycler => Resources::from([
+                (ResourceType::Metal, 10000.0),
+                (ResourceType::Crystal, 6000.0),
+                (ResourceType::Deuterium, 2000.0),
+            ]),
+            ShipType::EspionageProbe => Resources::from([
+                (ResourceType::Metal, 0.0),
+                (ResourceType::Crystal, 1000.0),
+                (ResourceType::Deuterium, 0.0),
+            ]),
+            ShipType::SolarSatellite => Resources::from([
+                (ResourceType::Metal, 0.0),
+                (ResourceType::Crystal, 2000.0),
+                (ResourceType::Deuterium, 500.0),
+            ]),
+            ShipType::LightFighter => Resources::from([
+                (ResourceType::Metal, 3000.0),
+                (ResourceType::Crystal, 1000.0),
+                (ResourceType::Deuterium, 0.0),
+            ]),
+            ShipType::HeavyFighter => Resources::from([
+                (ResourceType::Metal, 6000.0),
+                (ResourceType::Crystal, 4000.0),
+                (ResourceType::Deuterium, 0.0),
+            ]),
+            ShipType::Cruiser => Resources::from([
+                (ResourceType::Metal, 20000.0),
+                (ResourceType::Crystal, 7000.0),
+                (ResourceType::Deuterium, 2000.0),
+            ]),
+            ShipType::Battleship => Resources::from([
+                (ResourceType::Metal, 45000.0),
+                (ResourceType::Crystal, 15000.0),
+                (ResourceType::Deuterium, 0.0),
+            ]),
+            ShipType::Bomber => Resources::from([
+                (ResourceType::Metal, 50000.0),
+                (ResourceType::Crystal, 25000.0),
+                (ResourceType::Deuterium, 15000.0),
+            ]),
+            ShipType::Destroyer => Resources::from([
+                (ResourceType::Metal, 60000.0),
+                (ResourceType::Crystal, 50000.0),
+                (ResourceType::Deuterium, 15000.0),
+            ]),
+            ShipType::Battlecruiser => Resources::from([
+                (ResourceType::Metal, 30000.0),
+                (ResourceType::Crystal, 40000.0),
+                (ResourceType::Deuterium, 15000.0),
+            ]),
+            ShipType::Deathstar => Resources::from([
+                (ResourceType::Metal, 5000000.0),
+                (ResourceType::Crystal, 4000000.0),
+                (ResourceType::Deuterium, 1000000.0),
+            ]),
         }
     }
 }

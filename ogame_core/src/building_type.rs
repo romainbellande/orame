@@ -2,7 +2,10 @@ use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{build_cost_trait::BuildCost, resources::Resources};
+use crate::{
+    build_cost_trait::BuildCost,
+    resources::{ResourceType, Resources},
+};
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
 pub enum BuildingType {
@@ -26,28 +29,21 @@ impl Display for BuildingType {
 impl BuildingType {
     pub fn produced(&self, level: usize, ticks: usize) -> Resources {
         match self {
-            BuildingType::Metal => Resources {
-                id: "".to_string(),
-                metal: 30.0 * level as f64 * (1.1f64.powi(level as i32)) * ticks as f64 / 3600.0
+            BuildingType::Metal => Resources::from([(
+                ResourceType::Metal,
+                30.0 * level as f64 * (1.1f64.powi(level as i32)) * ticks as f64 / 3600.0
                     * crate::UNIVERSE_SPEED as f64,
-                crystal: 0.0,
-                deuterium: 0.0,
-            },
-            BuildingType::Crystal => Resources {
-                id: "".to_string(),
-                metal: 0.0,
-                crystal: 20.0 * level as f64 * (1.1f64.powi(level as i32)) * ticks as f64 / 3600.0
+            )]),
+            BuildingType::Crystal => Resources::from([(
+                ResourceType::Crystal,
+                20.0 * level as f64 * (1.1f64.powi(level as i32)) * ticks as f64 / 3600.0
                     * crate::UNIVERSE_SPEED as f64,
-                deuterium: 0.0,
-            },
-            BuildingType::Deuterium => Resources {
-                id: "".to_string(),
-                metal: 0.0,
-                crystal: 0.0,
-                deuterium: 10.0 * level as f64 * (1.1f64.powi(level as i32)) * ticks as f64
-                    / 3600.0
+            )]),
+            BuildingType::Deuterium => Resources::from([(
+                ResourceType::Deuterium,
+                10.0 * level as f64 * (1.1f64.powi(level as i32)) * ticks as f64 / 3600.0
                     * crate::UNIVERSE_SPEED as f64,
-            },
+            )]),
             _ => Resources::default(),
         }
     }
@@ -56,30 +52,26 @@ impl BuildingType {
 impl BuildCost for BuildingType {
     fn cost(&self, level: usize) -> Resources {
         match self {
-            BuildingType::Metal => Resources {
-                id: "".to_string(),
-                metal: 60.0 * 1.5f64.powi(level as i32 - 1) as f64,
-                crystal: 15.0 * 1.5f64.powi(level as i32 - 1) as f64,
-                deuterium: 0.0,
-            },
-            BuildingType::Crystal => Resources {
-                id: "".to_string(),
-                metal: 48.0 * 1.6f64.powi(level as i32 - 1) as f64,
-                crystal: 24.0 * 1.6f64.powi(level as i32 - 1) as f64,
-                deuterium: 0.0,
-            },
-            BuildingType::Deuterium => Resources {
-                id: "".to_string(),
-                metal: 225.0 * 1.5f64.powi(level as i32 - 1) as f64,
-                crystal: 75.0 * 1.5f64.powi(level as i32 - 1) as f64,
-                deuterium: 0.0,
-            },
-            BuildingType::Shipyard => Resources {
-                id: "".to_string(),
-                metal: 400.0 * 2.0f64.powi(level as i32 - 1) as f64,
-                crystal: 200.0 * 2.0f64.powi(level as i32 - 1) as f64,
-                deuterium: 100.0 * 2.0f64.powi(level as i32 - 1) as f64,
-            },
+            BuildingType::Metal => Resources::from([
+                (ResourceType::Metal, 60.0 * 1.5f64.powi(level as i32 - 1)),
+                (ResourceType::Crystal, 15.0 * 1.5f64.powi(level as i32 - 1)),
+            ]),
+            BuildingType::Crystal => Resources::from([
+                (ResourceType::Metal, 48.0 * 1.6f64.powi(level as i32 - 1)),
+                (ResourceType::Crystal, 24.0 * 1.6f64.powi(level as i32 - 1)),
+            ]),
+            BuildingType::Deuterium => Resources::from([
+                (ResourceType::Metal, 225.0 * 1.5f64.powi(level as i32 - 1)),
+                (ResourceType::Crystal, 75.0 * 1.5f64.powi(level as i32 - 1)),
+            ]),
+            BuildingType::Shipyard => Resources::from([
+                (ResourceType::Metal, 400.0 * 2.0f64.powi(level as i32 - 1)),
+                (ResourceType::Crystal, 200.0 * 2.0f64.powi(level as i32 - 1)),
+                (
+                    ResourceType::Deuterium,
+                    100.0 * 2.0f64.powi(level as i32 - 1),
+                ),
+            ]),
         }
     }
 }

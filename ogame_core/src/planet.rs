@@ -10,7 +10,7 @@ use crate::{
     error::*,
     fleet::Fleet,
     flight::{Flight, MissionType},
-    resources::Resources,
+    resources::{ResourceType, Resources},
     ship_type::ShipType,
 };
 
@@ -136,6 +136,16 @@ impl Planet {
         }
 
         Ok(())
+    }
+
+    pub fn get_produced_resource(&self, resource: ResourceType, ticks: usize) -> f64 {
+        let mut produced = 0.0;
+
+        for (building, level) in &self.buildings {
+            produced += building.produced(*level, ticks).get(resource.clone());
+        }
+
+        produced
     }
 
     pub fn building_level(&self, building_type: BuildingType) -> usize {
