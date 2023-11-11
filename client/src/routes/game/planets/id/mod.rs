@@ -1,7 +1,5 @@
 use leptos::leptos_dom::logging::console_log;
-use ogame_core::game::Game;
 
-use leptos::wasm_bindgen::UnwrapThrowExt;
 use leptos::*;
 use leptos_router::use_params_map;
 mod toolbar;
@@ -25,10 +23,7 @@ pub fn PlanetIDPage() -> impl IntoView {
     let planet: Signal<Option<Planet>> = Signal::derive(move || {
         game_wrapper.with(|state| {
             console_log(format!("id: {} planets: {:?}", &id(), state.planets).as_str());
-            match state.planets.clone().get(&id()) {
-                Some(planet) => Some(planet.clone()),
-                None => None,
-            }
+            state.planets.clone().get(&id()).cloned()
         })
     });
 

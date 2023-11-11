@@ -9,6 +9,7 @@ use crate::{
     error::*,
     fleet::Fleet,
     flight::{Flight, MissionType},
+    game_config::GameConfig,
     planet::Planet,
     protocol::Protocol,
     resources::Resources,
@@ -19,6 +20,13 @@ use crate::{
 pub struct Game {
     pub player_id: String,
     pub planets: BTreeMap<String, Planet>,
+    pub config: GameConfig,
+}
+
+impl Default for Game {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Game {
@@ -26,6 +34,11 @@ impl Game {
         Game {
             player_id: "".to_string(),
             planets: BTreeMap::new(),
+            config: GameConfig {
+                nb_galaxies: 5,
+                nb_systems: 500,
+                nb_planets: 15,
+            },
         }
     }
 
@@ -97,33 +110,6 @@ impl Game {
 
         Ok(())
     }
-
-    /* fn process_flights(&mut self) -> Result<()> {
-        self.tick()?;
-
-        let now = web_time::SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs() as usize;
-
-        let mut flights = vec![];
-
-        for flight in &mut self.flights {
-            if flight.arrival_time <= now {
-                self.planets
-                    .get_mut(&flight.to_planet_id)
-                    .unwrap()
-                    .ships
-                    .add_ships(&flight.ships)?;
-            } else {
-                flights.push(flight.clone());
-            }
-        }
-
-        self.flights = flights;
-
-        Ok(())
-    } */
 
     fn buy_ship(&mut self, planet_id: String, ship_type: ShipType, amount: usize) -> Result<()> {
         self.planets

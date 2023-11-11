@@ -36,7 +36,7 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
       <For
           each=buildings
           key=|building| building.0
-          children=move |(id, (building, _))| {
+          children=move |(_id, (building, _))| {
             view! {
               <Show when=move || toolbar_ui().is_building_visible(building().get_type()).get()>
                 <BuildingWindow building=building planet=planet ui=toolbar_ui/>
@@ -50,7 +50,7 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
               <For
                 each=buildings
                 key=|building| building.0
-                children=move |(id, (building, _))| {
+                children=move |(_id, (building, _))| {
                   view! {
                       <BuildingTile building=building on_toggle=move |_| { toolbar_ui().toggle_building_window(building().get_type()); } />
                   }

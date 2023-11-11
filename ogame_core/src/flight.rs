@@ -120,7 +120,7 @@ impl Flight {
         let distance = from.distance(to);
 
         // FIXME: the 1 is a placeholder for the speed of the slowest ship
-        ((10 + (3500 / speed_ratio) * (10 * distance / 1)) as f64)
+        ((10 + (3500 / speed_ratio) * 10 * distance) as f64)
             .sqrt()
             .floor() as usize
     }
