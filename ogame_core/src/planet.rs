@@ -139,13 +139,10 @@ impl Planet {
     }
 
     pub fn get_produced_resource(&self, resource: ResourceType, ticks: usize) -> f64 {
-        let mut produced = 0.0;
-
-        for (building, level) in &self.buildings {
-            produced += building.produced(*level, ticks).get(resource.clone());
-        }
-
-        produced
+        self.buildings
+            .iter()
+            .map(|(building, level)| building.produced(*level, ticks).get(resource.clone()))
+            .sum()
     }
 
     pub fn building_level(&self, building_type: BuildingType) -> usize {
