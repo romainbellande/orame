@@ -1,6 +1,6 @@
 use clap::Parser;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use tokio::spawn;
+
 mod fixtures;
 
 #[derive(Parser, Debug)]

@@ -26,8 +26,7 @@ pub async fn fetch_game(user_id: String, conn: &Arc<PrismaClient>) -> Game {
 }
 
 pub async fn fetch_planet(planet_id: String, conn: &Arc<PrismaClient>) -> planet::Data {
-    let planet = conn
-        .planet()
+    conn.planet()
         .find_first(vec![planet::id::equals(planet_id.clone())])
         .with(planet::coordinates::fetch())
         .with(planet::resources::fetch())
@@ -38,9 +37,7 @@ pub async fn fetch_planet(planet_id: String, conn: &Arc<PrismaClient>) -> planet
         .exec()
         .await
         .unwrap()
-        .unwrap();
-
-    planet
+        .unwrap()
 }
 
 impl From<user::Data> for ogame_core::game::Game {
@@ -76,7 +73,7 @@ impl From<planet::Data> for ogame_core::planet::Planet {
                 .out_flights
                 .unwrap()
                 .into_iter()
-                .chain(db_planet.in_flights.unwrap().into_iter())
+                .chain(db_planet.in_flights.unwrap())
                 .map(|f| f.into())
                 .collect(),
         )

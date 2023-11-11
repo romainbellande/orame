@@ -3,7 +3,7 @@ use leptos::leptos_dom::logging::console_log;
 pub use leptos::*;
 
 #[component]
-pub fn Window<F: Fn(bool) -> () + 'static>(
+pub fn Window<F: Fn(bool) + 'static>(
     children: Children,
     on_show: F,
     title: &'static str,
