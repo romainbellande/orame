@@ -20,14 +20,9 @@ pub struct Resources {
 
 impl<const N: usize> From<[(ResourceType, f64); N]> for Resources {
     fn from(items: [(ResourceType, f64); N]) -> Self {
-        let items: BTreeMap<ResourceType, f64> = items
-            .into_iter()
-            .map(|(resource_type, amount)| (resource_type, amount))
-            .collect();
-
         Self {
             id: "".to_string(),
-            items,
+            items: items.into(),
         }
     }
 }
