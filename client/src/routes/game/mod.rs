@@ -1,15 +1,20 @@
 use futures::channel::mpsc::Receiver;
 use leptos::*;
 use leptos_router::Outlet;
-mod home;
-mod planets;
 use crate::components::{header::Header, sidenav::SideNav};
 use crate::utils::{GameWrapper, Socket};
 use futures::StreamExt;
-pub use home::HomePage;
 use ogame_core::{game::Game, protocol::Protocol};
-pub use planets::{PlanetIDPage, PlanetsPage};
 use wasm_bindgen::{prelude::Closure, JsCast};
+
+mod home;
+pub use home::HomePage;
+
+mod planets;
+pub use planets::{PlanetIDPage, PlanetsPage};
+
+mod galaxy;
+pub use galaxy::GalaxyPage;
 
 fn set_tick_interval(game: RwSignal<GameWrapper>) {
     let cb = Closure::wrap(Box::new(move || {

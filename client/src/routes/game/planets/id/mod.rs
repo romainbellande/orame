@@ -11,7 +11,7 @@ use toolbar::Toolbar;
 mod resource_bar;
 use resource_bar::ResourceBar;
 
-use crate::components::galaxy::Galaxy;
+use crate::components::galaxy::GalaxyView;
 use crate::components::planets::Planets;
 use crate::utils::GameWrapper;
 
@@ -40,7 +40,7 @@ pub fn PlanetIDPage() -> impl IntoView {
               <ResourceBar planet=Signal::derive(move || planet.get().unwrap().clone()) />
             </div>
             <div>"My Planet"</div>
-            <Galaxy />
+            <GalaxyView />
             <Planets />
           </section>
           <Toolbar planet=Signal::derive(move || planet.get().unwrap().clone())  />

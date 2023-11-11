@@ -11,6 +11,7 @@ pub fn SideNav() -> impl IntoView {
           <ul class="space-y-4">
             <SidenavItem href="/" >home</SidenavItem>
             <SidenavItem href="/planets">"Planets"</SidenavItem>
+            <SidenavItem href="/galaxy">"Galaxy"</SidenavItem>
           </ul>
         </div>
       </nav>
