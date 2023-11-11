@@ -1,12 +1,9 @@
-
-
 use leptos::html::Canvas;
 use leptos::*;
-mod utils;
 mod galaxy;
+mod utils;
 use galaxy::Galaxy;
 mod star;
-
 
 #[component]
 pub fn GalaxyView() -> impl IntoView {
@@ -17,7 +14,6 @@ pub fn GalaxyView() -> impl IntoView {
             let mut galaxy = Galaxy::new("galaxy".to_string());
             galaxy.render();
         });
-
     });
 
     view! {

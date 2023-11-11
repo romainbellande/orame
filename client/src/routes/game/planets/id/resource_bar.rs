@@ -1,7 +1,7 @@
-use leptos::{leptos_dom::logging::console_log, *};
-use ogame_core::{planet::Planet, building_type::BuildingType};
-use uuid::Uuid;
 use crate::components::tooltip::{TooltipContent, TooltipProvider};
+use leptos::{leptos_dom::logging::console_log, *};
+use ogame_core::{building_type::BuildingType, planet::Planet};
+use uuid::Uuid;
 
 enum ResourceItem {
     Metal,
@@ -53,8 +53,15 @@ impl ResourceConfig {
     }
 
     pub fn produced(&self, planet: Planet, ticks: usize) -> f64 {
-      // TODO: update this when resources will be updated
-        self.producers.iter().map(|building_type| building_type.produced(planet.building_level(building_type.clone()), ticks).metal).sum::<f64>()
+        // TODO: update this when resources will be updated
+        self.producers
+            .iter()
+            .map(|building_type| {
+                building_type
+                    .produced(planet.building_level(building_type.clone()), ticks)
+                    .metal
+            })
+            .sum::<f64>()
     }
 }
 

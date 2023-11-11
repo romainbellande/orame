@@ -1,9 +1,9 @@
-use futures::channel::mpsc::Receiver;
-use leptos::*;
-use leptos_router::Outlet;
 use crate::components::{header::Header, sidenav::SideNav};
 use crate::utils::{GameWrapper, Socket};
+use futures::channel::mpsc::Receiver;
 use futures::StreamExt;
+use leptos::*;
+use leptos_router::Outlet;
 use ogame_core::{game::Game, protocol::Protocol};
 use wasm_bindgen::{prelude::Closure, JsCast};
 

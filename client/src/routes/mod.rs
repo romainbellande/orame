@@ -6,7 +6,7 @@ mod portal;
 use portal::Portal;
 
 mod game;
-use game::{GamePage, HomePage, PlanetIDPage, PlanetsPage, GalaxyPage};
+use game::{GalaxyPage, GamePage, HomePage, PlanetIDPage, PlanetsPage};
 
 #[component]
 pub fn AppRouter() -> impl IntoView {
