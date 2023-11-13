@@ -1,8 +1,10 @@
-mod apply_to_game;
 mod auth;
+mod client;
 mod config;
 mod connected_users;
+mod error;
 mod socket;
+
 use dotenv::dotenv;
 
 #[tokio::main]
