@@ -21,7 +21,7 @@ where
     T: serde::Serialize,
 {
     let mut stdout = io::stdout();
-    print!("Serializing to json          ");
+    print!("{:<30}", "Serializing to json");
     stdout.flush()?;
 
     let json = serde_json::to_vec(&t)?;
@@ -38,7 +38,7 @@ where
     T: serde::Serialize,
 {
     let mut stdout = io::stdout();
-    print!("Serializing to cbor          ");
+    print!("{:<30}", "Serializing to cbor");
     stdout.flush()?;
 
     let cbor = serde_cbor::to_vec(&t)?;
