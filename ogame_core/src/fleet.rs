@@ -32,7 +32,11 @@ impl Fleet {
     pub fn remove_ships(&mut self, ships: &BTreeMap<ShipType, usize>) -> Result<()> {
         self.assert_ships_amount(ships)?;
         for (ship_type, amount) in ships {
-            let current_amount = self.ships.get_mut(ship_type).unwrap();
+            let current_amount = self
+                .ships
+                .get_mut(ship_type)
+                .ok_or(Error::NotFound(format!("Ship type: {ship_type}")))?;
+
             *current_amount -= amount;
         }
 
@@ -41,7 +45,11 @@ impl Fleet {
 
     pub fn add_ships(&mut self, ships: &BTreeMap<ShipType, usize>) -> Result<()> {
         for (ship_type, amount) in ships {
-            let current_amount = self.ships.get_mut(ship_type).unwrap();
+            let current_amount = self
+                .ships
+                .get_mut(ship_type)
+                .ok_or(Error::NotFound(format!("Ship type: {ship_type}")))?;
+
             *current_amount += amount;
         }
 

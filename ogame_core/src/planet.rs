@@ -65,7 +65,7 @@ impl Planet {
 
         self.pay(cost)?;
 
-        self.build_queue.push(building_type, current_level + 1);
+        self.build_queue.push(building_type, current_level + 1)?;
 
         Ok(())
     }
@@ -75,7 +75,7 @@ impl Planet {
 
         self.pay(cost)?;
 
-        self.ship_queue.push(ship_type, amount);
+        self.ship_queue.push(ship_type, amount)?;
 
         Ok(())
     }
@@ -110,7 +110,11 @@ impl Planet {
         let buildings_update = self.build_queue.tick(now)?;
 
         for building in buildings_update {
-            let current_level = self.buildings.get_mut(&building).unwrap(); // Should always exist
+            let current_level = self
+                .buildings
+                .get_mut(&building)
+                .ok_or(Error::NotFound(format!("Building type: {building}",)))?;
+
             *current_level += 1;
         }
 
@@ -121,7 +125,12 @@ impl Planet {
         let ships_update = self.ship_queue.tick(now)?;
 
         for ship in ships_update {
-            let current_amount = self.ships.ships.get_mut(&ship).unwrap();
+            let current_amount = self
+                .ships
+                .ships
+                .get_mut(&ship)
+                .ok_or(Error::NotFound(format!("Ship type: {ship}",)))?;
+
             *current_amount += 1;
         }
 
@@ -154,8 +163,7 @@ impl Planet {
     }
     pub fn received_flight(&mut self, flight: Flight) -> Result<()> {
         let now = web_time::SystemTime::now()
-            .duration_since(web_time::UNIX_EPOCH)
-            .unwrap()
+            .duration_since(web_time::UNIX_EPOCH)?
             .as_secs() as usize;
 
         if let Some(return_time) = flight.return_time {
