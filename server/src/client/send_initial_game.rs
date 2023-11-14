@@ -16,7 +16,7 @@ pub async fn send_initial_game(
 
     connected_users
         .send(user_id.clone(), Protocol::Game(game.clone()))
-        .await;
+        .await?;
 
     save_game(game, &conn).await;
 

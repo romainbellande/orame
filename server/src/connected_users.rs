@@ -4,6 +4,8 @@ use std::sync::Arc;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::RwLock;
 
+use crate::error::*;
+
 #[derive(Clone)]
 pub struct ConnectedUsers {
     pub users: Arc<RwLock<HashMap<String, Sender<Protocol>>>>,
@@ -26,9 +28,11 @@ impl ConnectedUsers {
         self.users.write().await.remove(&user_id);
     }
 
-    pub async fn send(&self, user_id: String, message: Protocol) {
+    pub async fn send(&self, user_id: String, message: Protocol) -> Result<()> {
         if let Some(sender) = self.users.write().await.get_mut(&user_id) {
-            sender.try_send(message).unwrap();
+            sender.try_send(message)?;
         }
+
+        Ok(())
     }
 }

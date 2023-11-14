@@ -30,18 +30,16 @@ pub async fn handle_flight(
             .ok_or(Error::NotFound)?;
 
         // create flight
-        let flight = game
-            .create_flight(
-                "".to_string(),
-                from_planet_id,
-                to_planet_id.clone(),
-                &((*to_planet.coordinates.unwrap()).into()),
-                Fleet::new("".to_string(), ships),
-                resources,
-                mission,
-                speed_ratio,
-            )
-            .unwrap();
+        let flight = game.create_flight(
+            "".to_string(),
+            from_planet_id,
+            to_planet_id.clone(),
+            &((*to_planet.coordinates.ok_or(Error::NotFound)?).into()),
+            Fleet::new("".to_string(), ships),
+            resources,
+            mission,
+            speed_ratio,
+        )?;
 
         // save it in db
         let ships = create_ships(&flight.ships.ships, conn).await;
@@ -56,7 +54,7 @@ pub async fn handle_flight(
 
         connected_users
             .send(game.player_id.clone(), msg.clone())
-            .await;
+            .await?;
 
         game.process_message(msg.clone())?;
 
@@ -64,7 +62,7 @@ pub async fn handle_flight(
         if target_planet.user_id != game.player_id {
             connected_users
                 .send(target_planet.user_id.clone(), msg.clone())
-                .await;
+                .await?;
 
             super::apply_to_game_with(target_planet.user_id.clone(), conn, move |game| {
                 Ok(game.process_message(msg.clone())?)

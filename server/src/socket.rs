@@ -51,7 +51,7 @@ pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() -> Result<
 
     info!("Listening on {}", addr);
 
-    Ok(axum::Server::bind(&addr.parse().unwrap())
+    Ok(axum::Server::bind(&addr.parse()?)
         .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await?)
 }
@@ -107,11 +107,13 @@ async fn handle_client<P: Serialize + DeserializeOwned + Debug + 'static>(
 async fn listen_to_others_messages(
     mut user_rx: Receiver<Protocol>,
     mut tx: SplitSink<WebSocket, Message>,
-) {
+) -> Result<()> {
     while let Some(msg) = user_rx.recv().await {
         let msg = protocol_to_bytes(msg);
-        tx.send(msg.into()).await.unwrap();
+        tx.send(msg.into()).await?;
     }
+
+    Ok(())
 }
 
 async fn message_loop(
