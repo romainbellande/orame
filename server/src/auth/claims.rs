@@ -29,7 +29,9 @@ where
                 .await
                 .map_err(|e| match *e.name() {
                     COOKIE => match e.reason() {
-                        TypedHeaderRejectionReason::Missing => AuthError::MissingCredentials.into(),
+                        TypedHeaderRejectionReason::Missing => {
+                            WebError::from(AuthError::MissingCredentials)
+                        }
                         _ => AuthError::InvalidToken.into(),
                     },
                     _ => AuthError::InvalidToken.into(),
@@ -37,10 +39,10 @@ where
 
         let access_token = cookies
             .get("access_token")
-            .ok_or_else(|| AuthError::MissingCredentials.into())?;
+            .ok_or_else(|| WebError::from(AuthError::MissingCredentials))?;
 
         let token_data = decode::<Claims>(access_token, &KEYS.decoding, &Validation::default())
-            .map_err(|_| AuthError::InvalidToken.into())?;
+            .map_err(|_| WebError::from(AuthError::InvalidToken))?;
 
         Ok(token_data.claims)
     }

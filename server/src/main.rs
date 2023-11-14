@@ -20,5 +20,5 @@ async fn main() {
 }
 
 async fn run() -> Result<()> {
-    socket::run::<ogame_core::protocol::Protocol>().await
+    socket::run().await
 }

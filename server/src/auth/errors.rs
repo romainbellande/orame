@@ -14,30 +14,31 @@ pub enum AuthError {
     UserAlreadyExists,
 }
 
-impl Into<WebError> for AuthError {
-    fn into(self) -> WebError {
-        match self {
-            Self::WrongCredentials => WebError {
+// the From version :
+impl From<AuthError> for WebError {
+    fn from(e: AuthError) -> WebError {
+        match e {
+            AuthError::WrongCredentials => WebError {
                 code: 1,
                 status: HyperStatusCode::UNAUTHORIZED,
                 message: "Wrong credentials".to_string(),
             },
-            Self::MissingCredentials => WebError {
+            AuthError::MissingCredentials => WebError {
                 code: 2,
                 status: HyperStatusCode::BAD_REQUEST,
                 message: "Missing credentials".to_string(),
             },
-            Self::TokenCreation => WebError {
+            AuthError::TokenCreation => WebError {
                 code: 3,
                 status: HyperStatusCode::INTERNAL_SERVER_ERROR,
                 message: "Token creation error".to_string(),
             },
-            Self::InvalidToken => WebError {
+            AuthError::InvalidToken => WebError {
                 code: 4,
                 status: HyperStatusCode::BAD_REQUEST,
                 message: "Invalid token".to_string(),
             },
-            Self::UserAlreadyExists => WebError {
+            AuthError::UserAlreadyExists => WebError {
                 code: 5,
                 status: HyperStatusCode::BAD_REQUEST,
                 message: "User already exists".to_string(),
@@ -54,7 +55,7 @@ pub struct WebError {
 }
 
 impl WebError {
-    pub fn into_json(&self) -> Json<Value> {
+    pub fn into_json(self) -> Json<Value> {
         Json(json!({
             "code": self.code,
             "message": self.message,
@@ -73,10 +74,10 @@ pub enum UserError {
     NotFound { email: String },
 }
 
-impl Into<WebError> for UserError {
-    fn into(self) -> WebError {
-        match self {
-            Self::NotFound { email } => WebError {
+impl From<UserError> for WebError {
+    fn from(e: UserError) -> WebError {
+        match e {
+            UserError::NotFound { email } => WebError {
                 code: 404,
                 status: HyperStatusCode::NOT_FOUND,
                 message: format!("user with email {} not found", email),
