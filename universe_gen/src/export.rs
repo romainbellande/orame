@@ -5,13 +5,13 @@ pub fn to_files(
     planets: &std::collections::BTreeMap<crate::SystemId, Vec<(i32, i32)>>,
     folder: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    super::plot::draw(&systems, &format!("{folder}/galaxy.png"))?;
+    super::plot::draw(systems, &format!("{folder}/galaxy.png"))?;
 
-    json(&systems, &format!("{folder}/systems.json"))?;
-    json(&planets, &format!("{folder}/planets.json"))?;
+    json(systems, &format!("{folder}/systems.json"))?;
+    json(planets, &format!("{folder}/planets.json"))?;
 
-    cbor(&systems, &format!("{folder}/systems.cbor"))?;
-    cbor(&planets, &format!("{folder}/planets.cbor"))?;
+    cbor(systems, &format!("{folder}/systems.cbor"))?;
+    cbor(planets, &format!("{folder}/planets.cbor"))?;
 
     Ok(())
 }
@@ -24,7 +24,7 @@ where
     print!("{:<30}", "Serializing to json");
     stdout.flush()?;
 
-    let json = serde_json::to_vec(&t)?;
+    let json = serde_json::to_vec(t)?;
 
     std::fs::write(filename, &json)?;
 
@@ -41,7 +41,7 @@ where
     print!("{:<30}", "Serializing to cbor");
     stdout.flush()?;
 
-    let cbor = serde_cbor::to_vec(&t)?;
+    let cbor = serde_cbor::to_vec(t)?;
 
     std::fs::write(filename, &cbor)?;
 

@@ -23,8 +23,7 @@ pub fn draw(systems: &Vec<System>, filename: &str) -> Result<(), Box<dyn std::er
     ));
 
     let dot_and_label = |x: f32, y: f32| {
-        return EmptyElement::at((x, y))
-            + Circle::new((0, 0), 2, ShapeStyle::from(&WHITE).filled());
+        EmptyElement::at((x, y)) + Circle::new((0, 0), 2, ShapeStyle::from(&WHITE).filled())
     };
 
     for system in systems {
