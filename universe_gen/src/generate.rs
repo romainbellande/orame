@@ -9,9 +9,7 @@ pub fn systems() -> Vec<System> {
 
     let mut systems: Vec<_> = generate(SYSTEM_NB, SYSTEM_GAP)
         .iter()
-        .enumerate()
-        .map(|(i, (x, y))| System {
-            id: i as i32,
+        .map(|(x, y)| System {
             x: *x,
             y: *y,
             links: vec![],
@@ -45,7 +43,7 @@ fn links(systems: &mut Vec<System>) {
                 if distance < (SYSTEM_GAP + SYSTEM_GAP / 3) as f64 {
                     nb_links += 1;
                     print!("{:<30}{nb_links}\r", "Generating system links");
-                    systems[i].links.push(system2.id);
+                    systems[i].links.push(j as i32);
                 }
             }
         }

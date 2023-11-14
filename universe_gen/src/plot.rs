@@ -30,7 +30,12 @@ pub fn draw(systems: &Vec<System>, filename: &str) -> Result<(), Box<dyn std::er
         root.draw(&dot_and_label(system.x as f32, system.y as f32))?;
 
         for link in &system.links {
-            let system2 = systems.iter().find(|s| s.id == *link).unwrap();
+            let system2 = systems
+                .iter()
+                .enumerate()
+                .find(|(id, _)| *id as i32 == *link)
+                .map(|(_, system)| system)
+                .unwrap();
 
             root.draw(&PathElement::new(
                 vec![
