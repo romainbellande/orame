@@ -19,6 +19,7 @@ members = [
   "cli",
   "prisma-client",
   "ogame_core"
+, "universe_gen"
 ]
 
 

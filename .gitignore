@@ -5,3 +5,5 @@ style/*.css
 dist
 Cargo.lock
 .env
+
+universe_gen/data/*
