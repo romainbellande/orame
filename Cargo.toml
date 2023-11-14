@@ -13,14 +13,14 @@ lto = 'thin'
 resolver = "2"
 
 members = [
-  "server",
-  "prisma-cli",
-  "client",
-  "cli",
-  "prisma-client",
-  "ogame_core"
-, "universe_gen"
+  "packages/server",
+  "packages/prisma-cli",
+  "packages/client",
+  "packages/cli",
+  "packages/prisma-client",
+  "packages/ogame_core",
+  "packages/universe_gen",
 ]
 
 
-default-members = ["server"]
+default-members = ["packages/server"]

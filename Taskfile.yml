@@ -4,14 +4,14 @@ dotenv: ['.env']
 
 includes:
   client:
-    taskfile: ./client/Taskfile.yml
-    dir: ./client
+    taskfile: ./packages/client/Taskfile.yml
+    dir: ./packages/client
   server:
-    taskfile: ./server/Taskfile.yml
-    dir: ./server
+    taskfile: ./packages/server/Taskfile.yml
+    dir: ./packages/server
   cli:
-    taskfile: ./cli/Taskfile.yml
-    dir: ./cli
+    taskfile: ./packages/cli/Taskfile.yml
+    dir: ./packages/cli
 
 tasks:
   start:
