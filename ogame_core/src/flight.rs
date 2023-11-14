@@ -95,7 +95,6 @@ impl Flight {
             Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed_ratio);
         let now = web_time::SystemTime::now()
             .duration_since(web_time::UNIX_EPOCH)?
-            // .ok_or(Error::SystemTime("SystemTime::now() failed".to_string()))?
             .as_secs() as usize;
 
         let arrival_time = duration + now;
