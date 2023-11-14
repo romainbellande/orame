@@ -42,8 +42,8 @@ tasks:
     desc: fix lint & format
     cmds:
       - rustup target add wasm32-unknown-unknown
-      - cargo install clippy
       - cargo install cargo-watch
       - cargo install --locked trunk
       - cargo install --locked wasm-bindgen-cli
+      - curl -fsSL https://get.pnpm.io/install.sh | sh -
       - pnpm i; cd client; pnpm i
