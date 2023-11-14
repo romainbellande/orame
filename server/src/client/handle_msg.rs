@@ -12,7 +12,5 @@ pub async fn handle_msg(
     connected_users: ConnectedUsers,
     conn: &Arc<PrismaClient>,
 ) -> Result<()> {
-    apply_msg_to_game(user_id.clone(), protocol, connected_users.clone(), conn).await;
-
-    Ok(())
+    apply_msg_to_game(user_id.clone(), protocol, connected_users.clone(), conn).await
 }

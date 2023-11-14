@@ -7,8 +7,18 @@ mod socket;
 
 use dotenv::dotenv;
 
+use error::*;
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    socket::run::<ogame_core::protocol::Protocol>().await;
+    if let Err(e) = run().await {
+        eprintln!("Error: {:?}", e);
+
+        std::process::exit(1);
+    }
+}
+
+async fn run() -> Result<()> {
+    socket::run::<ogame_core::protocol::Protocol>().await
 }

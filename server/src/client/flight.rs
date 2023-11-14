@@ -58,7 +58,7 @@ pub async fn handle_flight(
             .send(game.player_id.clone(), msg.clone())
             .await;
 
-        game.process_message(msg.clone()).unwrap();
+        game.process_message(msg.clone())?;
 
         // if target player is different from current player then send it to him
         if target_planet.user_id != game.player_id {
@@ -67,9 +67,11 @@ pub async fn handle_flight(
                 .await;
 
             super::apply_to_game_with(target_planet.user_id.clone(), conn, move |game| {
-                game.process_message(msg.clone()).unwrap();
+                Ok(game.process_message(msg.clone())?)
             })
-            .await;
+            .await?;
         }
     }
+
+    Ok(())
 }
