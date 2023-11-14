@@ -37,10 +37,13 @@ tasks:
     desc: fix lint & format
     cmds:
       - cargo clippy --fix --allow-dirty --allow-staged --all
-      - cargo fmt --all;
 
-  fix:all:
+  init:
     desc: fix lint & format
     cmds:
-      - cargo clippy --fix --allow-dirty --allow-staged --all
-      - cargo fmt --all;
+      - rustup target add wasm32-unknown-unknown
+      - cargo install clippy
+      - cargo install cargo-watch
+      - cargo install --locked trunk
+      - cargo install --locked wasm-bindgen-cli
+      - pnpm i; cd client; pnpm i
