@@ -14,7 +14,6 @@ pub enum AuthError {
     UserAlreadyExists,
 }
 
-// the From version :
 impl From<AuthError> for WebError {
     fn from(e: AuthError) -> WebError {
         match e {
