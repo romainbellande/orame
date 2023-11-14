@@ -31,14 +31,15 @@ fn links(systems: &mut Vec<System>) {
     for i in 0..systems.len() {
         for j in 0..systems.len() {
             if i != j {
-                let system1 = systems[i].clone();
-                let system2 = systems[j].clone();
+                let distance = {
+                    let system1 = &systems[i];
+                    let system2 = &systems[j];
 
-                let distance = (((system1.x as i64 - system2.x as i64).pow(2)
-                    + (system1.y as i64 - system2.y as i64).pow(2))
-                    as f64)
-                    .sqrt()
-                    .abs();
+                    (((system1.x as i64 - system2.x as i64).pow(2)
+                        + (system1.y as i64 - system2.y as i64).pow(2)) as f64)
+                        .sqrt()
+                        .abs()
+                };
 
                 if distance < (SYSTEM_GAP + SYSTEM_GAP / 3) as f64 {
                     nb_links += 1;

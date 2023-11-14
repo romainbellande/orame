@@ -7,7 +7,7 @@ mod plot;
 
 type SystemId = i32;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct System {
     x: i32,
     y: i32,
