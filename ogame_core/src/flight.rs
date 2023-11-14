@@ -2,7 +2,9 @@ use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{coordinates::Coordinates, fleet::Fleet, planet::Planet, resources::Resources};
+use crate::{
+    coordinates::Coordinates, error::*, fleet::Fleet, planet::Planet, resources::Resources,
+};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum MissionType {
@@ -88,12 +90,12 @@ impl Flight {
         resources: Resources,
         mission: MissionType,
         speed_ratio: usize,
-    ) -> Self {
+    ) -> Result<Self> {
         let duration =
             Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed_ratio);
         let now = web_time::SystemTime::now()
-            .duration_since(web_time::UNIX_EPOCH)
-            .unwrap()
+            .duration_since(web_time::UNIX_EPOCH)?
+            // .ok_or(Error::SystemTime("SystemTime::now() failed".to_string()))?
             .as_secs() as usize;
 
         let arrival_time = duration + now;
@@ -102,7 +104,7 @@ impl Flight {
             _ => Some(duration * 2 + now),
         };
 
-        Flight {
+        Ok(Flight {
             id,
             player_id,
             from_planet_id: from_planet.id.clone(),
@@ -113,7 +115,7 @@ impl Flight {
             mission,
             resources,
             speed_ratio,
-        }
+        })
     }
 
     fn calc_flight_duration(from: &Coordinates, to: &Coordinates, speed_ratio: usize) -> usize {

@@ -36,11 +36,10 @@ where
         BuildQueue { items }
     }
 
-    pub fn push(&mut self, item: T, level: usize) {
+    pub fn push(&mut self, item: T, level: usize) -> Result<()> {
         let finish_date = self.items.last().map(|item| item.finish_date).unwrap_or(
             web_time::SystemTime::now()
-                .duration_since(web_time::UNIX_EPOCH)
-                .unwrap()
+                .duration_since(web_time::UNIX_EPOCH)?
                 .as_secs() as usize,
         ) + item.build_time(level);
 
@@ -48,6 +47,8 @@ where
             r#type: item,
             finish_date,
         });
+
+        Ok(())
     }
 
     pub fn tick(&mut self, now: usize) -> Result<Vec<T>> {

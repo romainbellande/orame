@@ -37,11 +37,10 @@ impl Game {
 
     pub fn tick(&mut self) -> Result<()> {
         let now = web_time::SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
+            .duration_since(UNIX_EPOCH)?
             .as_secs() as usize;
 
-        for (_, planet) in &mut self.planets {
+        for planet in self.planets.values_mut() {
             planet.tick(now)?;
         }
 
@@ -98,7 +97,7 @@ impl Game {
 
         self.planets
             .get_mut(&planet_id)
-            .unwrap()
+            .ok_or(Error::NotFound(format!("Planet id: {planet_id}")))?
             .upgrade_building(building_type)?;
 
         Ok(())
@@ -134,7 +133,7 @@ impl Game {
     fn buy_ship(&mut self, planet_id: String, ship_type: ShipType, amount: usize) -> Result<()> {
         self.planets
             .get_mut(&planet_id)
-            .unwrap()
+            .ok_or(Error::NotFound(format!("Planet id: {planet_id}")))?
             .buy_ship(ship_type, amount)?;
 
         Ok(())
@@ -146,7 +145,10 @@ impl Game {
         ships: BTreeMap<ShipType, usize>,
         resources: Resources,
     ) -> Result<()> {
-        let origin_planet = self.planets.get_mut(&planet_id).unwrap();
+        let origin_planet = self
+            .planets
+            .get_mut(&planet_id)
+            .ok_or(Error::NotFound(format!("Planet id: {planet_id}")))?;
 
         // we first assert the ship amount so that if we cannot pay the resources price, we dont
         // have to add the ships back to the planet hangar
@@ -169,18 +171,18 @@ impl Game {
         mission: MissionType,
         speed_ratio: usize,
     ) -> Result<Flight> {
-        let flight = Flight::create(
+        Flight::create(
             id,
             self.player_id.clone(),
-            self.planets.get(&from_planet_id).unwrap(),
+            self.planets
+                .get(&from_planet_id)
+                .ok_or(Error::NotFound(format!("Planet id: {from_planet_id}")))?,
             to_planet_id.clone(),
             to_planet_coordinates,
             ships,
             resources,
             mission,
             speed_ratio,
-        );
-
-        Ok(flight)
+        )
     }
 }
