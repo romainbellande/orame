@@ -109,7 +109,7 @@ async fn listen_to_others_messages(
     mut tx: SplitSink<WebSocket, Message>,
 ) -> Result<()> {
     while let Some(msg) = user_rx.recv().await {
-        let msg = protocol_to_bytes(msg);
+        let msg = protocol_to_bytes(msg)?;
         tx.send(msg.into()).await?;
     }
 
@@ -123,7 +123,7 @@ async fn message_loop(
     conn: &Arc<PrismaClient>,
 ) -> Result<()> {
     while let Some(msg) = rx.next().await {
-        let protocol = msg_to_protocol(msg).unwrap();
+        let protocol = msg_to_protocol(msg)?;
 
         client::handle_msg(user_id.clone(), protocol, connected_users.clone(), conn).await?;
     }
@@ -143,13 +143,13 @@ fn msg_to_protocol(msg: std::result::Result<Message, axum::Error>) -> Result<Pro
         return Err(Error::ClientDisconnected);
     }
 
-    Ok(protocol_from_bytes(&msg_tmp))
+    protocol_from_bytes(&msg_tmp)
 }
 
-fn protocol_from_bytes(bytes: &[u8]) -> Protocol {
-    serde_cbor::from_slice(bytes).unwrap()
+fn protocol_from_bytes(bytes: &[u8]) -> Result<Protocol> {
+    Ok(serde_cbor::from_slice(bytes)?)
 }
 
-fn protocol_to_bytes(packet: Protocol) -> Vec<u8> {
-    serde_cbor::to_vec(&packet).unwrap()
+fn protocol_to_bytes(packet: Protocol) -> Result<Vec<u8>> {
+    Ok(serde_cbor::to_vec(&packet)?)
 }

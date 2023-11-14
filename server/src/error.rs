@@ -18,16 +18,19 @@ pub enum Error {
     AxumServe(String),
 
     #[error("Db error: {0}")]
-    DbError(String),
+    Db(String),
 
     #[error("Not found")]
     NotFound,
 
     #[error("Parse error")]
-    ParseError(String),
+    Parse(String),
 
     #[error("Send error")]
-    SendError(String),
+    Send(String),
+
+    #[error("Serialization error")]
+    Serialization(String),
 }
 
 impl From<prisma_client::NewClientError> for Error {
@@ -50,19 +53,25 @@ impl From<hyper::Error> for Error {
 
 impl From<prisma_client::QueryError> for Error {
     fn from(e: prisma_client::QueryError) -> Self {
-        Self::DbError(e.to_string())
+        Self::Db(e.to_string())
     }
 }
 
 impl From<AddrParseError> for Error {
     fn from(e: AddrParseError) -> Self {
-        Self::ParseError(e.to_string())
+        Self::Parse(e.to_string())
     }
 }
 
 impl<T> From<tokio::sync::mpsc::error::TrySendError<T>> for Error {
     fn from(e: tokio::sync::mpsc::error::TrySendError<T>) -> Self {
-        Self::SendError(e.to_string())
+        Self::Send(e.to_string())
+    }
+}
+
+impl From<serde_cbor::Error> for Error {
+    fn from(e: serde_cbor::Error) -> Self {
+        Self::Serialization(e.to_string())
     }
 }
 
