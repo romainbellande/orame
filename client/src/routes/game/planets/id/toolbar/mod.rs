@@ -9,7 +9,7 @@ use crate::{
         ui::PlanetUI,
     },
 };
-use leptos::{leptos_dom::logging::console_log, *};
+use leptos::*;
 use ogame_core::{building_type::BuildingType, planet::Planet};
 
 pub fn create_building(building_type: BuildingType, planet: Signal<Planet>) -> Building {
