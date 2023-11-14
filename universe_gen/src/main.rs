@@ -9,7 +9,6 @@ type SystemId = i32;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 struct System {
-    id: SystemId,
     x: i32,
     y: i32,
     links: Vec<SystemId>,
