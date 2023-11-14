@@ -1,6 +1,5 @@
 use clap::Parser;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-
 mod fixtures;
 
 #[derive(Parser, Debug)]

@@ -29,9 +29,11 @@ use crate::{
     error::*,
 };
 
-pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() {
-    let db: Result<PrismaClient, NewClientError> = PrismaClient::_builder().build().await;
-    let db = Arc::new(db.unwrap());
+pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() -> Result<()> {
+    let db = PrismaClient::_builder().build().await?;
+
+    let db = Arc::new(db);
+
     let ws_router = Router::new()
         .route("/", get(ws_handler::<P>))
         .route_layer(middleware::from_fn(auth_bearer_middleware));
@@ -49,10 +51,9 @@ pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() {
 
     info!("Listening on {}", addr);
 
-    axum::Server::bind(&addr.parse().unwrap())
+    Ok(axum::Server::bind(&addr.parse().unwrap())
         .serve(app.into_make_service_with_connect_info::<SocketAddr>())
-        .await
-        .unwrap();
+        .await?)
 }
 
 async fn ws_handler<P: Serialize + DeserializeOwned + Debug + 'static>(
@@ -74,9 +75,13 @@ async fn handle_client_with_error<P: Serialize + DeserializeOwned + Debug + 'sta
     connected_users: ConnectedUsers,
     conn: Arc<PrismaClient>,
 ) {
-    if let Err(e) = handle_client::<P>(socket, addr, user_id, connected_users, conn).await {
+    if let Err(e) =
+        handle_client::<P>(socket, addr, user_id.clone(), connected_users.clone(), conn).await
+    {
         error!("Error handling client: {:?}", e);
     }
+
+    connected_users.remove(user_id).await;
 }
 
 async fn handle_client<P: Serialize + DeserializeOwned + Debug + 'static>(
@@ -85,20 +90,18 @@ async fn handle_client<P: Serialize + DeserializeOwned + Debug + 'static>(
     user_id: String,
     connected_users: ConnectedUsers,
     conn: Arc<PrismaClient>,
-) {
+) -> Result<()> {
     let (tx, rx) = socket.split();
 
     let user_rx = connected_users.add(user_id.clone()).await;
 
     tokio::task::spawn(listen_to_others_messages(user_rx, tx));
 
-    client::send_initial_game(user_id.clone(), connected_users.clone(), &conn).await;
+    client::send_initial_game(user_id.clone(), connected_users.clone(), &conn).await?;
 
-    message_loop(rx, user_id.clone(), connected_users.clone(), &conn)
-        .await
-        .unwrap();
+    message_loop(rx, user_id.clone(), connected_users.clone(), &conn).await?;
 
-    // client disconnected
+    Ok(())
 }
 
 async fn listen_to_others_messages(
@@ -120,13 +123,7 @@ async fn message_loop(
     while let Some(msg) = rx.next().await {
         let protocol = msg_to_protocol(msg).unwrap();
 
-        crate::client::handle_msg::handle_msg(
-            user_id.clone(),
-            protocol,
-            connected_users.clone(),
-            conn,
-        )
-        .await?;
+        client::handle_msg(user_id.clone(), protocol, connected_users.clone(), conn).await?;
     }
 
     Ok(())
@@ -135,13 +132,13 @@ async fn message_loop(
 fn msg_to_protocol(msg: std::result::Result<Message, axum::Error>) -> Result<Protocol> {
     let msg = match msg {
         Ok(msg) => msg,
-        Err(_) => return Err(()),
+        Err(_) => return Err(Error::ClientDisconnected),
     };
 
     let msg_tmp = msg.into_data();
 
     if msg_tmp.is_empty() {
-        return Err(());
+        return Err(Error::ClientDisconnected);
     }
 
     Ok(protocol_from_bytes(&msg_tmp))
