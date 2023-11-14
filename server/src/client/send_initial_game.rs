@@ -10,7 +10,7 @@ pub async fn send_initial_game(
     connected_users: ConnectedUsers,
     conn: &Arc<PrismaClient>,
 ) -> Result<()> {
-    let mut game = fetch_game(user_id.clone(), &conn).await;
+    let mut game = fetch_game(user_id.clone(), conn).await;
 
     game.tick()?;
 
@@ -18,7 +18,7 @@ pub async fn send_initial_game(
         .send(user_id.clone(), Protocol::Game(game.clone()))
         .await?;
 
-    save_game(game, &conn).await;
+    save_game(game, conn).await;
 
     Ok(())
 }

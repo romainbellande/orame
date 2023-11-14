@@ -1,4 +1,4 @@
-use std::{fmt::Debug, net::SocketAddr, sync::Arc};
+use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
     extract::{
@@ -16,7 +16,6 @@ use futures::{
 };
 use log::*;
 use prisma_client::*;
-use serde::{de::DeserializeOwned, Serialize};
 use tokio::sync::mpsc::Receiver;
 use tower_http::services::{ServeDir, ServeFile};
 
@@ -29,13 +28,13 @@ use crate::{
     error::*,
 };
 
-pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() -> Result<()> {
+pub async fn run() -> Result<()> {
     let db = PrismaClient::_builder().build().await?;
 
     let db = Arc::new(db);
 
     let ws_router = Router::new()
-        .route("/", get(ws_handler::<P>))
+        .route("/", get(ws_handler))
         .route_layer(middleware::from_fn(auth_bearer_middleware));
 
     let app = Router::new()
@@ -56,7 +55,7 @@ pub async fn run<P: Serialize + DeserializeOwned + Debug + 'static>() -> Result<
         .await?)
 }
 
-async fn ws_handler<P: Serialize + DeserializeOwned + Debug + 'static>(
+async fn ws_handler(
     ws: WebSocketUpgrade,
     Extension(claims): Extension<Claims>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
@@ -64,11 +63,11 @@ async fn ws_handler<P: Serialize + DeserializeOwned + Debug + 'static>(
     Extension(connected_users): Extension<ConnectedUsers>,
 ) -> Response {
     ws.on_upgrade(move |socket| {
-        handle_client_with_error::<P>(socket, addr, claims.sub, connected_users, conn)
+        handle_client_with_error(socket, addr, claims.sub, connected_users, conn)
     })
 }
 
-async fn handle_client_with_error<P: Serialize + DeserializeOwned + Debug + 'static>(
+async fn handle_client_with_error(
     socket: WebSocket,
     addr: SocketAddr,
     user_id: String,
@@ -76,7 +75,7 @@ async fn handle_client_with_error<P: Serialize + DeserializeOwned + Debug + 'sta
     conn: Arc<PrismaClient>,
 ) {
     if let Err(e) =
-        handle_client::<P>(socket, addr, user_id.clone(), connected_users.clone(), conn).await
+        handle_client(socket, addr, user_id.clone(), connected_users.clone(), conn).await
     {
         error!("Error handling client: {:?}", e);
     }
@@ -84,7 +83,7 @@ async fn handle_client_with_error<P: Serialize + DeserializeOwned + Debug + 'sta
     connected_users.remove(user_id).await;
 }
 
-async fn handle_client<P: Serialize + DeserializeOwned + Debug + 'static>(
+async fn handle_client(
     socket: WebSocket,
     _addr: SocketAddr,
     user_id: String,

@@ -7,10 +7,8 @@ use prisma_client::{
     create_user, planet, user, PrismaClient,
 };
 
-use super::errors::{UserError, WebError};
-use super::{
-    body::AuthBody, claims::Claims, credentials::Credentials, errors::AuthError, keys::KEYS,
-};
+use super::errors::{AuthError, UserError, WebError};
+use super::{body::AuthBody, claims::Claims, credentials::Credentials, keys::KEYS};
 
 use hyper::StatusCode;
 use jsonwebtoken::{encode, Header};
@@ -24,7 +22,7 @@ pub fn authorize(user_id: String) -> Result<AuthBody, WebError> {
 
     // Create the authorization token
     let token = encode(&Header::default(), &claims, &KEYS.encoding)
-        .map_err(|_| AuthError::TokenCreation.into())?;
+        .map_err(|_| WebError::from(AuthError::TokenCreation))?;
 
     Ok(AuthBody::new(token))
 }
@@ -58,10 +56,9 @@ pub async fn login(
     })?;
 
     let my_user = my_user.ok_or_else(|| {
-        UserError::NotFound {
+        WebError::from(UserError::NotFound {
             email: credentials.email.clone(),
-        }
-        .into()
+        })
     })?;
 
     if credentials.password != my_user.password {
@@ -70,7 +67,7 @@ pub async fn login(
 
     println!("USER: {:#?}", my_user);
 
-    Ok(authorize(my_user.id)?)
+    authorize(my_user.id)
 }
 
 pub async fn register(
@@ -113,7 +110,7 @@ pub async fn register(
 
     let new_ships = create_ships(
         &vec![
-            (ShipType::SmallCargo, 0 as usize),
+            (ShipType::SmallCargo, 0_usize),
             (ShipType::LargeCargo, 0),
             (ShipType::ColonyShip, 0),
             (ShipType::Recycler, 0),
@@ -145,5 +142,5 @@ pub async fn register(
 
     create_buildings(new_planet.id.clone(), &conn).await;
 
-    Ok(authorize(new_user.id)?)
+    authorize(new_user.id)
 }
