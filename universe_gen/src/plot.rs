@@ -8,7 +8,7 @@ use super::{consts::*, System};
 pub fn draw(systems: &Vec<System>, filename: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut stdout = io::stdout();
 
-    print!("Plotting galaxy              ");
+    print!("{:<30}", "Plotting galaxy");
     stdout.flush()?;
 
     let backend = BitMapBackend::new(&filename, (1980, 1080));

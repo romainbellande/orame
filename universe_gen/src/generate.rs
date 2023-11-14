@@ -5,7 +5,7 @@ use rand::Rng;
 use super::{consts::*, System, SystemId};
 
 pub fn systems() -> Vec<System> {
-    print!("Generating systems           ");
+    print!("{:<30}", "Generating systems");
 
     let mut systems: Vec<_> = generate(SYSTEM_NB, SYSTEM_GAP)
         .iter()
@@ -26,7 +26,7 @@ pub fn systems() -> Vec<System> {
 }
 
 fn links(systems: &mut Vec<System>) {
-    print!("Generating system links      \r");
+    print!("{:<30}\r", "Generating system links");
 
     let mut nb_links = 0;
 
@@ -44,24 +44,25 @@ fn links(systems: &mut Vec<System>) {
 
                 if distance < (SYSTEM_GAP + SYSTEM_GAP / 3) as f64 {
                     nb_links += 1;
-                    print!("Generating system links      {}\r", nb_links);
+                    print!("{:<30}{nb_links}\r", "Generating system links");
                     systems[i].links.push(system2.id);
                 }
             }
         }
     }
 
-    println!("Generating system links      {}", nb_links);
+    println!("{:<30}{nb_links}", "Generating system links");
 }
 
 pub fn planets(system_len: usize) -> BTreeMap<SystemId, Vec<(i32, i32)>> {
-    print!("Generating planets           \r");
+    print!("{:<30}", "Generating planets\r");
 
     let mut planets = BTreeMap::new();
 
     for i in 0..system_len {
         print!(
-            "Generating planets           System {}/{}, Planets {} \r",
+            "{:<30}System {}/{}, Planets {}\r",
+            "Generating planets",
             i,
             system_len,
             PLANET_NB * PLANET_NB * i as i32
@@ -70,7 +71,10 @@ pub fn planets(system_len: usize) -> BTreeMap<SystemId, Vec<(i32, i32)>> {
     }
 
     println!(
-        "Generating planets           {}                                       ",
+        "{:<30}System {}/{}, Planets {}\r",
+        "Generating planets",
+        system_len,
+        system_len,
         PLANET_NB * PLANET_NB * system_len as i32
     );
 
