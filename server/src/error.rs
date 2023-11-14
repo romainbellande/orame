@@ -1,19 +1,33 @@
+use std::net::AddrParseError;
+
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Error, Debug, Serialize, Deserialize, Clone)]
 pub enum Error {
-    Core(ogame_core::error::Error),
-    ClientDisconnected,
-    DbNewClient(String),
-    AxumServe(String),
-    DbError(String),
-    NotFound,
-}
+    #[error("Ogame core error: {0}")]
+    Core(#[from] ogame_core::error::Error),
 
-impl From<ogame_core::error::Error> for Error {
-    fn from(e: ogame_core::error::Error) -> Self {
-        Self::Core(e)
-    }
+    #[error("Client disconnected")]
+    ClientDisconnected,
+
+    #[error("Db error: {0}")]
+    DbNewClient(String),
+
+    #[error("Axum error: {0}")]
+    AxumServe(String),
+
+    #[error("Db error: {0}")]
+    DbError(String),
+
+    #[error("Not found")]
+    NotFound,
+
+    #[error("Parse error")]
+    ParseError(String),
+
+    #[error("Send error")]
+    SendError(String),
 }
 
 impl From<prisma_client::NewClientError> for Error {
@@ -37,6 +51,18 @@ impl From<hyper::Error> for Error {
 impl From<prisma_client::QueryError> for Error {
     fn from(e: prisma_client::QueryError) -> Self {
         Self::DbError(e.to_string())
+    }
+}
+
+impl From<AddrParseError> for Error {
+    fn from(e: AddrParseError) -> Self {
+        Self::ParseError(e.to_string())
+    }
+}
+
+impl<T> From<tokio::sync::mpsc::error::TrySendError<T>> for Error {
+    fn from(e: tokio::sync::mpsc::error::TrySendError<T>) -> Self {
+        Self::SendError(e.to_string())
     }
 }
 
