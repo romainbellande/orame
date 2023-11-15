@@ -58,7 +58,7 @@ pub fn GamePage() -> impl IntoView {
     view! {
          <div class="flex max-w-full max-h-full font-shentox">
             <SideNav />
-            <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map">
+            <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map opacity-30">
                 <Outlet />
             </main>
         </div>

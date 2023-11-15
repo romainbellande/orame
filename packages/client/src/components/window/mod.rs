@@ -54,7 +54,7 @@ pub fn Window<F: Fn(bool) + 'static>(
         // let collapsed_class = if collapsed() { "" } else { "overflow-scroll" };
 
         classnames(vec![
-            Classname::String("fixed bg-black rounded-lg min-w-max opacity-80".to_string()),
+            Classname::String("fixed bg-black rounded-lg min-w-max opacity-80 z-10".to_string()),
             Classname::String(fullscreen_class.to_string()),
             Classname::String(resize_class.to_string()),
             // Classname::String(collapsed_class.to_string()),
