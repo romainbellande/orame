@@ -75,7 +75,7 @@ pub fn BuildingWindow(
             <div class="space-y-4">
               <h3><span>{ building().config.name }</span><span>"level " {level}</span></h3>
               <div class=format!("sprite sprite_large building {}", building().config.class)></div>
-              <p class="text-xs">{ building().config.description }</p>
+              <p class="text-xs max-w-sm">{ building().config.description }</p>
               <div class="flex justify-end">
 
                 <button type="button" on:click=on_upgrade(building(), planet()) class="rounded bg-indigo-500 p-2 px-4 text-white hover:bg-orange-500">"upgrade"</button>

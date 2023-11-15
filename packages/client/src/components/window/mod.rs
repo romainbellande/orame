@@ -51,18 +51,22 @@ pub fn Window<F: Fn(bool) + 'static>(
             "resize"
         };
 
-        let collapsed_class = if collapsed() { "" } else { "overflow-scroll" };
+        // let collapsed_class = if collapsed() { "" } else { "overflow-scroll" };
 
         classnames(vec![
-            Classname::String("fixed bg-black rounded-lg".to_string()),
+            Classname::String("fixed bg-black rounded-lg min-w-max opacity-80".to_string()),
             Classname::String(fullscreen_class.to_string()),
             Classname::String(resize_class.to_string()),
-            Classname::String(collapsed_class.to_string()),
+            // Classname::String(collapsed_class.to_string()),
         ])
     });
 
     let content_classes = create_memo(move |_| {
-        let collapsed_class = if collapsed() { "max-h-0 p-0" } else { "p-4" };
+        let collapsed_class = if collapsed() {
+            "max-h-0 p-0"
+        } else {
+            "h-min-content p-2 text-xs"
+        };
 
         classnames(vec![
             Classname::String("transition-max-height duration-300 overflow-hidden".to_string()),
@@ -71,13 +75,13 @@ pub fn Window<F: Fn(bool) + 'static>(
     });
 
     view! {
-      <div node_ref=node_ref class=root_classes style:width=format!("{width}rem")>
-        <div node_ref=handler_node class="cursor-move border-b border-solid border-s-slate-900 rounded-tr-lg rounded-tl-lg p-1 bg-slate-900 space-x-1 flex justify-between items-center">
-          <div class="text-slate-300">{ title }</div>
-          <div class="space-x-2">
-            <button class="rounded-full bg-green-500 h-4 w-4" on:click=on_collapsed></button>
-            <button class="rounded-full bg-yellow-500 h-4 w-4" on:click=on_fullscreen_toggle></button>
-            <button class="rounded-full bg-red-500 h-4 w-4" on:click=on_close></button>
+      <div node_ref=node_ref class=root_classes>
+        <div node_ref=handler_node class="cursor-move rounded-tr-lg rounded-tl-lg  bg-black-900 flex justify-between items-center">
+          <div class="pl-2 text-white text-xs">{ title }</div>
+          <div class="space-x-2 pr-2">
+            <button class="rounded-full bg-green-500 h-3 w-3" on:click=on_collapsed></button>
+            <button class="rounded-full bg-yellow-500 h-3 w-3" on:click=on_fullscreen_toggle></button>
+            <button class="rounded-full bg-red-500 h-3 w-3" on:click=on_close></button>
           </div>
         </div>
         <div class=content_classes>{ children() }</div>
