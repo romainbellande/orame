@@ -1,14 +1,8 @@
 use web_sys::MouseEvent;
 
-use crate::{
-    components::window::Window,
-    data::building::Building,
-    routes::game::planets::id::{
-        buildings::{BuildingTile, BuildingWindow},
-        shipyard::ShipyardWindow,
-        ui::PlanetUI,
-    },
-};
+mod building;
+use crate::components::window::Window;
+use building::{Building, BuildingTile /*BuildingWindow*/};
 use leptos::*;
 use ogame_core::{building_type::BuildingType, planet::Planet};
 
@@ -54,13 +48,13 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
           key=|building| building.0
           children=move |(_id, (building, _))| {
             view! {
-              <Show when=move || planet_ui().is_building_visible(building().get_type()).get()>
-                <BuildingWindow building=building planet=planet ui=planet_ui/>
-              </Show>
+              /* <Show when=move || toolbar_ui().is_building_visible(building().get_type()).get()>
+                <BuildingWindow building=building planet=planet ui=toolbar_ui/>
+              </Show> */
             }
           }
         />
-        <Show when=show_buildings>
+        /* <Show when=show_buildings>
           <Window title="Buildings" on_show=set_show_buildings>
             <ul class="text-white flex space-x-4">
               <For
@@ -74,9 +68,9 @@ pub fn Toolbar(planet: Signal<Planet>) -> impl IntoView {
               />
             </ul>
           </Window>
-        </Show>
+        </Show> */
 
-        <ShipyardWindow ui=planet_ui planet=planet />
+        // <ShipyardWindow ui=planet_ui planet=planet />
 
         <ul class="space-x-4 flex item-center">
           <ToolbarItem on_click=move |_| set_show_buildings(!show_buildings())>"buildings"</ToolbarItem>

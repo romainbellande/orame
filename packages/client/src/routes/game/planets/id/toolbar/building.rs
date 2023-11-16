@@ -49,7 +49,7 @@ impl Building {
     }
 }
 
-#[component]
+/* #[component]
 pub fn BuildingWindow(
     building: ReadSignal<Building>,
     planet: Signal<Planet>,
@@ -83,7 +83,7 @@ pub fn BuildingWindow(
             </div>
           </Window>
     }
-}
+} */
 
 #[component]
 pub fn BuildingTile(
