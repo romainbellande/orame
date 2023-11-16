@@ -17,7 +17,7 @@ pub fn PlanetsWindow() -> impl IntoView {
     view! {
         <Window title="Planets">
             <ul class="text-white flex space-x-4">
-                <TreeRow tree_item=planets_tree_view().into_tree_item() />
+                <TreeRow tree_item=planets_tree_view />
             </ul>
         </Window>
     }

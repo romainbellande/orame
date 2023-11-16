@@ -17,7 +17,7 @@ pub fn BuildingsByPlanetWindow() -> impl IntoView {
     view! {
         <Window title="Buildings">
             <ul class="text-white flex space-x-4">
-                <TreeRow tree_item=move || buildings_by_planet().into_tree_item() />
+                <TreeRow tree_item=buildings_by_planet />
             </ul>
         </Window>
     }

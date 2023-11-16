@@ -6,12 +6,13 @@ pub trait IntoTreeItem {
     fn into_tree_item(&self) -> TreeItem;
 }
 
-impl<F> IntoTreeItem for F
+impl<F, I> IntoTreeItem for F
 where
-    F: Fn() -> TreeItem,
+    F: Fn() -> I,
+    I: IntoTreeItem,
 {
     fn into_tree_item(&self) -> TreeItem {
-        self()
+        self().into_tree_item()
     }
 }
 
