@@ -2,7 +2,7 @@ use leptos::*;
 
 use crate::{
     components::{
-        tree_row::{views::ShipsByPlanetTreeItem, IntoTreeItem, TreeRow},
+        tree_row::{views::ShipsByPlanetTreeItem, TreeRow},
         window::Window,
     },
     utils::GameWrapper,
@@ -17,7 +17,7 @@ pub fn ShipsByPlanetWindow() -> impl IntoView {
     view! {
         <Window title="Ships">
             <ul class="text-white flex space-x-4">
-                <TreeRow tree_item=move || ships_by_planet().into_tree_item() />
+                <TreeRow tree_item=ships_by_planet />
             </ul>
         </Window>
     }
