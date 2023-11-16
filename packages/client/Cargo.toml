@@ -27,3 +27,4 @@ wasm-bindgen-futures = "0.4.30"
 console_error_panic_hook = "0.1.7"
 reqwest = { version = "0.11.22", features = ["json"] }
 uuid = { version = "1.5.0", features = ["v4"] }
+leptos-use = "0.8.2"
