@@ -1,3 +1,4 @@
+pub mod context_menu;
 pub mod galaxy;
 pub mod header;
 pub mod sidenav;

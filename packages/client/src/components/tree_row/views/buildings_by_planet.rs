@@ -3,8 +3,12 @@ use std::collections::BTreeMap;
 use leptos::*;
 
 use ogame_core::{building_type::BuildingType, planet::Planet};
+use web_sys::MouseEvent;
 
-use crate::components::tree_row::{IntoTreeItem, TreeItem};
+use crate::components::{
+    context_menu::{views::BuildingContextMenu, ContextMenu, ContextMenuContext},
+    tree_row::{IntoTreeItem, TreeItem},
+};
 
 pub struct BuildingsByPlanetTreeItem(pub BTreeMap<String, Planet>);
 
@@ -55,8 +59,21 @@ pub struct BuildingTreeItem(pub (BuildingType, usize));
 
 impl IntoTreeItem for BuildingTreeItem {
     fn into_tree_item(&self) -> TreeItem {
+        let context_menu = expect_context::<RwSignal<ContextMenuContext>>();
+        let building_type = self.0 .0.to_string();
+        let level = self.0 .1;
+        let self_copy = self.0.clone();
+        let context_click = move |ev: MouseEvent| {
+            context_menu.update(|context_menu| {
+                context_menu.show(BuildingContextMenu(self_copy.clone()), ev)
+            });
+        };
+
         let view = view! {
-            {self.0.0.to_string()} {self.0.1}
+            <span on:auxclick=context_click>
+                <span> {building_type} </span>
+                <span> {level} </span>
+            </span>
         }
         .into_view();
 

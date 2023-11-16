@@ -1,10 +1,17 @@
 use std::collections::BTreeMap;
 
 use futures::channel::mpsc::Receiver;
+use leptos::ev::{click, contextmenu};
+use leptos::html::Div;
+use leptos::leptos_dom::logging::console_log;
+use leptos::logging::log;
 use leptos::*;
 use leptos_router::Outlet;
+use leptos_use::use_event_listener;
+use web_sys::MouseEvent;
 mod home;
 mod planets;
+use crate::components::context_menu::ContextMenu;
 use crate::components::window::Windows;
 use crate::components::{header::Header, sidenav::SideNav};
 use crate::utils::{GameWrapper, Socket};
@@ -59,10 +66,11 @@ pub fn GamePage() -> impl IntoView {
     provide_context(game_context);
 
     view! {
-         <div class="flex max-w-full max-h-full font-shentox">
+         <div class="flex max-w-full max-h-full font-shentox" oncontextmenu="event.preventDefault();">
+            <ContextMenu />
             <Windows />
             <SideNav />
-            <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map opacity-30">
+            <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map opacity-30" >
                 <Outlet />
             </main>
         </div>
