@@ -1,8 +1,11 @@
+use std::collections::BTreeMap;
+
 use futures::channel::mpsc::Receiver;
 use leptos::*;
 use leptos_router::Outlet;
 mod home;
 mod planets;
+use crate::components::window::Windows;
 use crate::components::{header::Header, sidenav::SideNav};
 use crate::utils::{GameWrapper, Socket};
 use futures::StreamExt;
@@ -57,6 +60,7 @@ pub fn GamePage() -> impl IntoView {
 
     view! {
          <div class="flex max-w-full max-h-full font-shentox">
+            <Windows />
             <SideNav />
             <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map opacity-30">
                 <Outlet />
