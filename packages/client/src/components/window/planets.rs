@@ -2,7 +2,7 @@ use leptos::*;
 
 use crate::{
     components::{
-        tree_row::{views::PlanetsTreeItem, IntoTreeItem, TreeRow},
+        tree_row::{views::PlanetsTreeItem, TreeRow},
         window::Window,
     },
     utils::GameWrapper,

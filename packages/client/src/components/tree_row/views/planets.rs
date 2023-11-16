@@ -22,7 +22,7 @@ impl IntoTreeItem for PlanetsTreeItem {
                 .0
                 .clone()
                 .into_iter()
-                .map(|(id, planet)| PlanetTreeItem(planet).into_tree_item())
+                .map(|(_, planet)| PlanetTreeItem(planet).into_tree_item())
                 .collect(),
         }
     }

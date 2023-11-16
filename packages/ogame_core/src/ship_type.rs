@@ -2,54 +2,37 @@ use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    build_cost_trait::BuildCost,
-    resources::{ResourceType, Resources},
-};
-
-#[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug, Serialize, Deserialize, Hash)]
+#[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
 pub enum ShipType {
-    // Utility
-    SmallCargo,
-    LargeCargo,
-    ColonyShip,
-    Recycler,
-    EspionageProbe,
-    SolarSatellite,
-
-    // Battle
-    LightFighter,
-    HeavyFighter,
-    Cruiser,
-    Battleship,
-    Bomber,
-    Destroyer,
-    Battlecruiser,
-    Deathstar,
+    Basic,
 }
 
 impl Display for ShipType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ShipType::SmallCargo => write!(f, "Small Cargo"),
-            ShipType::LargeCargo => write!(f, "Large Cargo"),
-            ShipType::ColonyShip => write!(f, "Colony Ship"),
-            ShipType::Recycler => write!(f, "Recycler"),
-            ShipType::EspionageProbe => write!(f, "Espionage Probe"),
-            ShipType::SolarSatellite => write!(f, "Solar Satellite"),
-            ShipType::LightFighter => write!(f, "Light Fighter"),
-            ShipType::HeavyFighter => write!(f, "Heavy Fighter"),
-            ShipType::Cruiser => write!(f, "Cruiser"),
-            ShipType::Battleship => write!(f, "Battleship"),
-            ShipType::Bomber => write!(f, "Bomber"),
-            ShipType::Destroyer => write!(f, "Destroyer"),
-            ShipType::Battlecruiser => write!(f, "Battlecruiser"),
-            ShipType::Deathstar => write!(f, "Deathstar"),
+            Self::Basic => write!(f, "Basic"),
         }
     }
 }
 
-impl BuildCost for ShipType {
+impl From<ShipType> for String {
+    fn from(s: ShipType) -> Self {
+        match s {
+            ShipType::Basic => "Basic".to_string(),
+        }
+    }
+}
+
+impl From<String> for ShipType {
+    fn from(s: String) -> Self {
+        match s.as_str() {
+            "Basic" => ShipType::Basic,
+            _ => panic!("Unknown ship type: {}", s),
+        }
+    }
+}
+
+/* impl BuildCost for ShipType {
     fn cost(&self, _level: usize) -> Resources {
         match self {
             ShipType::SmallCargo => Resources::from([
@@ -146,4 +129,4 @@ impl From<String> for ShipType {
             _ => panic!("Unknown ship type: {}", s),
         }
     }
-}
+} */

@@ -9,105 +9,61 @@ generator client {
 }
 
 model User {
-  id       String   @id @default(cuid())
+  id       String    @id @default(cuid())
   name     String
-  email    String   @unique
+  email    String    @unique
   password String
-  planets  Planet[]
+  ships    Ship[]
+  flights  Flight[]
+  storages Storage[]
 }
 
-model Planet {
-  id      String @id @default(cuid())
+model Ship {
+  id          String @id @default(cuid())
+  user_id     String
+  user        User   @relation(fields: [user_id], references: [id])
+  position_id String
+  type        String
 
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
+  storage_id String  @unique
+  storage    Storage @relation(fields: [storage_id], references: [id])
 
-  coordinates_id String @unique
-  coordinates Coordinates @relation(fields: [coordinates_id], references: [id])
-
-  resources_id   String @unique
-  resources   Resources  @relation(fields: [resources_id], references: [id])
-
-  buildings   Buildings?
-
-  ships_id     String @unique
-  ships       Ships  @relation(fields: [ships_id], references: [id])
-  build_queue String
-  ship_queue  String
-  last_update Int
-
-  out_flights Flight[]     @relation("in_flights")
-  in_flights  Flight[]     @relation("out_flights")
-}
-
-model Coordinates {
-  id        String @id @default(cuid())
-
-  galaxy   Int
-  system   Int
-  position Int
-
-  planet   Planet?
-}
-
-model Resources {
-  id        String @id @default(cuid())
-
-  metal     Float
-  crystal   Float
-  deuterium Float
-
-  planet    Planet? 
-  flight    Flight?
-}
-
-model Buildings {
-  id        String @id @default(cuid())
-
-  metal     Int
-  crystal   Int
-  deuterium Int
-  shipyard  Int
-
-  planet_id String @unique
-  planet    Planet @relation(fields: [planet_id], references: [id])
-}
-
-model Ships {
-  id        String @id @default(cuid())
-
-  smallCargo     Int
-  largeCargo     Int
-  colonyShip     Int
-  recycler       Int
-  espionageProbe Int
-  solarSatellite Int
-  lightFighter   Int
-  heavyFighter   Int
-  cruiser        Int
-  battleship     Int
-  bomber         Int
-  destroyer      Int
-  battlecruiser  Int
-  deathstar      Int
-  flight         Flight?
-  planet         Planet?
+  // flight ShipsInFlight? @relation(fields: [id], references: [ship_id])
+  flight ShipsInFlight[]
 }
 
 model Flight {
-  id             String    @id @default(cuid())
-  player_id      String
-  from_planet_id String
-  from_planet    Planet    @relation("in_flights", fields: [from_planet_id], references: [id])
-  to_planet_id   String
-  to_planet      Planet    @relation("out_flights", fields: [to_planet_id], references: [id])
-  ships_id       String    @unique
-  ships          Ships     @relation(fields: [ships_id], references: [id])
-  resources_id   String    @unique
-  resources      Resources @relation(fields: [resources_id], references: [id])
+  id      String @id @default(cuid())
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  from_id String
+  to_id   String
+
+  ships ShipsInFlight[]
 
   arrival_time Int
   return_time  Int?
   mission      String
   speed_ratio  Int
+}
+
+model ShipsInFlight {
+  ship_id   String  @unique
+  flight_id String
+  flight    Flight  @relation(fields: [flight_id], references: [id])
+  ship      Ship?   @relation(fields: [ship_id], references: [id])
+
+  @@id([ship_id, flight_id])
+}
+
+model Storage {
+  id           String @id @default(cuid())
+  user_id      String
+  user         User   @relation(fields: [user_id], references: [id])
+  structure_id String
+
+  items String // json
+
+  ship Ship?
 }

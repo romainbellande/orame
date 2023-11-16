@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use ogame_core::protocol::Protocol;
-use prisma_client::{fetch_game, save_game, PrismaClient};
+use ogame_core::{game::Game, protocol::Protocol};
+use prisma_client::{DbModel, PrismaClient, User};
 
 use crate::{connected_users::ConnectedUsers, error::*};
 
@@ -10,7 +10,7 @@ pub async fn send_initial_game(
     connected_users: ConnectedUsers,
     conn: &Arc<PrismaClient>,
 ) -> Result<()> {
-    let mut game = fetch_game(user_id.clone(), conn).await;
+    let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
 
     game.tick()?;
 
@@ -18,7 +18,9 @@ pub async fn send_initial_game(
         .send(user_id.clone(), Protocol::Game(game.clone()))
         .await?;
 
-    save_game(game, conn).await;
+    let user: User = game.into();
+
+    user.save(conn).await?;
 
     Ok(())
 }

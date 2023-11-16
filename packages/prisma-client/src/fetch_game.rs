@@ -43,7 +43,7 @@ pub async fn fetch_planet(planet_id: String, conn: &Arc<PrismaClient>) -> planet
 impl From<user::Data> for ogame_core::game::Game {
     fn from(db_user: user::Data) -> Self {
         let mut game = ogame_core::game::Game::new();
-        game.player_id = db_user.id;
+        game.user_id = db_user.id;
         game.planets = db_user
             .planets
             .unwrap()
@@ -84,7 +84,7 @@ impl From<flight::Data> for ogame_core::flight::Flight {
     fn from(flight: flight::Data) -> Self {
         ogame_core::flight::Flight::new(
             flight.id,
-            flight.player_id,
+            flight.user_id,
             flight.from_planet_id,
             flight.to_planet_id,
             (*flight.ships.unwrap()).into(),

@@ -1,10 +1,13 @@
-use std::fmt::{Display, Formatter};
+use std::{
+    collections::BTreeMap,
+    fmt::{Display, Formatter},
+};
+
+use crate::error::*;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    coordinates::Coordinates, error::*, fleet::Fleet, planet::Planet, resources::Resources,
-};
+use crate::ship::Ship;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum MissionType {
@@ -27,6 +30,18 @@ impl Display for MissionType {
     }
 }
 
+impl From<MissionType> for String {
+    fn from(m: MissionType) -> Self {
+        match m {
+            MissionType::Attack => "Attack".to_string(),
+            MissionType::Transport => "Transport".to_string(),
+            MissionType::Colonize => "Colonize".to_string(),
+            MissionType::Espionage => "Espionage".to_string(),
+            MissionType::Station => "Station".to_string(),
+        }
+    }
+}
+
 impl From<String> for MissionType {
     fn from(s: String) -> Self {
         match s.as_str() {
@@ -43,11 +58,10 @@ impl From<String> for MissionType {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Flight {
     pub id: String,
-    pub player_id: String,
-    pub from_planet_id: String,
-    pub to_planet_id: String,
-    pub ships: Fleet,
-    pub resources: Resources,
+    pub user_id: String,
+    pub from_id: String,
+    pub to_id: String,
+    pub ships: Vec<Ship>,
     pub mission: MissionType,
     pub speed_ratio: usize, // between 0 and 100,
     pub arrival_time: usize,
@@ -57,11 +71,10 @@ pub struct Flight {
 impl Flight {
     pub fn new(
         id: String,
-        player_id: String,
-        from_planet_id: String,
-        to_planet_id: String,
-        ships: Fleet,
-        resources: Resources,
+        user_id: String,
+        from_id: String,
+        to_id: String,
+        ships: Vec<Ship>,
         mission: MissionType,
         speed_ratio: usize,
         arrival_time: usize,
@@ -69,11 +82,10 @@ impl Flight {
     ) -> Self {
         Flight {
             id,
-            player_id,
-            from_planet_id,
-            to_planet_id,
+            user_id,
+            from_id,
+            to_id,
             ships,
-            resources,
             mission,
             speed_ratio,
             arrival_time,
@@ -82,17 +94,16 @@ impl Flight {
     }
     pub fn create(
         id: String,
-        player_id: String,
-        from_planet: &Planet,
-        to_planet_id: String,
-        to_coordinates: &Coordinates,
-        ships: Fleet,
-        resources: Resources,
+        user_id: String,
+        from_id: String,
+        to_id: String,
+        ships: Vec<Ship>,
         mission: MissionType,
         speed_ratio: usize,
     ) -> Result<Self> {
-        let duration =
-            Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed_ratio);
+        /* let duration =
+        Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed_ratio); */
+        let duration = 0;
         let now = web_time::SystemTime::now()
             .duration_since(web_time::UNIX_EPOCH)?
             .as_secs() as usize;
@@ -105,24 +116,23 @@ impl Flight {
 
         Ok(Flight {
             id,
-            player_id,
-            from_planet_id: from_planet.id.clone(),
-            to_planet_id,
+            user_id,
+            from_id,
+            to_id,
             ships,
             arrival_time,
             return_time,
             mission,
-            resources,
             speed_ratio,
         })
     }
 
-    fn calc_flight_duration(from: &Coordinates, to: &Coordinates, speed_ratio: usize) -> usize {
+    /* fn calc_flight_duration(from: String, to: String, speed_ratio: usize) -> usize {
         let distance = from.distance(to);
 
         // FIXME: the 1 is a placeholder for the speed of the slowest ship
         ((10 + (3500 / speed_ratio) * 10 * distance) as f64)
             .sqrt()
             .floor() as usize
-    }
+    } */
 }

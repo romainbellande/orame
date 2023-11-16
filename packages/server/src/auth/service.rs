@@ -1,16 +1,10 @@
 use std::sync::Arc;
 
-use ogame_core::resources::{ResourceType, Resources};
-use ogame_core::ship_type::ShipType;
-use prisma_client::{
-    create_buildings, create_coordinates, create_planet, create_resources, create_ships,
-    create_user, planet, user, PrismaClient,
-};
+use prisma_client::{DbModel, PrismaClient, User};
 
-use super::errors::{AuthError, UserError, WebError};
+use super::errors::{AuthError, WebError};
 use super::{body::AuthBody, claims::Claims, credentials::Credentials, keys::KEYS};
 
-use hyper::StatusCode;
 use jsonwebtoken::{encode, Header};
 
 pub fn authorize(user_id: String) -> Result<AuthBody, WebError> {
@@ -28,7 +22,7 @@ pub fn authorize(user_id: String) -> Result<AuthBody, WebError> {
 }
 
 pub async fn login(
-    conn: Arc<PrismaClient>,
+    conn: &Arc<PrismaClient>,
     credentials: Credentials,
 ) -> Result<AuthBody, WebError> {
     // Check if the user sent the credentials
@@ -36,30 +30,7 @@ pub async fn login(
         return Err(AuthError::MissingCredentials.into());
     }
 
-    let my_user = conn
-        .user()
-        .find_first(vec![user::email::equals(credentials.email.clone())])
-        .with(
-            user::planets::fetch(vec![])
-                .with(planet::coordinates::fetch())
-                .with(planet::resources::fetch())
-                .with(planet::buildings::fetch())
-                .with(planet::ships::fetch()),
-        )
-        .exec()
-        .await;
-
-    let my_user = my_user.map_err(|err| WebError {
-        code: 1,
-        status: StatusCode::INTERNAL_SERVER_ERROR,
-        message: err.to_string(),
-    })?;
-
-    let my_user = my_user.ok_or_else(|| {
-        WebError::from(UserError::NotFound {
-            email: credentials.email.clone(),
-        })
-    })?;
+    let my_user = User::fetch(credentials.email.clone(), conn).await?;
 
     if credentials.password != my_user.password {
         return Err(AuthError::WrongCredentials.into());
@@ -71,7 +42,7 @@ pub async fn login(
 }
 
 pub async fn register(
-    conn: Arc<PrismaClient>,
+    conn: &Arc<PrismaClient>,
     credentials: Credentials,
 ) -> Result<AuthBody, WebError> {
     // Check if the user sent the credentials
@@ -79,68 +50,21 @@ pub async fn register(
         return Err(AuthError::MissingCredentials.into());
     }
 
-    if let Ok(Some(_)) = conn
-        .user()
-        .find_first(vec![user::email::equals(credentials.email.clone())])
-        .exec()
-        .await
-    {
+    println!("Pre fetch");
+    if let Ok(_) = User::fetch_by_email(credentials.email.clone(), conn).await {
+        println!("User already exists");
         return Err(AuthError::UserAlreadyExists.into());
     }
 
-    let new_user = create_user(
-        "EMPTY_NAME".to_owned(),
+    let mut new_user = User::new(
+        "EMPTY_NAME".to_string(),
         credentials.email.clone(),
         credentials.password.clone(),
-        &conn,
-    )
-    .await;
+    );
 
-    let new_coordinates = create_coordinates(0, 0, 0, &conn).await;
-
-    let new_resources = create_resources(
-        &Resources::from([
-            (ResourceType::Metal, 2500.0),
-            (ResourceType::Crystal, 1000.0),
-            (ResourceType::Deuterium, 0.0),
-        ]),
-        &conn,
-    )
-    .await;
-
-    let new_ships = create_ships(
-        &vec![
-            (ShipType::SmallCargo, 0_usize),
-            (ShipType::LargeCargo, 0),
-            (ShipType::ColonyShip, 0),
-            (ShipType::Recycler, 0),
-            (ShipType::EspionageProbe, 0),
-            (ShipType::SolarSatellite, 0),
-            (ShipType::LightFighter, 0),
-            (ShipType::HeavyFighter, 0),
-            (ShipType::Cruiser, 0),
-            (ShipType::Battleship, 0),
-            (ShipType::Bomber, 0),
-            (ShipType::Destroyer, 0),
-            (ShipType::Battlecruiser, 0),
-            (ShipType::Deathstar, 0),
-        ]
-        .into_iter()
-        .collect(),
-        &conn,
-    )
-    .await;
-
-    let new_planet = create_planet(
-        new_user.id.clone(),
-        new_coordinates.id,
-        new_resources.id,
-        new_ships.id,
-        &conn,
-    )
-    .await;
-
-    create_buildings(new_planet.id.clone(), &conn).await;
+    println!("Pre save");
+    new_user.create(conn).await?;
+    println!("Post save");
 
     authorize(new_user.id)
 }

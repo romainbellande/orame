@@ -6,7 +6,7 @@ use ogame_core::{building_type::BuildingType, planet::Planet};
 use web_sys::MouseEvent;
 
 use crate::components::{
-    context_menu::{views::BuildingContextMenu, ContextMenu, ContextMenuContext},
+    context_menu::{views::BuildingContextMenu, ContextMenuContext},
     tree_row::{IntoTreeItem, TreeItem},
 };
 
@@ -37,7 +37,8 @@ pub struct PlanetWithBuildingsTreeItem(pub Planet);
 impl IntoTreeItem for PlanetWithBuildingsTreeItem {
     fn into_tree_item(&self) -> TreeItem {
         let view = view! {
-            {self.0.id.clone()}
+            #[allow(unused_braces)]
+            { self.0.id.clone() }
         }
         .into_view();
 

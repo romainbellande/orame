@@ -4,21 +4,26 @@ use serde::{Deserialize, Serialize};
 use web_time::UNIX_EPOCH;
 
 use crate::{
-    building_type::BuildingType,
-    coordinates::Coordinates,
+    /* building_type::BuildingType,
+    coordinates::Coordinates, */
     error::*,
-    fleet::Fleet,
+    // fleet::Fleet,
     flight::{Flight, MissionType},
-    planet::Planet,
+    // planet::Planet,
     protocol::Protocol,
-    resources::Resources,
-    ship_type::ShipType,
+    // resources::Resources,
+    // ship_type::ShipType,
+    ship::Ship,
+    storage::Storage,
 };
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Game {
-    pub player_id: String,
-    pub planets: BTreeMap<String, Planet>,
+    pub user_id: String,
+    // pub planets: BTreeMap<String, Planet>,
+    pub ships: BTreeMap<String, Ship>,
+    pub flights: BTreeMap<String, Flight>,
+    pub storages: BTreeMap<String, Storage>,
 }
 
 impl Default for Game {
@@ -30,8 +35,11 @@ impl Default for Game {
 impl Game {
     pub fn new() -> Self {
         Game {
-            player_id: "".to_string(),
-            planets: BTreeMap::new(),
+            user_id: "".to_string(),
+            ships: BTreeMap::new(),
+            flights: BTreeMap::new(),
+            storages: BTreeMap::new(),
+            // planets: BTreeMap::new(),
         }
     }
 
@@ -40,9 +48,9 @@ impl Game {
             .duration_since(UNIX_EPOCH)?
             .as_secs() as usize;
 
-        for planet in self.planets.values_mut() {
+        /* for planet in self.planets.values_mut() {
             planet.tick(now)?;
-        }
+        } */
 
         Ok(())
     }
@@ -53,46 +61,45 @@ impl Game {
         match msg {
             // Servec -> Client
             Protocol::Game(game) => {
-                self.player_id = game.player_id;
-                self.planets = game.planets;
+                *self = game;
             }
             Protocol::InboundFleet(flight) => {
-                if let Some(ref mut planet) = self.planets.get_mut(&flight.from_planet_id) {
+                /* if let Some(ref mut planet) = self.planets.get_mut(&flight.from_planet_id) {
                     planet.flights.push(flight.clone());
                 }
                 if let Some(ref mut planet) = self.planets.get_mut(&flight.to_planet_id) {
                     planet.flights.push(flight);
-                }
+                } */
             }
 
             // Client -> Server
-            Protocol::UpgradeBuilding {
+            /* Protocol::UpgradeBuilding {
                 planet_id,
                 building_type,
             } => {
                 self.upgrade_building(planet_id, building_type)?;
-            }
-            Protocol::BuyShip {
+            } */
+            /* Protocol::BuyShip {
                 planet_id,
                 ship_type,
                 amount,
             } => {
                 self.buy_ship(planet_id, ship_type, amount)?;
-            }
+            } */
             Protocol::SendShips {
-                from_planet_id,
+                from_id,
                 ships,
                 resources,
                 ..
             } => {
-                self.pay_for_flight(from_planet_id, ships, resources)?;
+                // self.pay_for_flight(from_id, ships, resources)?;
             }
         }
 
         Ok(())
     }
 
-    fn upgrade_building(&mut self, planet_id: String, building_type: BuildingType) -> Result<()> {
+    /* fn upgrade_building(&mut self, planet_id: String, building_type: BuildingType) -> Result<()> {
         self.tick()?;
 
         self.planets
@@ -101,7 +108,7 @@ impl Game {
             .upgrade_building(building_type)?;
 
         Ok(())
-    }
+    } */
 
     /* fn process_flights(&mut self) -> Result<()> {
         self.tick()?;
@@ -130,7 +137,7 @@ impl Game {
         Ok(())
     } */
 
-    fn buy_ship(&mut self, planet_id: String, ship_type: ShipType, amount: usize) -> Result<()> {
+    /* fn buy_ship(&mut self, planet_id: String, ship_type: ShipType, amount: usize) -> Result<()> {
         self.planets
             .get_mut(&planet_id)
             .ok_or(Error::NotFound(format!("Planet id: {planet_id}")))?
@@ -142,8 +149,8 @@ impl Game {
     fn pay_for_flight(
         &mut self,
         planet_id: String,
-        ships: BTreeMap<ShipType, usize>,
-        resources: Resources,
+        ships: Vec<String>,
+        resources: BTreeMap<String, f64>,
     ) -> Result<()> {
         let origin_planet = self
             .planets
@@ -158,29 +165,24 @@ impl Game {
         // TODO: add deuterium consumption
 
         Ok(())
-    }
+    } */
 
     pub fn create_flight(
         &self,
         id: String,
-        from_planet_id: String,
-        to_planet_id: String,
-        to_planet_coordinates: &Coordinates,
-        ships: Fleet,
-        resources: Resources,
+        from_id: String,
+        to_id: String,
+        ships: Vec<Ship>,
+        resources: BTreeMap<String, usize>,
         mission: MissionType,
         speed_ratio: usize,
     ) -> Result<Flight> {
         Flight::create(
             id,
-            self.player_id.clone(),
-            self.planets
-                .get(&from_planet_id)
-                .ok_or(Error::NotFound(format!("Planet id: {from_planet_id}")))?,
-            to_planet_id.clone(),
-            to_planet_coordinates,
+            self.user_id.clone(),
+            from_id,
+            to_id,
             ships,
-            resources,
             mission,
             speed_ratio,
         )

@@ -21,7 +21,7 @@ pub async fn login(
     Extension(conn): Extension<Arc<PrismaClient>>,
     Json(credentials): Json<Credentials>,
 ) -> Result<(HeaderMap, Redirect), WebError> {
-    let body: body::AuthBody = service::login(conn, credentials).await?;
+    let body: body::AuthBody = service::login(&conn, credentials).await?;
 
     let cookie = format!("access_token={}; SameSite=Lax; Path=/", body.access_token);
     let mut headers = HeaderMap::new();
@@ -35,7 +35,7 @@ pub async fn register(
     Extension(conn): Extension<Arc<PrismaClient>>,
     Json(credentials): Json<Credentials>,
 ) -> Result<(HeaderMap, Redirect), WebError> {
-    let body: body::AuthBody = service::register(conn, credentials).await?;
+    let body: body::AuthBody = service::register(&conn, credentials).await?;
 
     let cookie = format!("access_token={}; SameSite=Lax; Path=/", body.access_token);
     let mut headers = HeaderMap::new();

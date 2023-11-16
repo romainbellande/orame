@@ -3,10 +3,8 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    building_type::BuildingType,
     flight::{Flight, MissionType},
     game::Game,
-    resources::Resources,
     ship_type::ShipType,
 };
 
@@ -17,21 +15,21 @@ pub enum Protocol {
     InboundFleet(Flight),
 
     // Client -> Server
-    UpgradeBuilding {
+    /* UpgradeBuilding {
         planet_id: String,
         building_type: BuildingType,
-    },
-    BuyShip {
+    }, */
+    /* BuyShip {
         planet_id: String,
         ship_type: ShipType,
         amount: usize,
-    },
+    }, */
     SendShips {
-        from_planet_id: String,
-        to_planet_id: String,
-        ships: BTreeMap<ShipType, usize>,
+        from_id: String,
+        to_id: String,
+        ships: Vec<String>,
         mission: MissionType,
-        resources: Resources,
         speed_ratio: usize,
+        resources: BTreeMap<String, usize>,
     },
 }

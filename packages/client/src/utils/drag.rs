@@ -1,5 +1,5 @@
 pub use leptos::*;
-use leptos::{ev::mousedown, html::Div, leptos_dom::logging::console_log};
+use leptos::{ev::mousedown, html::Div};
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{self, MouseEvent};
 
