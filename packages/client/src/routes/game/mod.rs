@@ -1,24 +1,17 @@
-use std::collections::BTreeMap;
-
-use futures::channel::mpsc::Receiver;
-use leptos::ev::{click, contextmenu};
-use leptos::html::Div;
-use leptos::leptos_dom::logging::console_log;
-use leptos::logging::log;
-use leptos::*;
-use leptos_router::Outlet;
-use leptos_use::use_event_listener;
-use web_sys::MouseEvent;
 mod home;
-mod planets;
+// mod planets;
+
 use crate::components::context_menu::ContextMenu;
+use crate::components::sidenav::SideNav;
 use crate::components::window::Windows;
-use crate::components::{header::Header, sidenav::SideNav};
 use crate::utils::{GameWrapper, Socket};
+use futures::channel::mpsc::Receiver;
 use futures::StreamExt;
 pub use home::HomePage;
+use leptos::*;
+use leptos_router::Outlet;
 use ogame_core::{game::Game, protocol::Protocol};
-pub use planets::{PlanetIDPage, PlanetsPage};
+// pub use planets::{PlanetIDPage, PlanetsPage};
 use wasm_bindgen::{prelude::Closure, JsCast};
 
 fn set_tick_interval(game: RwSignal<GameWrapper>) {

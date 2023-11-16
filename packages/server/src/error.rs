@@ -31,6 +31,9 @@ pub enum Error {
 
     #[error("Serialization error")]
     Serialization(String),
+
+    #[error("Prisma error")]
+    Prisma(String),
 }
 
 impl From<prisma_client::NewClientError> for Error {
@@ -72,6 +75,12 @@ impl<T> From<tokio::sync::mpsc::error::TrySendError<T>> for Error {
 impl From<serde_cbor::Error> for Error {
     fn from(e: serde_cbor::Error) -> Self {
         Self::Serialization(e.to_string())
+    }
+}
+
+impl From<prisma_client::Error> for Error {
+    fn from(e: prisma_client::Error) -> Self {
+        Self::Prisma(e.to_string())
     }
 }
 

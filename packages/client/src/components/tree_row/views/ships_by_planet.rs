@@ -22,7 +22,7 @@ impl IntoTreeItem for ShipsByPlanetTreeItem {
                 .0
                 .clone()
                 .into_iter()
-                .map(|(id, planet)| PlanetWithShipsTreeItem(planet).into_tree_item())
+                .map(|(_, planet)| PlanetWithShipsTreeItem(planet).into_tree_item())
                 .collect(),
         }
     }
@@ -33,6 +33,7 @@ pub struct PlanetWithShipsTreeItem(pub Planet);
 impl IntoTreeItem for PlanetWithShipsTreeItem {
     fn into_tree_item(&self) -> TreeItem {
         let view = view! {
+            #[allow(unused_braces)]
             {self.0.id.clone()}
         }
         .into_view();

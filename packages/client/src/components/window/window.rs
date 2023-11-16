@@ -1,6 +1,5 @@
 use crate::utils::{classnames, Classname, Drag};
 
-use leptos::leptos_dom::logging::console_log;
 pub use leptos::*;
 
 use super::windows_context::WindowsContext;

@@ -1,7 +1,7 @@
 use crate::utils::error::*;
 use futures::{channel::mpsc::Sender, SinkExt};
 use leptos::spawn_local;
-use ogame_core::{building_type::BuildingType, game::Game, protocol::Protocol};
+use ogame_core::{game::Game, protocol::Protocol};
 
 #[derive(Clone)]
 pub struct GameWrapper {
@@ -17,7 +17,7 @@ impl GameWrapper {
         }
     }
 
-    pub fn upgrade_building(
+    /* pub fn upgrade_building(
         &mut self,
         planet_id: String,
         building_type: BuildingType,
@@ -26,7 +26,7 @@ impl GameWrapper {
             planet_id,
             building_type,
         })
-    }
+    } */
 
     fn action(&mut self, message: Protocol) -> Result<()> {
         self.game.process_message(message.clone())?;

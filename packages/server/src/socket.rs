@@ -15,7 +15,7 @@ use futures::{
     SinkExt,
 };
 use log::*;
-use prisma_client::*;
+use prisma_client::PrismaClient;
 use tokio::sync::mpsc::Receiver;
 use tower_http::services::{ServeDir, ServeFile};
 

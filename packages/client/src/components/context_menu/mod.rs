@@ -38,14 +38,14 @@ pub fn ContextMenu() -> impl IntoView {
             <Show
                 when=move || context().visible
             >
-                <div class="bg-gray-800 rounded shadow-lg">
+                <div class="bg-gray-800 rounded shadow-lg opacity-80">
                     <ul class="list-reset">
                         <For
                             each=move || context().rows.into_context_menu().rows
                             key=move |row| row.to_string()
                             let:row
                         >
-                            <li class="hover:bg-gray-700">
+                            <li class="hover:bg-gray-700 h-8 text-xs">
                                 <button class="block px-4 py-2 text-white no-underline" on:click=row_event(row.clone())>
                                     {row.to_string()}
                                 </button>
