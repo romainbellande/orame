@@ -6,4 +6,5 @@ dist
 Cargo.lock
 .env
 
-universe_gen/data/*
+packages/universe_gen/data/*
+data/game_data.cbor

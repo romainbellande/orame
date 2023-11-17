@@ -64,7 +64,7 @@ impl User {
         let db_user = conn
             .user()
             .find_first(vec![user::email::equals(email.clone())])
-            .with(user::ships::fetch(vec![]).with(ship::storage::fetch()))
+            .with(user::ships::fetch(vec![]))
             .with(user::flights::fetch(vec![]))
             .with(user::storages::fetch(vec![]))
             .exec()
@@ -113,6 +113,7 @@ impl From<User> for ogame_core::game::Game {
             ships: user.ships,
             flights: user.flights,
             storages: user.storages,
+            game_data: Default::default(),
         }
     }
 }
@@ -191,7 +192,7 @@ impl DbModel for User {
         let db_user = conn
             .user()
             .find_first(vec![user::id::equals(id.clone())])
-            .with(user::ships::fetch(vec![]).with(ship::storage::fetch()))
+            .with(user::ships::fetch(vec![]))
             .with(user::flights::fetch(vec![]))
             .with(user::storages::fetch(vec![]))
             .exec()
@@ -210,41 +211,28 @@ impl From<ship::Data> for Ship {
             r#type: db_ship.r#type.into(),
             user_id: db_ship.user_id.clone(),
             position_id: db_ship.position_id.clone(),
-            storage: (*db_ship.storage.unwrap()).into(),
-            flight: db_ship.flight.map(|flight| {
-                flight
-                    .into_iter()
-                    .map(|f| (*f.flight.unwrap()).into())
-                    .collect::<Vec<Flight>>()
-                    .first()
-                    .unwrap()
-                    .clone()
-            }),
+            storage_id: db_ship.storage_id.clone(),
         }
     }
 }
 
 impl DbModel for Ship {
     async fn create(&mut self, conn: &Arc<PrismaClient>) -> Result<&mut Self> {
-        println!("pre-storage_create");
-        self.storage.create(conn).await?;
+        let mut storage = Storage::new(self.user_id.clone());
+        storage.create(conn).await?;
 
-        println!("post-storage_create {:#?}", self.storage);
-
-        println!("pre-ship_create {:#?}", self);
         let db_ship = conn
             .ship()
             .create(
                 user::id::equals(self.user_id.clone()),
                 self.position_id.clone(),
                 self.r#type.clone().into(),
-                storage::id::equals(self.storage.id.clone()),
+                storage::id::equals(storage.id.clone()),
                 vec![],
             )
             .exec()
             .await
             .map_err(|e| Error::CannotCreate(e.to_string()))?;
-        println!("post-ship_create");
 
         self.id = db_ship.id.clone();
 
@@ -291,7 +279,7 @@ impl From<flight::Data> for Flight {
                 .ships
                 .unwrap()
                 .into_iter()
-                .map(|s| (*s.ship.unwrap().unwrap()).into())
+                .map(|s| (*s.ship.unwrap().unwrap()).id.clone())
                 .collect(),
             arrival_time: db_flight.arrival_time as usize,
             return_time: db_flight

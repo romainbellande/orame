@@ -24,13 +24,14 @@ pub struct Game {
     pub ships: BTreeMap<String, Ship>,
     pub flights: BTreeMap<String, Flight>,
     pub storages: BTreeMap<String, Storage>,
+    pub game_data: universe_gen::GameData,
 }
 
-impl Default for Game {
+/* impl Default for Game {
     fn default() -> Self {
         Self::new()
     }
-}
+} */
 
 impl Game {
     pub fn new() -> Self {
@@ -39,6 +40,7 @@ impl Game {
             ships: BTreeMap::new(),
             flights: BTreeMap::new(),
             storages: BTreeMap::new(),
+            game_data: Default::default(),
             // planets: BTreeMap::new(),
         }
     }
@@ -172,7 +174,7 @@ impl Game {
         id: String,
         from_id: String,
         to_id: String,
-        ships: Vec<Ship>,
+        ships: Vec<String>,
         resources: BTreeMap<String, usize>,
         mission: MissionType,
         speed_ratio: usize,

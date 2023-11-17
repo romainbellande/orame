@@ -27,3 +27,4 @@ dotenv = "0.15.0"
 prisma-client = { path = "../prisma-client" }
 http = "0.2.9"
 thiserror = "1.0.50"
+lazy_static = "1.4.0"

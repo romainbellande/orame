@@ -22,3 +22,10 @@ async fn main() {
 async fn run() -> Result<()> {
     socket::run().await
 }
+
+lazy_static::lazy_static! {
+    pub static ref GAME_DATA: ogame_core::GameData = {
+        let data = std::fs::read("../../data/game_data.cbor").unwrap();
+        serde_cbor::from_slice(&data[..]).unwrap()
+    };
+}

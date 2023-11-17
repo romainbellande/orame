@@ -13,7 +13,8 @@ pub async fn apply_to_game_with<F: FnMut(&mut Game) -> Result<T>, T>(
     conn: &Arc<PrismaClient>,
     mut cb: F,
 ) -> Result<T> {
-    let mut game = User::fetch(user_id.clone(), conn).await?.into();
+    let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
+    game.game_data = crate::GAME_DATA.clone();
 
     let ret = cb(&mut game);
 
@@ -29,7 +30,8 @@ pub async fn apply_to_game_with_async<Fut: Future<Output = Result<Game>>, F: FnM
     conn: &Arc<PrismaClient>,
     mut cb: F,
 ) -> Result<()> {
-    let game = User::fetch(user_id.clone(), conn).await?.into();
+    let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
+    game.game_data = crate::GAME_DATA.clone();
 
     let game = cb(game).await?;
 

@@ -4,6 +4,7 @@ mod home;
 use crate::components::context_menu::ContextMenu;
 use crate::components::sidenav::SideNav;
 use crate::components::window::Windows;
+use crate::error::*;
 use crate::utils::{GameWrapper, Socket};
 use futures::channel::mpsc::Receiver;
 use futures::StreamExt;
@@ -11,6 +12,7 @@ pub use home::HomePage;
 use leptos::*;
 use leptos_router::Outlet;
 use ogame_core::{game::Game, protocol::Protocol};
+use reqwasm::http::Request;
 // pub use planets::{PlanetIDPage, PlanetsPage};
 use wasm_bindgen::{prelude::Closure, JsCast};
 
@@ -28,6 +30,31 @@ fn set_tick_interval(game: RwSignal<GameWrapper>) {
     cb.forget(); // leak the closure
 }
 
+pub async fn get_game_data() -> Result<ogame_core::GameData> {
+    let data = Request::get("/public/game_data.cbor")
+        .send()
+        .await?
+        .binary()
+        .await?;
+
+    let game_data = serde_cbor::from_slice(&data[..])?;
+
+    Ok(game_data)
+}
+
+pub async fn init_game(game: RwSignal<GameWrapper>, new_game: Game) -> Result<()> {
+    let game_data = get_game_data().await?;
+
+    game.update(|game| {
+        **game = new_game;
+        game.game_data = game_data;
+    });
+
+    set_tick_interval(game);
+
+    Ok(())
+}
+
 pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<Protocol>) {
     let mut ws: Socket<Protocol> = Socket::connect("ws://localhost:8080/ws").await;
 
@@ -35,9 +62,13 @@ pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<P
 
     spawn_local(async move {
         while let Some(msg) = recv.next().await {
-            game.update(|game| {
-                game.process_message(msg).unwrap();
-            });
+            if let Protocol::Game(new_game) = msg {
+                init_game(game, new_game).await.unwrap();
+            } else {
+                game.update(|game| {
+                    game.process_message(msg).unwrap();
+                });
+            }
         }
     });
 
@@ -51,8 +82,6 @@ pub fn GamePage() -> impl IntoView {
     let (tx, rx) = futures::channel::mpsc::channel(1);
 
     let game_context = create_rw_signal(crate::utils::GameWrapper::new(Game::new(), tx));
-
-    set_tick_interval(game_context);
 
     spawn_local(connect_socket(game_context, rx));
 
