@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use plotters::coord::types::RangedCoordf32;
 use plotters::prelude::*;
 
-use super::{consts::*, System};
+use universe_gen::{consts::*, System};
 
 pub fn draw(systems: &Vec<System>, filename: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut stdout = io::stdout();

@@ -1,0 +1,10 @@
+version: 3
+
+tasks:
+  gen:
+    desc: generate the universe
+    status:
+      - ! test -f ../../data/game_data.cbor
+    cmds:
+      - cargo run -- ../../data
+

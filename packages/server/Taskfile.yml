@@ -4,12 +4,16 @@ includes:
   prisma:
     taskfile: ../prisma-client/Taskfile.yml
     dir: ../prisma-client
+  universe:
+    taskfile: ../universe_gen/Taskfile.yml
+    dir: ../universe_gen
 
 tasks:
   start:
     desc: serve the app
     deps:
       - task: prisma:gen
+      - task: universe:gen
     cmds:
       - cargo watch -x run
 

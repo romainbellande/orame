@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use rand::Rng;
 
-use super::{consts::*, System, SystemId};
+use universe_gen::{consts::*, System, SystemId};
 
 pub fn systems() -> Vec<System> {
     print!("{:<30}", "Generating systems");

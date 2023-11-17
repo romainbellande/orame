@@ -4,9 +4,10 @@ pub fn to_files(
     game_data: &crate::GameData,
     folder: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // super::plot::draw(systems, &format!("{folder}/galaxy.png"))?;
+    super::plot::draw(&game_data.systems, &format!("{folder}/galaxy.png"))?;
 
     cbor(game_data, &format!("{folder}/game_data.cbor"))?;
+    json(game_data, &format!("{folder}/game_data.json"))?;
 
     Ok(())
 }
