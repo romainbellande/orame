@@ -15,6 +15,6 @@ pub mod ship_type;
 
 pub mod ship;
 
-pub use universe_gen::GameData;
+pub use universe_gen::*;
 
 const UNIVERSE_SPEED: usize = 8;

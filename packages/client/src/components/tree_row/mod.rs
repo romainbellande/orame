@@ -65,7 +65,9 @@ where
     view! {
         <div class="flex flex-col">
             <div class=item_classes on:click=move |_| { if level > 0 {set_collapsed(!collapsed())}}>
-                <i class=arrow_classes> </i>
+                <span class="fixed">
+                    <i class=arrow_classes> </i>
+                </span>
                 {move || tree_item()().view}
             </div>
             <For

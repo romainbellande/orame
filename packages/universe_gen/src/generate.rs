@@ -2,17 +2,22 @@ use std::collections::BTreeMap;
 
 use rand::Rng;
 
-use universe_gen::{consts::*, System, SystemId};
+use universe_gen::{consts::*, Planet, PlanetId, Station, StationId, System, SystemId};
 
-pub fn systems() -> Vec<System> {
+pub fn systems() -> BTreeMap<SystemId, System> {
     print!("{:<30}", "Generating systems");
 
-    let mut systems: Vec<_> = generate(SYSTEM_NB, SYSTEM_GAP)
+    let mut systems: BTreeMap<_, _> = generate(SYSTEM_NB, SYSTEM_GAP)
         .iter()
-        .map(|(x, y)| System {
-            x: *x,
-            y: *y,
-            links: vec![],
+        .map(|(x, y)| {
+            let id = cuid2::cuid().to_string();
+            let system = System {
+                id: id.clone(),
+                x: *x,
+                y: *y,
+                links: vec![],
+            };
+            (id, system)
         })
         .collect();
 
@@ -23,20 +28,18 @@ pub fn systems() -> Vec<System> {
     systems
 }
 
-fn links(systems: &mut Vec<System>) {
+fn links(systems: &mut BTreeMap<SystemId, System>) {
     print!("{:<30}\r", "Generating system links");
 
     let mut nb_links = 0;
 
-    for i in 0..systems.len() {
-        for j in 0..systems.len() {
-            if i != j {
+    let mut links = BTreeMap::new();
+    for system in systems.values() {
+        for system2 in systems.values() {
+            if system.id != system2.id {
                 let distance = {
-                    let system1 = &systems[i];
-                    let system2 = &systems[j];
-
-                    (((system1.x as i64 - system2.x as i64).pow(2)
-                        + (system1.y as i64 - system2.y as i64).pow(2)) as f64)
+                    (((system.x as i64 - system2.x as i64).pow(2)
+                        + (system.y as i64 - system2.y as i64).pow(2)) as f64)
                         .sqrt()
                         .abs()
                 };
@@ -44,42 +47,96 @@ fn links(systems: &mut Vec<System>) {
                 if distance < (SYSTEM_GAP + SYSTEM_GAP / 3) as f64 {
                     nb_links += 1;
                     print!("{:<30}{nb_links}\r", "Generating system links");
-                    systems[i].links.push(j as i32);
+                    let system2_id = system2.id.clone();
+                    links
+                        .entry(system.id.clone())
+                        .or_insert(vec![])
+                        .push(system2_id);
                 }
             }
         }
     }
 
+    for link in links {
+        systems.get_mut(&link.0).unwrap().links = link.1;
+    }
+
     println!("{:<30}{nb_links}", "Generating system links");
 }
 
-pub fn planets(system_len: usize) -> BTreeMap<SystemId, Vec<(i32, i32)>> {
+pub fn planets(systems: &BTreeMap<SystemId, System>) -> BTreeMap<PlanetId, Planet> {
     print!("{:<30}", "Generating planets\r");
 
     let mut planets = BTreeMap::new();
 
-    for i in 0..system_len {
+    for (i, system) in systems.values().enumerate() {
         print!(
             "{:<30}System {}/{}, Planets {}\r",
             "Generating planets",
             i,
-            system_len,
+            systems.len(),
             PLANET_NB * PLANET_NB * i as i32
         );
-        planets.insert(i as i32, generate(PLANET_NB, PLANET_GAP));
+
+        for (x, y) in generate(PLANET_NB, PLANET_GAP) {
+            let id = cuid2::cuid().to_string();
+            let planet = Planet {
+                id: id.clone(),
+                system_id: system.id.clone(),
+                x,
+                y,
+            };
+            planets.insert(id, planet);
+        }
     }
 
     println!(
         "{:<30}System {}/{}, Planets {}\r",
         "Generating planets",
-        system_len,
-        system_len,
-        PLANET_NB * PLANET_NB * system_len as i32
+        systems.len(),
+        systems.len(),
+        PLANET_NB * PLANET_NB * systems.len() as i32
     );
 
     planets
 }
 
+pub fn stations(systems: &BTreeMap<SystemId, System>) -> BTreeMap<StationId, Station> {
+    print!("{:<30}", "Generating stations\r");
+
+    let mut stations = BTreeMap::new();
+
+    for (i, system) in systems.values().enumerate() {
+        print!(
+            "{:<30}System {}/{}, Stations {}\r",
+            "Generating stations",
+            i,
+            systems.len(),
+            STATION_NB * STATION_NB * i as i32
+        );
+
+        for (x, y) in generate(STATION_NB, STATION_GAP) {
+            let id = cuid2::cuid().to_string();
+            let station = Station {
+                id: id.clone(),
+                system_id: system.id.clone(),
+                x,
+                y,
+            };
+            stations.insert(id, station);
+        }
+    }
+
+    println!(
+        "{:<30}System {}/{}, Stations {}\r",
+        "Generating stations",
+        systems.len(),
+        systems.len(),
+        STATION_NB * STATION_NB * systems.len() as i32
+    );
+
+    stations
+}
 fn generate(nb: i32, gap: i32) -> Vec<(i32, i32)> {
     let mut res = vec![];
 
