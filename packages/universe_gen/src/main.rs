@@ -19,9 +19,14 @@ fn run(folder: Option<String>) -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let systems = generate::systems();
-    let planets = generate::planets(systems.len());
+    let planets = generate::planets(&systems);
+    let stations = generate::stations(&systems);
 
-    let game_data = GameData { systems, planets };
+    let game_data = GameData {
+        systems,
+        planets,
+        stations,
+    };
 
     export::to_files(&game_data, &folder)?;
 

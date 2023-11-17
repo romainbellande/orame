@@ -32,8 +32,8 @@ pub struct PlanetWithShipsTreeItem(pub Planet);
 
 impl IntoTreeItem for PlanetWithShipsTreeItem {
     fn into_tree_item(&self) -> TreeItem {
+        #[allow(unused_braces)]
         let view = view! {
-            #[allow(unused_braces)]
             {self.0.id.clone()}
         }
         .into_view();
