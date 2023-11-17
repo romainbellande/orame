@@ -7,4 +7,5 @@ pub use planets::*;
 pub use ships_by_planet::*; */
 
 pub mod ships;
+pub mod storages;
 pub mod universe;

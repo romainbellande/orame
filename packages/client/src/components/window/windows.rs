@@ -4,6 +4,7 @@ use leptos::*;
 use super::PlanetsWindow;
 use super::ShipsByPlanetWindow; */
 use super::ShipsWindow;
+use super::StoragesWindow;
 use super::UniverseWindow;
 use super::WindowsContext;
 
@@ -17,5 +18,6 @@ pub fn Windows() -> impl IntoView {
         <ShipsByPlanetWindow /> */
         <ShipsWindow />
         <UniverseWindow />
+        <StoragesWindow />
     }
 }

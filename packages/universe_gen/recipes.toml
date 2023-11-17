@@ -1,0 +1,19 @@
+[hydrogen]
+ticks = 3600
+[hydrogen.inputs]
+[hydrogen.outputs]
+hydrogen = 1
+
+[carbon]
+ticks = 3600
+[carbon.inputs]
+[carbon.outputs]
+carbon = 1
+
+[fuel]
+ticks = 3600
+[fuel.inputs]
+hydrogen = 2
+carbon = 1
+[fuel.outputs]
+fuel = 1

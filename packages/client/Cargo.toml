@@ -29,3 +29,4 @@ reqwest = { version = "0.11.22", features = ["json"] }
 uuid = { version = "1.5.0", features = ["v4"] }
 leptos-use = "0.8.2"
 reqwasm = "0.5.0"
+lazy_static = "1.4.0"
