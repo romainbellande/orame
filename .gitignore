@@ -7,4 +7,5 @@ Cargo.lock
 .env
 
 packages/universe_gen/data/*
-data/game_data.cbor
+data/*
+

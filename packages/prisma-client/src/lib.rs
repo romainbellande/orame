@@ -9,6 +9,7 @@ use std::{
     sync::Arc,
 };
 
+pub use db::new_client_with_url;
 pub use db::PrismaClient;
 use db::*;
 // pub use fetch_game::*;
