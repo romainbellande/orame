@@ -1,6 +1,6 @@
 use std::{cell::RefCell, collections::BTreeMap, rc::Rc};
 
-use leptos::{leptos_dom::logging::console_log, *};
+use leptos::*;
 
 #[derive(Clone)]
 pub struct WindowsContext {
@@ -21,9 +21,7 @@ impl WindowsContext {
     }
 
     pub fn toggle(&self, id: &str) {
-        console_log("Toggling window>>>>");
         if let Some(window) = self.windows.borrow().get(id) {
-            console_log("Toggling window");
             window.update(|v| *v = !*v);
         }
     }

@@ -9,8 +9,7 @@ pub struct Ship {
     pub r#type: ShipType,
     pub user_id: String,
     pub position_id: String,
-    pub storage: Storage,
-    pub flight: Option<Flight>,
+    pub storage_id: String,
 }
 
 impl Ship {
@@ -18,10 +17,9 @@ impl Ship {
         Self {
             id: "".to_string(),
             r#type,
-            storage: Storage::new(user_id.clone()),
             user_id,
             position_id: "".to_string(),
-            flight: None,
+            storage_id: "".to_string(),
         }
     }
 }

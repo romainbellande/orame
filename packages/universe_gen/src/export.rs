@@ -1,17 +1,12 @@
 use std::io::{self, Write};
 
 pub fn to_files(
-    systems: &Vec<crate::System>,
-    planets: &std::collections::BTreeMap<crate::SystemId, Vec<(i32, i32)>>,
+    game_data: &crate::GameData,
     folder: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    super::plot::draw(systems, &format!("{folder}/galaxy.png"))?;
+    // super::plot::draw(systems, &format!("{folder}/galaxy.png"))?;
 
-    json(systems, &format!("{folder}/systems.json"))?;
-    json(planets, &format!("{folder}/planets.json"))?;
-
-    cbor(systems, &format!("{folder}/systems.cbor"))?;
-    cbor(planets, &format!("{folder}/planets.cbor"))?;
+    cbor(game_data, &format!("{folder}/game_data.cbor"))?;
 
     Ok(())
 }
