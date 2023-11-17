@@ -1,4 +1,5 @@
 mod home;
+
 // mod planets;
 
 use crate::components::context_menu::ContextMenu;
@@ -14,6 +15,7 @@ use leptos_router::Outlet;
 use ogame_core::{game::Game, protocol::Protocol};
 use reqwasm::http::Request;
 // pub use planets::{PlanetIDPage, PlanetsPage};
+use lazy_static::lazy_static;
 use wasm_bindgen::{prelude::Closure, JsCast};
 
 fn set_tick_interval(game: RwSignal<GameWrapper>) {
@@ -37,7 +39,8 @@ pub async fn get_game_data() -> Result<ogame_core::GameData> {
         .binary()
         .await?;
 
-    let game_data = serde_cbor::from_slice(&data[..])?;
+    let game_data: ogame_core::GameData = serde_cbor::from_slice(&data[..])?;
+    *crate::GAME_DATA.write().unwrap() = game_data.clone();
 
     Ok(game_data)
 }
