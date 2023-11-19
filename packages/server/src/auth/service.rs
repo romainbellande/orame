@@ -36,8 +36,6 @@ pub async fn login(
         return Err(AuthError::WrongCredentials.into());
     }
 
-    println!("USER: {:#?}", my_user);
-
     authorize(my_user.id)
 }
 
@@ -50,7 +48,6 @@ pub async fn register(
         return Err(AuthError::MissingCredentials.into());
     }
 
-    println!("Pre fetch");
     if let Ok(_) = User::fetch_by_email(credentials.email.clone(), conn).await {
         println!("User already exists");
         return Err(AuthError::UserAlreadyExists.into());
@@ -62,9 +59,7 @@ pub async fn register(
         credentials.password.clone(),
     );
 
-    println!("Pre save");
     new_user.create(conn).await?;
-    println!("Post save");
 
     authorize(new_user.id)
 }

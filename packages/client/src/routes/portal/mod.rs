@@ -37,7 +37,7 @@ pub fn Portal() -> impl IntoView {
             set_error("".to_string());
             let client = reqwest::Client::new();
             let response = client
-                .post(format!("http://10.12.2.42:8080/auth/{}", method))
+                .post(format!("http://localhost:8080/auth/{}", method))
                 .json(&credentials)
                 .send()
                 .await

@@ -59,8 +59,7 @@ pub async fn init_game(game: RwSignal<GameWrapper>, new_game: Game) -> Result<()
 }
 
 pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<Protocol>) {
-    let mut ws: Socket<Protocol> = Socket::connect("ws://10.12.2.42:8080/ws").await;
-    // let mut ws: Socket<Protocol> = Socket::connect("ws://localhost:8080/ws").await;
+    let mut ws: Socket<Protocol> = Socket::connect("ws://localhost:8080/ws").await;
 
     let mut recv = ws.take_receiver().unwrap();
 
