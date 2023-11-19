@@ -4,7 +4,6 @@ use lazy_static::lazy_static;
 use leptos::*;
 
 mod components;
-mod data;
 mod routes;
 mod utils;
 
