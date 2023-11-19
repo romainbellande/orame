@@ -87,7 +87,6 @@ impl From<UserError> for WebError {
 
 impl From<prisma_client::Error> for WebError {
     fn from(e: prisma_client::Error) -> Self {
-        println!("PRISMA ERROR ?!?!?! {:#?}", e);
         WebError {
             code: 500,
             status: HyperStatusCode::INTERNAL_SERVER_ERROR,
