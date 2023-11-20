@@ -27,6 +27,7 @@ impl IntoTreeItem for StoragesTreeItem {
                 .into_iter()
                 .map(|(_, storage)| StorageTreeItem(storage).into_tree_item())
                 .collect(),
+            collapsed: create_rw_signal(false),
         }
     }
 }
@@ -49,6 +50,7 @@ impl IntoTreeItem for StorageTreeItem {
             view,
             id: self.0.id.clone(),
             children: vec![ItemsTreeItem(self.0.items.clone()).into_tree_item()],
+            collapsed: create_rw_signal(true),
         }
     }
 }
@@ -74,6 +76,7 @@ impl IntoTreeItem for ItemsTreeItem {
                 .into_iter()
                 .map(|(name, amount)| ItemTreeItem(name, amount).into_tree_item())
                 .collect(),
+            collapsed: create_rw_signal(true),
         }
     }
 }
@@ -96,6 +99,7 @@ impl IntoTreeItem for ItemTreeItem {
             view,
             id: self.0.clone(),
             children: vec![],
+            collapsed: create_rw_signal(true),
         }
     }
 }

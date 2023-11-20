@@ -58,7 +58,11 @@ pub async fn init_game(game: RwSignal<GameWrapper>, new_game: Game) -> Result<()
     Ok(())
 }
 
-pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<Protocol>) {
+pub async fn connect_socket(
+    game: RwSignal<GameWrapper>,
+    mut game_rx: Receiver<Protocol>,
+    ready: RwSignal<bool>,
+) {
     let mut ws: Socket<Protocol> = Socket::connect("ws://localhost:8080/ws").await;
 
     let mut recv = ws.take_receiver().unwrap();
@@ -67,6 +71,7 @@ pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<P
         while let Some(msg) = recv.next().await {
             if let Protocol::Game(new_game) = msg {
                 init_game(game, new_game).await.unwrap();
+                ready.set(true);
             } else {
                 game.update(|game| {
                     game.process_message(msg).unwrap();
@@ -83,21 +88,27 @@ pub async fn connect_socket(game: RwSignal<GameWrapper>, mut game_rx: Receiver<P
 #[component]
 pub fn GamePage() -> impl IntoView {
     let (tx, rx) = futures::channel::mpsc::channel(1);
+    let ready = create_rw_signal(false);
 
     let game_context = create_rw_signal(crate::utils::GameWrapper::new(Game::new(), tx));
 
-    spawn_local(connect_socket(game_context, rx));
+    spawn_local(connect_socket(game_context, rx, ready));
 
     provide_context(game_context);
 
     view! {
-         <div class="flex max-w-full max-h-full font-shentox" oncontextmenu="event.preventDefault();">
-            <ContextMenu />
-            <Windows />
-            <SideNav />
-            <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map opacity-30" >
-                <Outlet />
-            </main>
-        </div>
+         // <div class="flex max-w-full max-h-full font-shentox" oncontextmenu="event.preventDefault();">
+        <Show
+            when={ready}
+        >
+             <div class="text-white flex max-w-full max-h-full font-shentox">
+                <ContextMenu />
+                <Windows />
+                <SideNav />
+                <main class="min-h-screen flex flex-col w-screen space-y-4 bg-gray-900 bg-map opacity-30" >
+                    <Outlet />
+                </main>
+            </div>
+        </Show>
     }
 }

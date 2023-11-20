@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use crate::{flight::Flight, ship_type::ShipType, storage::Storage};
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct Ship {
     pub id: String,
     pub r#type: ShipType,

@@ -14,7 +14,7 @@ impl WindowsContext {
         }
     }
 
-    pub fn register(&mut self, id: String) -> RwSignal<bool> {
+    pub fn register(&self, id: String) -> RwSignal<bool> {
         let signal = create_rw_signal(false);
         self.windows.borrow_mut().insert(id, signal.clone());
         signal
