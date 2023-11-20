@@ -1,5 +1,5 @@
 pub const GALAXY_SIZE: i32 = 100000; // on one axis
-pub const SYSTEM_NB: i32 = 2; // on one axis
+pub const SYSTEM_NB: i32 = 4; // on one axis
 pub const SYSTEM_SIZE: i32 = 1000; // on one axis
 pub const PLANET_NB: i32 = 3; // on one axis
 pub const SYSTEM_GAP: i32 = GALAXY_SIZE / SYSTEM_NB;

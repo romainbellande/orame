@@ -1,18 +1,36 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, io::Read};
 
 use rand::Rng;
 
 use universe_gen::{consts::*, Planet, PlanetId, Station, StationId, System, SystemId};
 
+pub fn parse_system_names() -> Vec<String> {
+    let mut res = vec![];
+
+    let mut file = std::fs::File::open("./data/system_names.txt").unwrap();
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).unwrap();
+
+    for line in contents.lines() {
+        res.push(line.to_string());
+    }
+
+    res
+}
+
 pub fn systems() -> BTreeMap<SystemId, System> {
     print!("{:<30}", "Generating systems");
 
+    let system_names = parse_system_names();
+
     let mut systems: BTreeMap<_, _> = generate(SYSTEM_NB, SYSTEM_GAP)
         .iter()
-        .map(|(x, y)| {
+        .enumerate()
+        .map(|(i, (x, y))| {
             let id = cuid2::cuid().to_string();
             let system = System {
                 id: id.clone(),
+                name: system_names[i].clone(),
                 x: *x,
                 y: *y,
                 links: vec![],
@@ -78,10 +96,11 @@ pub fn planets(systems: &BTreeMap<SystemId, System>) -> BTreeMap<PlanetId, Plane
             PLANET_NB * PLANET_NB * i as i32
         );
 
-        for (x, y) in generate(PLANET_NB, PLANET_GAP) {
+        for (j, (x, y)) in generate(PLANET_NB, PLANET_GAP).into_iter().enumerate() {
             let id = cuid2::cuid().to_string();
             let planet = Planet {
                 id: id.clone(),
+                name: system.name.clone() + " " + &(j + 1).to_string(),
                 system_id: system.id.clone(),
                 x,
                 y,
@@ -104,6 +123,8 @@ pub fn planets(systems: &BTreeMap<SystemId, System>) -> BTreeMap<PlanetId, Plane
 pub fn stations(systems: &BTreeMap<SystemId, System>) -> BTreeMap<StationId, Station> {
     print!("{:<30}", "Generating stations\r");
 
+    let system_names = parse_system_names();
+
     let mut stations = BTreeMap::new();
 
     for (i, system) in systems.values().enumerate() {
@@ -119,6 +140,7 @@ pub fn stations(systems: &BTreeMap<SystemId, System>) -> BTreeMap<StationId, Sta
             let id = cuid2::cuid().to_string();
             let station = Station {
                 id: id.clone(),
+                name: system.name.clone() + &" Station",
                 system_id: system.id.clone(),
                 x,
                 y,

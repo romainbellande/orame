@@ -6,9 +6,9 @@ use super::windows_context::WindowsContext;
 
 #[component]
 pub fn WindowInner(children: ChildrenFn, title: &'static str) -> impl IntoView {
-    let windows = expect_context::<RwSignal<WindowsContext>>();
+    let windows = expect_context::<WindowsContext>();
 
-    let visible_signal = windows().get_visible(title);
+    let visible_signal = windows.get_visible(title);
 
     let (fullscreen, set_fullscreen) = create_signal(false);
     let (collapsed, set_collapsed) = create_signal(false);
@@ -75,7 +75,7 @@ pub fn WindowInner(children: ChildrenFn, title: &'static str) -> impl IntoView {
 
     view! {
           <div node_ref=node_ref class=root_classes clone:handler_node >
-            <div node_ref=handler_node class="cursor-move rounded-tr-lg rounded-tl-lg  bg-black-900 flex justify-between items-center">
+            <div node_ref=handler_node class="cursor-move rounded-tr-lg rounded-tl-lg  bg-gray-800 flex justify-between items-center">
               <div class="pl-2 text-white text-xs">{ title }</div>
               <div class="space-x-2 pr-2">
                 <button class="rounded-full bg-green-500 h-3 w-3" on:click=on_collapsed></button>
@@ -83,22 +83,22 @@ pub fn WindowInner(children: ChildrenFn, title: &'static str) -> impl IntoView {
                 <button class="rounded-full bg-red-500 h-3 w-3" on:click=on_close></button>
               </div>
             </div>
-            <div class=content_classes>{ move || children() }</div>
+            <div class=content_classes>{ children }</div>
           </div>
     }
 }
 
 #[component]
 pub fn Window(children: ChildrenFn, title: &'static str) -> impl IntoView {
-    let windows = expect_context::<RwSignal<WindowsContext>>();
+    let windows = expect_context::<WindowsContext>();
 
-    let visible_signal = windows().register(title.to_string());
+    let visible_signal = windows.register(title.to_string());
     let children = store_value(children);
 
     view! {
         <Show when=visible_signal>
             <WindowInner title=title>
-                { move || children() }
+                { children }
             </WindowInner>
         </Show>
     }

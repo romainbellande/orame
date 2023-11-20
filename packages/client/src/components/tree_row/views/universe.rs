@@ -32,6 +32,7 @@ impl IntoTreeItem for UniverseTreeItem {
                     SystemTreeItem(system.id.clone(), self.0.clone()).into_tree_item()
                 })
                 .collect(),
+            collapsed: create_rw_signal(false),
         }
     }
 }
@@ -59,6 +60,7 @@ impl IntoTreeItem for SystemTreeItem {
                 PlanetsTreeItem(self.0.clone(), self.1.clone()).into_tree_item(),
                 StationsTreeItem(self.0.clone(), self.1.clone()).into_tree_item(),
             ],
+            collapsed: create_rw_signal(true),
         }
     }
 }
@@ -90,6 +92,7 @@ impl IntoTreeItem for PlanetsTreeItem {
                     PlanetTreeItem(planet.id.clone(), self.1.clone()).into_tree_item()
                 })
                 .collect(),
+            collapsed: create_rw_signal(true),
         }
     }
 }
@@ -113,6 +116,7 @@ impl IntoTreeItem for PlanetTreeItem {
             view,
             id: self.0.to_string(),
             children: vec![],
+            collapsed: create_rw_signal(true),
         }
     }
 }
@@ -144,6 +148,7 @@ impl IntoTreeItem for StationsTreeItem {
                     StationTreeItem(planet.id.clone(), self.1.clone()).into_tree_item()
                 })
                 .collect(),
+            collapsed: create_rw_signal(true),
         }
     }
 }
@@ -167,6 +172,7 @@ impl IntoTreeItem for StationTreeItem {
             view,
             id: self.0.to_string(),
             children: vec![],
+            collapsed: create_rw_signal(true),
         }
     }
 }

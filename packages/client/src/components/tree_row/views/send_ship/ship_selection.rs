@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+use crate::leptos_dom::logging::console_log;
 use leptos::*;
 
 use ogame_core::{ship::Ship, ship_type::ShipType};
@@ -10,15 +11,16 @@ use crate::components::{
     tree_row::{IntoTreeItem, TreeItem},
 };
 
-pub struct ShipsTreeItem(pub BTreeMap<String, Ship>);
+#[derive(Clone, PartialEq)]
+pub struct ShipsSelectionTreeItem(pub BTreeMap<String, Ship>, pub RwSignal<Option<Ship>>);
 
-impl IntoTreeItem for ShipsTreeItem {
+impl IntoTreeItem for ShipsSelectionTreeItem {
     fn into_tree_item(&self) -> TreeItem {
         let view = view! {
             <div class="grid grid-cols-4 gap-4 ml-4">
                 <span> Ship id </span>
                 <span> Type </span>
-                <span> Structure id </span>
+                <span> Position </span>
                 <span> Storage id </span>
             </div>
         }
@@ -31,14 +33,14 @@ impl IntoTreeItem for ShipsTreeItem {
                 .0
                 .clone()
                 .into_iter()
-                .map(|(_, ship)| ShipTreeItem(ship).into_tree_item())
+                .map(|(_, ship)| ShipTreeItem(ship, self.1).into_tree_item())
                 .collect(),
             collapsed: create_rw_signal(false),
         }
     }
 }
 
-pub struct ShipTreeItem(pub Ship);
+pub struct ShipTreeItem(pub Ship, pub RwSignal<Option<Ship>>);
 
 impl IntoTreeItem for ShipTreeItem {
     fn into_tree_item(&self) -> TreeItem {
@@ -49,12 +51,40 @@ impl IntoTreeItem for ShipTreeItem {
             context_menu
                 .update(|context_menu| context_menu.show(ShipContextMenu(self_copy.clone()), ev));
         };
+
+        let selected_ship = self.1.clone();
+        let ship = self.0.clone();
+        let ship_id = ship.id.clone();
+
+        let ship2 = ship.clone();
+        let select_ship = move |ev: MouseEvent| {
+            ev.stop_propagation();
+            selected_ship.update(|selected_ship| *selected_ship = Some(ship2.clone()));
+        };
+
+        let selected_class = move || {
+            if selected_ship()
+                .map(|ship| ship.id)
+                .unwrap_or("".to_string())
+                .eq(&ship.id)
+            {
+                "grid grid-cols-4 gap-4 hover:bg-green-200 bg-green-400"
+            } else {
+                "grid grid-cols-4 gap-4 hover:bg-gray-400"
+            }
+        };
+
+        let position_name = crate::GAME_DATA
+            .read()
+            .unwrap()
+            .get_position_name(&self.0.position_id);
+
         #[allow(unused_braces)]
         let view = view! {
-            <div class="grid grid-cols-4 gap-4" on:auxclick=context_click>
+            <div class=selected_class on:auxclick=context_click on:click=select_ship>
                 <span> {self.0.id.clone()} </span>
                 <span> {self.0.r#type.to_string()} </span>
-                <span> {self.0.position_id.clone()} </span>
+                <span> {position_name} </span>
                 <span> {self.0.storage_id.clone()} </span>
             </div>
 
