@@ -1,4 +1,5 @@
 use leptos::*;
+use ogame_core::PositionedItem;
 
 use crate::{
     components::{
@@ -47,6 +48,28 @@ pub fn SendShipWindow() -> impl IntoView {
                         }.into_view()
                     }
                 }
+            </div>
+            <div>
+                <span class="float-left"> Distance:</span>
+                { move ||
+                    if let Some(ship) = selected_ship() {
+                        if let Some(dest) = selected_dest() {
+                            let distance = ship.distance_to(&dest, &crate::GAME_DATA.read().unwrap().clone());
+                            view! {
+                                { distance }
+                            }.into_view()
+                        } else {
+                            view! {
+                                { "None".to_string() }
+                            }.into_view()
+                        }
+                    } else {
+                        view! {
+                            { "None".to_string() }
+                        }.into_view()
+                    }
+                }
+
             </div>
 
             <div class="h-40 m-4">

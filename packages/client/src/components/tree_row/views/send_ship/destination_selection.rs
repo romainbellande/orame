@@ -2,28 +2,25 @@ use std::collections::BTreeMap;
 
 use leptos::*;
 
-use ogame_core::{GameData, Planet, PlanetId, Station, StationId, SystemId};
+use ogame_core::{GameData, Item, Planet, PlanetId, PositionedItem, Station, StationId, SystemId};
 use web_sys::MouseEvent;
 
 use crate::components::tree_row::{IntoTreeItem, TreeItem};
 
-#[derive(Clone)]
-pub enum Destination {
-    Planet(Planet),
-    Station(Station),
-}
+#[derive(Clone, PartialEq)]
+pub struct Destination(pub Item);
 
 impl Destination {
     pub fn id(&self) -> &PlanetId {
-        match self {
-            Destination::Planet(planet) => &planet.id,
-            Destination::Station(station) => &station.id,
+        match &self.0 {
+            Item::Planet(planet) => &planet.id,
+            Item::Station(station) => &station.id,
         }
     }
 
     pub fn view(&self) -> impl IntoView {
-        match self {
-            Destination::Planet(planet) => {
+        match &self.0 {
+            Item::Planet(planet) => {
                 view! {
                     <span class="grid grid-cols-3 gap-4 hover:bg-gray-400">
                         <span> Planet </span>
@@ -32,7 +29,7 @@ impl Destination {
                     </span>
                 }
             }
-            Destination::Station(station) => {
+            Item::Station(station) => {
                 view! {
                     <span class="grid grid-cols-3 gap-4 hover:bg-gray-400">
                         <span> Station </span>
@@ -41,6 +38,15 @@ impl Destination {
                     </span>
                 }
             }
+        }
+    }
+}
+
+impl PositionedItem for Destination {
+    fn get_real_position(&self, game_data: &GameData) -> (i32, i32) {
+        match &self.0 {
+            Item::Planet(planet) => planet.get_real_position(game_data),
+            Item::Station(station) => station.get_real_position(game_data),
         }
     }
 }
@@ -157,7 +163,7 @@ impl IntoTreeItem for PlanetTreeItem {
         let select_ship = move |ev: MouseEvent| {
             ev.stop_propagation();
             selected_destination.update(|selected_destination| {
-                *selected_destination = Some(Destination::Planet(planet2.clone()))
+                *selected_destination = Some(Destination(Item::Planet(planet2.clone())))
             });
         };
 
@@ -242,7 +248,7 @@ impl IntoTreeItem for StationTreeItem {
         let select_dest = move |ev: MouseEvent| {
             ev.stop_propagation();
             selected_destination.update(|selected_destination| {
-                *selected_destination = Some(Destination::Station(station2.clone()))
+                *selected_destination = Some(Destination(Item::Station(station2.clone())))
             });
         };
 
