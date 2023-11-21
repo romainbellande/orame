@@ -60,4 +60,14 @@ impl DbModel for Storage {
 
         Ok(Self::from(db_storage))
     }
+
+    async fn delete(&self, conn: &Arc<PrismaClient>) -> Result<()> {
+        conn.storage()
+            .delete(storage::id::equals(self.id.clone()))
+            .exec()
+            .await
+            .map_err(|e| Error::CannotDelete(e.to_string()))?;
+
+        Ok(())
+    }
 }

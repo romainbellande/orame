@@ -11,12 +11,14 @@ pub struct Ship {
     pub user_id: String,
     pub position_id: String,
     pub storage_id: String,
+    pub flight_id: Option<String>,
 }
 
 impl Ship {
     pub fn new(user_id: String, r#type: ShipType) -> Self {
         Self {
             id: "".to_string(),
+            flight_id: None,
             r#type,
             user_id,
             position_id: "".to_string(),

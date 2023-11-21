@@ -77,7 +77,7 @@ async fn handle_client_with_error(
     if let Err(e) =
         handle_client(socket, addr, user_id.clone(), connected_users.clone(), conn).await
     {
-        error!("Error handling client: {:?}", e);
+        println!("Error handling client: {:?}", e);
     }
 
     connected_users.remove(user_id).await;

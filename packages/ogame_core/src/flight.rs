@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-use crate::error::*;
+use crate::{error::*, ship::Ship};
 
 use serde::{Deserialize, Serialize};
 
@@ -56,7 +56,7 @@ pub struct Flight {
     pub user_id: String,
     pub from_id: String,
     pub to_id: String,
-    pub ships: Vec<String>,
+    pub ships: Vec<Ship>,
     pub mission: MissionType,
     pub speed_ratio: usize, // between 0 and 100,
     pub arrival_time: usize,
@@ -69,7 +69,7 @@ impl Flight {
         user_id: String,
         from_id: String,
         to_id: String,
-        ships: Vec<String>,
+        ships: Vec<Ship>,
         mission: MissionType,
         speed_ratio: usize,
         arrival_time: usize,
@@ -92,13 +92,11 @@ impl Flight {
         user_id: String,
         from_id: String,
         to_id: String,
-        ships: Vec<String>,
+        ships: Vec<Ship>,
         mission: MissionType,
         speed_ratio: usize,
     ) -> Result<Self> {
-        /* let duration =
-        Self::calc_flight_duration(&from_planet.coordinates, to_coordinates, speed_ratio); */
-        let duration = 0;
+        let duration = 10;
         let now = web_time::SystemTime::now()
             .duration_since(web_time::UNIX_EPOCH)?
             .as_secs() as usize;

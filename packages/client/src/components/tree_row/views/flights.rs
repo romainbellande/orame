@@ -45,7 +45,7 @@ impl IntoTreeItem for FlightTreeItem {
             <div class="grid grid-cols-4 gap-4">
                 <span> {self.0.from_id.clone()} </span>
                 <span> {self.0.to_id.clone()} </span>
-                <span> {self.0.ships.clone()} </span>
+                <span> {self.0.ships.iter().map(|ship| ship.id.clone()).collect::<String>()} </span>
                 <span> {self.0.mission.to_string()} </span>
                 <span> {self.0.arrival_time.clone()} </span>
                 <span> {self.0.speed_ratio.clone()} </span>
