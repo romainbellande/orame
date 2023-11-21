@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
+use crate::game_data::{GameData, PositionedEntity, System};
 use crate::{flight::Flight, ship_type::ShipType, storage::Storage};
 use serde::{Deserialize, Serialize};
-use universe_gen::{GameData, PositionedItem, System};
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct Ship {
@@ -25,7 +25,7 @@ impl Ship {
     }
 }
 
-impl PositionedItem for Ship {
+impl PositionedEntity for Ship {
     fn get_real_position(&self, game_data: &GameData) -> (i32, i32) {
         let item = game_data.get_item_at_position(&self.position_id).unwrap();
 

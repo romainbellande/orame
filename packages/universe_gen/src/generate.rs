@@ -2,7 +2,8 @@ use std::{collections::BTreeMap, io::Read};
 
 use rand::Rng;
 
-use universe_gen::{consts::*, Planet, PlanetId, Station, StationId, System, SystemId};
+use crate::consts::*;
+use ogame_core::{Planet, PlanetId, Station, StationId, System, SystemId};
 
 pub fn parse_system_names() -> Vec<String> {
     let mut res = vec![];

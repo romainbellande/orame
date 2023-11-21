@@ -24,7 +24,7 @@ pub struct Game {
     pub ships: BTreeMap<String, Ship>,
     pub flights: BTreeMap<String, Flight>,
     pub storages: BTreeMap<String, Storage>,
-    pub game_data: universe_gen::GameData,
+    pub game_data: super::game_data::GameData,
 }
 
 /* impl Default for Game {
