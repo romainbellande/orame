@@ -1,5 +1,5 @@
 use leptos::*;
-use ogame_core::PositionedItem;
+use ogame_core::PositionedEntity;
 
 use crate::{
     components::{

@@ -3,8 +3,9 @@ use std::{
     io::Write,
 };
 
-use universe_gen::GameData;
+use ogame_core::game_data::*;
 
+mod consts;
 mod export;
 mod generate;
 mod plot;
@@ -59,7 +60,7 @@ pub struct Recipes(pub HashMap<RecipeId, TomlRecipe>);
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub struct ItemSet(HashMap<ItemId, usize>);
 
-fn read_recipes(filename: &str) -> BTreeMap<universe_gen::RecipeId, universe_gen::Recipe> {
+fn read_recipes(filename: &str) -> BTreeMap<ogame_core::RecipeId, ogame_core::Recipe> {
     let mut stdout = std::io::stdout();
     print!("{:<30}", "Reading recipes");
     stdout.flush().unwrap();
@@ -73,7 +74,7 @@ fn read_recipes(filename: &str) -> BTreeMap<universe_gen::RecipeId, universe_gen
         .0
         .into_iter()
         .map(|(name, recipe)| {
-            let recipe = universe_gen::Recipe {
+            let recipe = ogame_core::Recipe {
                 name: name.clone(),
                 description: "".to_string(),
                 ticks: recipe.ticks,

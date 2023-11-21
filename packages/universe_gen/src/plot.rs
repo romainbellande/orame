@@ -6,7 +6,8 @@ use std::{
 use plotters::coord::types::RangedCoordf32;
 use plotters::prelude::*;
 
-use universe_gen::{consts::*, System, SystemId};
+use crate::consts::*;
+use ogame_core::{System, SystemId};
 
 pub fn draw(
     systems: &BTreeMap<SystemId, System>,
