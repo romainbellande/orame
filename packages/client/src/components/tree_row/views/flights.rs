@@ -6,6 +6,7 @@ use ogame_core::flight::Flight;
 
 use crate::components::tree_row::{IntoTreeItem, TreeItem};
 
+#[derive(Clone)]
 pub struct FlightsTreeItem(pub BTreeMap<String, Flight>);
 
 impl IntoTreeItem for FlightsTreeItem {

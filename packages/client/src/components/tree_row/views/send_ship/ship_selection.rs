@@ -32,6 +32,7 @@ impl IntoTreeItem for ShipsSelectionTreeItem {
                 .0
                 .clone()
                 .into_iter()
+                .filter(|(_, ship)| ship.flight_id == None)
                 .map(|(_, ship)| ShipTreeItem(ship, self.1).into_tree_item())
                 .collect(),
             collapsed: create_rw_signal(false),

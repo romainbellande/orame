@@ -88,7 +88,7 @@ pub fn SendShipWindow() -> impl IntoView {
             <div class="h-40 m-4">
                 <div> Ship selection: </div>
                 <div class="overflow-auto h-40 border border-gray-600">
-                    <TreeRow tree_item=ship_selection />
+                    <TreeRow tree_item=ship_selection() />
                 </div>
             </div>
             <div class="h-40 m-4 mt-4">
