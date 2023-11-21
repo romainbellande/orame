@@ -1,9 +1,8 @@
 use std::collections::BTreeMap;
 
-use crate::leptos_dom::logging::console_log;
 use leptos::*;
 
-use ogame_core::{ship::Ship, ship_type::ShipType};
+use ogame_core::ship::Ship;
 use web_sys::MouseEvent;
 
 use crate::components::{
@@ -54,7 +53,6 @@ impl IntoTreeItem for ShipTreeItem {
 
         let selected_ship = self.1.clone();
         let ship = self.0.clone();
-        let ship_id = ship.id.clone();
 
         let ship2 = ship.clone();
         let select_ship = move |ev: MouseEvent| {

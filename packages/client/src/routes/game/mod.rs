@@ -1,22 +1,19 @@
-mod home;
-
-// mod planets;
-
-use crate::components::context_menu::ContextMenu;
-use crate::components::sidenav::SideNav;
-use crate::components::window::Windows;
-use crate::error::*;
-use crate::utils::{GameWrapper, Socket};
-use futures::channel::mpsc::Receiver;
-use futures::StreamExt;
-pub use home::HomePage;
+use futures::{channel::mpsc::Receiver, StreamExt};
 use leptos::*;
 use leptos_router::Outlet;
 use ogame_core::{game::Game, protocol::Protocol};
 use reqwasm::http::Request;
-// pub use planets::{PlanetIDPage, PlanetsPage};
-use lazy_static::lazy_static;
 use wasm_bindgen::{prelude::Closure, JsCast};
+
+use crate::{
+    components::{context_menu::ContextMenu, sidenav::SideNav, window::Windows},
+    error::*,
+    utils::{GameWrapper, Socket},
+};
+
+mod home;
+
+pub use home::HomePage;
 
 fn set_tick_interval(game: RwSignal<GameWrapper>) {
     let cb = Closure::wrap(Box::new(move || {

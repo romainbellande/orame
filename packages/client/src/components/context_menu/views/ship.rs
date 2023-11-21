@@ -6,8 +6,6 @@ pub struct ShipContextMenu(pub Ship);
 
 impl IntoContextMenuRows for ShipContextMenu {
     fn into_context_menu(&self) -> ContextMenuRows {
-        let ship_type = self.0.r#type.clone();
-
         let rows = vec![Action::OpenWindow("Storages".to_string())];
 
         ContextMenuRows { rows }

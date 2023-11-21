@@ -1,10 +1,6 @@
-use std::collections::BTreeMap;
-
 use leptos::*;
 
-use ogame_core::{
-    Entity, GameData, Planet, PlanetId, PositionedEntity, Station, StationId, SystemId,
-};
+use ogame_core::{Entity, GameData, PlanetId, PositionedEntity, StationId, SystemId};
 use web_sys::MouseEvent;
 
 use crate::components::tree_row::{IntoTreeItem, TreeItem};
@@ -74,7 +70,7 @@ impl IntoTreeItem for DestinationSelectionTreeItem {
                 .systems
                 .clone()
                 .into_iter()
-                .map(|(id, system)| {
+                .map(|(_id, system)| {
                     SystemTreeItem(system.id.clone(), self.0.clone(), self.1).into_tree_item()
                 })
                 .collect(),
@@ -140,7 +136,7 @@ impl IntoTreeItem for PlanetsTreeItem {
                 .clone()
                 .into_iter()
                 .filter(|(_, planet)| planet.system_id == self.0)
-                .map(|(id, planet)| {
+                .map(|(_id, planet)| {
                     PlanetTreeItem(planet.id.clone(), self.1.clone(), self.2).into_tree_item()
                 })
                 .collect(),
@@ -225,7 +221,7 @@ impl IntoTreeItem for StationsTreeItem {
                 .clone()
                 .into_iter()
                 .filter(|(_, station)| station.system_id == self.0)
-                .map(|(id, station)| {
+                .map(|(_id, station)| {
                     StationTreeItem(station.id.clone(), self.1.clone(), self.2).into_tree_item()
                 })
                 .collect(),

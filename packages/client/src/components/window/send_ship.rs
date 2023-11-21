@@ -44,7 +44,7 @@ pub fn SendShipWindow() -> impl IntoView {
                         dest.view().into_view()
                     } else {
                         view! {
-                            { "None".to_string() }
+                            None
                         }.into_view()
                     }
                 }
@@ -56,16 +56,17 @@ pub fn SendShipWindow() -> impl IntoView {
                         if let Some(dest) = selected_dest() {
                             let distance = ship.distance_to(&dest, &crate::GAME_DATA.read().unwrap().clone());
                             view! {
+                                #[allow_unused(braces)]
                                 { distance }
                             }.into_view()
                         } else {
                             view! {
-                                { "None".to_string() }
+                                None
                             }.into_view()
                         }
                     } else {
                         view! {
-                            { "None".to_string() }
+                            None
                         }.into_view()
                     }
                 }

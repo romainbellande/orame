@@ -124,8 +124,6 @@ pub fn planets(systems: &BTreeMap<SystemId, System>) -> BTreeMap<PlanetId, Plane
 pub fn stations(systems: &BTreeMap<SystemId, System>) -> BTreeMap<StationId, Station> {
     print!("{:<30}", "Generating stations\r");
 
-    let system_names = parse_system_names();
-
     let mut stations = BTreeMap::new();
 
     for (i, system) in systems.values().enumerate() {

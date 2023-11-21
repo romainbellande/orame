@@ -2,13 +2,9 @@ use std::collections::BTreeMap;
 
 use leptos::*;
 
-use ogame_core::{flight::Flight, ship::Ship, ship_type::ShipType};
-use web_sys::MouseEvent;
+use ogame_core::flight::Flight;
 
-use crate::components::{
-    context_menu::{views::ShipContextMenu, ContextMenuContext},
-    tree_row::{IntoTreeItem, TreeItem},
-};
+use crate::components::tree_row::{IntoTreeItem, TreeItem};
 
 pub struct FlightsTreeItem(pub BTreeMap<String, Flight>);
 
