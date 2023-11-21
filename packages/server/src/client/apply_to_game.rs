@@ -53,7 +53,7 @@ pub async fn apply_msg_to_game(
 
     apply_to_game_with_async(user_id, conn, move |mut game| {
         let message3 = message2.clone();
-        let connected_users3 = connected_users2.clone();
+        let _connected_users3 = connected_users2.clone();
         async move {
             // handle_flight(&mut game, message3.clone(), connected_users3, conn).await?;
 
