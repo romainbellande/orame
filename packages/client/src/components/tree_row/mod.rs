@@ -85,7 +85,7 @@ where
                     view! {
                         <Show when=move || !is_collapsed()()>
                             <div class="ml-4">
-                                <TreeRow tree_item=child() depth={depth - 1} level={level + 1}/>
+                                <TreeRow tree_item=child depth={depth - 1} level={level + 1}/>
                             </div>
                         </Show>
                     }

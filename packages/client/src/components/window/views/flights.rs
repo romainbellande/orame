@@ -17,7 +17,7 @@ pub fn FlightsWindow() -> impl IntoView {
     view! {
         <Window title="Flights">
             <ul class="text-white flex space-x-4">
-                <TreeRow tree_item=flights_tree_view />
+                <TreeRow tree_item=flights_tree_view() />
             </ul>
         </Window>
     }

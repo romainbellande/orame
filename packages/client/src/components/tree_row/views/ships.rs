@@ -10,6 +10,7 @@ use crate::components::{
     tree_row::{IntoTreeItem, TreeItem},
 };
 
+#[derive(Clone)]
 pub struct ShipsTreeItem(pub BTreeMap<String, Ship>);
 
 impl IntoTreeItem for ShipsTreeItem {

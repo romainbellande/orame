@@ -17,7 +17,7 @@ pub fn ShipsWindow() -> impl IntoView {
     view! {
         <Window title="Ships">
             <ul class="text-white flex space-x-4">
-                <TreeRow tree_item=ships_tree_view />
+                <TreeRow tree_item=ships_tree_view() />
             </ul>
         </Window>
     }

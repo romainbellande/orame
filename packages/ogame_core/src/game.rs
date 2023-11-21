@@ -52,6 +52,7 @@ impl Game {
             }
             Protocol::Flight(flight) => {
                 self.flights.insert(flight.id.clone(), flight.clone());
+                println!("FLIGHT {:#?}", flight);
                 for ship in flight.ships {
                     self.ships.insert(ship.id.clone(), ship.clone());
                 }
@@ -72,13 +73,12 @@ impl Game {
         for (_, flight) in &mut self.flights {
             if flight.arrival_time <= now {
                 flights_to_delete.push(flight.clone());
-                self.ships
-                    .values_mut()
-                    .find(|ship| ship.flight_id == Some(flight.id.clone()))
-                    .map(|ship| {
+                for ship in self.ships.values_mut() {
+                    if ship.flight_id == Some(flight.id.clone()) {
                         ship.flight_id = None;
                         ship.position_id = flight.to_id.clone();
-                    });
+                    }
+                }
             }
         }
 
