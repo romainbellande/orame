@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use ogame_core::flight::Flight;
 
-use crate::{db::*, db_model::DbModel, error::*, ShipsInFlight};
+use crate::{db::*, db_model::DbModel, error::*};
 
 impl From<flight::Data> for Flight {
     fn from(db_flight: flight::Data) -> Self {

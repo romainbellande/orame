@@ -48,14 +48,6 @@ model Flight {
   speed_ratio  Int
 }
 
-// model ShipsInFlight {
-// ship_id   String  @unique
-// flight_id String
-// flight    Flight  @relation(fields: [flight_id], references: [id])
-// ship      Ship    @relation(fields: [ship_id], references: [id])
-
-// @@id([ship_id, flight_id])
-// }
 
 model Storage {
   id           String @id @default(cuid())

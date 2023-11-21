@@ -6,7 +6,6 @@ mod db_model;
 mod error;
 mod flight;
 mod ship;
-mod ships_in_flight;
 mod storage;
 mod user;
 
@@ -17,7 +16,6 @@ pub use db_model::*;
 pub use error::*;
 pub use flight::*;
 pub use ship::*;
-pub use ships_in_flight::*;
 pub use storage::*;
 pub use user::*;
 
