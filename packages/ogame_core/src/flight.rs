@@ -1,13 +1,8 @@
-use std::{
-    collections::BTreeMap,
-    fmt::{Display, Formatter},
-};
+use std::fmt::{Display, Formatter};
 
 use crate::error::*;
 
 use serde::{Deserialize, Serialize};
-
-use crate::ship::Ship;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum MissionType {

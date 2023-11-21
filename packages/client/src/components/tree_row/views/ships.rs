@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use leptos::*;
 
-use ogame_core::{ship::Ship, ship_type::ShipType};
+use ogame_core::ship::Ship;
 use web_sys::MouseEvent;
 
 use crate::components::{

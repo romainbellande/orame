@@ -29,6 +29,7 @@ impl Action {
                 ev.prevent_default();
                 windows().toggle(&name);
             }) as Box<dyn Fn(MouseEvent)>,
+
             Action::UpgradeBuilding(_building_type, _level) => Box::new(move |ev: MouseEvent| {
                 ev.prevent_default();
             })
