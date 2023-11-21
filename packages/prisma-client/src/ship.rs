@@ -8,6 +8,7 @@ impl From<ship::Data> for Ship {
     fn from(db_ship: ship::Data) -> Self {
         Self {
             id: db_ship.id.clone(),
+            flight_id: db_ship.flight_id.clone(),
             r#type: db_ship.r#type.into(),
             user_id: db_ship.user_id.clone(),
             position_id: db_ship.position_id.clone(),
@@ -40,14 +41,20 @@ impl DbModel for Ship {
     }
 
     async fn save(&self, conn: &Arc<PrismaClient>) -> Result<&Self> {
-        conn.ship()
+        let ship_saved = conn
+            .ship()
             .update(
                 ship::id::equals(self.id.clone()),
-                vec![ship::position_id::set(self.position_id.clone())],
+                vec![
+                    ship::position_id::set(self.position_id.clone()),
+                    ship::flight_id::set(self.flight_id.clone()),
+                ],
             )
             .exec()
             .await
             .map_err(|e| Error::CannotSave(e.to_string()))?;
+
+        println!("ship_saved: {:#?}", ship_saved);
 
         Ok(self)
     }
@@ -65,5 +72,15 @@ impl DbModel for Ship {
         println!("db_ship {:#?}", db_ship);
 
         Ok(Self::from(db_ship))
+    }
+
+    async fn delete(&self, conn: &Arc<PrismaClient>) -> Result<()> {
+        conn.ship()
+            .delete(ship::id::equals(self.id.clone()))
+            .exec()
+            .await
+            .map_err(|e| Error::CannotDelete(e.to_string()))?;
+
+        Ok(())
     }
 }

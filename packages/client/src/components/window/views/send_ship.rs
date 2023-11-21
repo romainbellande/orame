@@ -1,5 +1,5 @@
 use leptos::*;
-use ogame_core::PositionedEntity;
+use ogame_core::{flight::MissionType, protocol::Protocol, PositionedEntity};
 
 use crate::{
     components::{
@@ -30,6 +30,18 @@ pub fn SendShipWindow() -> impl IntoView {
         DestinationSelectionTreeItem(crate::GAME_DATA.read().unwrap().clone(), selected_dest)
             .into_tree_item(),
     );
+
+    let send_ships = move |_| {
+        state()
+            .action(Protocol::SendShips {
+                from_id: selected_ship().unwrap().position_id.clone(),
+                to_id: selected_dest().unwrap().id().clone(),
+                ships: vec![selected_ship().unwrap().clone()],
+                mission: MissionType::Transport,
+                speed_ratio: 1,
+            })
+            .unwrap();
+    };
 
     view! {
         <Window title="SendShip">
@@ -86,7 +98,9 @@ pub fn SendShipWindow() -> impl IntoView {
                 </div>
             </div>
             <div>
-                <button> Send </button>
+                <button on:click=send_ships>
+                    Send
+                </button>
             </div>
         </Window>
     }

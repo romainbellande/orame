@@ -5,6 +5,7 @@ pub enum Error {
     CannotCreate(String),
     CannotSave(String),
     CannotFetch(String),
+    CannotDelete(String),
 }
 
 impl Display for Error {
@@ -13,6 +14,7 @@ impl Display for Error {
             Error::CannotCreate(msg) => write!(f, "Cannot create: {}", msg),
             Error::CannotSave(msg) => write!(f, "Cannot save: {}", msg),
             Error::CannotFetch(msg) => write!(f, "Cannot fetch: {}", msg),
+            Error::CannotDelete(msg) => write!(f, "Cannot delete: {}", msg),
         }
     }
 }

@@ -28,8 +28,8 @@ model Ship {
   storage_id String  @unique
   storage    Storage @relation(fields: [storage_id], references: [id])
 
-  // flight ShipsInFlight? @relation(fields: [id], references: [ship_id])
-  flight ShipsInFlight[]
+  flight    Flight? @relation(fields: [flight_id], references: [id])
+  flight_id String?
 }
 
 model Flight {
@@ -40,7 +40,7 @@ model Flight {
   from_id String
   to_id   String
 
-  ships ShipsInFlight[]
+  ships Ship[]
 
   arrival_time Int
   return_time  Int?
@@ -48,14 +48,14 @@ model Flight {
   speed_ratio  Int
 }
 
-model ShipsInFlight {
-  ship_id   String  @unique
-  flight_id String
-  flight    Flight  @relation(fields: [flight_id], references: [id])
-  ship      Ship?   @relation(fields: [ship_id], references: [id])
+// model ShipsInFlight {
+// ship_id   String  @unique
+// flight_id String
+// flight    Flight  @relation(fields: [flight_id], references: [id])
+// ship      Ship    @relation(fields: [ship_id], references: [id])
 
-  @@id([ship_id, flight_id])
-}
+// @@id([ship_id, flight_id])
+// }
 
 model Storage {
   id           String @id @default(cuid())

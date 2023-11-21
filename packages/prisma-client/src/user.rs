@@ -159,4 +159,14 @@ impl DbModel for User {
 
         Ok(Self::from(db_user))
     }
+
+    async fn delete(&self, conn: &Arc<PrismaClient>) -> Result<()> {
+        conn.user()
+            .delete(user::id::equals(self.id.clone()))
+            .exec()
+            .await
+            .map_err(|e| Error::CannotDelete(e.to_string()))?;
+
+        Ok(())
+    }
 }

@@ -16,6 +16,11 @@ pub async fn apply_to_game_with<F: FnMut(&mut Game) -> Result<T>, T>(
     let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
     game.game_data = crate::GAME_DATA.clone();
 
+    let flights_to_delete = game.tick()?;
+    for flight in flights_to_delete {
+        flight.delete(conn).await?;
+    }
+
     let ret = cb(&mut game);
 
     let user: User = game.into();
@@ -32,6 +37,13 @@ pub async fn apply_to_game_with_async<Fut: Future<Output = Result<Game>>, F: FnM
 ) -> Result<()> {
     let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
     game.game_data = crate::GAME_DATA.clone();
+
+    let flights_to_delete = game.tick()?;
+
+    println!("Flights to delete: {:?}", flights_to_delete);
+    for flight in flights_to_delete {
+        flight.delete(conn).await?;
+    }
 
     let game = cb(game).await?;
 
@@ -53,11 +65,18 @@ pub async fn apply_msg_to_game(
 
     apply_to_game_with_async(user_id, conn, move |mut game| {
         let message3 = message2.clone();
-        let _connected_users3 = connected_users2.clone();
+        let connected_users3 = connected_users2.clone();
         async move {
-            // handle_flight(&mut game, message3.clone(), connected_users3, conn).await?;
+            game.process_message(message3.clone())?;
 
-            game.process_message(message3)?;
+            let message_answer =
+                super::logic::db_msg_handling(game.user_id.clone(), message3, conn).await?;
+
+            game.process_message(message_answer.clone())?;
+
+            connected_users3
+                .send(game.user_id.clone(), message_answer)
+                .await?;
 
             Ok(game)
         }

@@ -31,12 +31,15 @@ impl Game {
         }
     }
 
-    pub fn tick(&mut self) -> Result<()> {
+    // Returns the data that have to be deleted from db
+    pub fn tick(&mut self) -> Result<Vec<Flight>> {
         let now = web_time::SystemTime::now()
             .duration_since(UNIX_EPOCH)?
             .as_secs() as usize;
 
-        Ok(())
+        let flights_to_delete = self.process_flights(now)?;
+
+        Ok(flights_to_delete)
     }
 
     pub fn process_message(&mut self, msg: Protocol) -> Result<()> {
@@ -47,52 +50,49 @@ impl Game {
             Protocol::Game(game) => {
                 *self = game;
             }
+            Protocol::Flight(flight) => {
+                self.flights.insert(flight.id.clone(), flight.clone());
+                for ship in flight.ships {
+                    self.ships.insert(ship.id.clone(), ship.clone());
+                }
+            }
 
             // Client -> Server
-            Protocol::SendShips {
-                from_id,
-                ships,
-                resources,
-                ..
-            } => {}
+            Protocol::SendShips { from_id, ships, .. } => {
+                // TODO: do various checks
+            }
         }
 
         Ok(())
     }
 
-    /* fn process_flights(&mut self) -> Result<()> {
-        self.tick()?;
+    fn process_flights(&mut self, now: usize) -> Result<Vec<Flight>> {
+        let mut flights_to_delete = vec![];
 
-        let now = web_time::SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs() as usize;
-
-        let mut flights = vec![];
-
-        for flight in &mut self.flights {
+        for (_, flight) in &mut self.flights {
             if flight.arrival_time <= now {
-                self.planets
-                    .get_mut(&flight.to_planet_id)
-                    .unwrap()
-                    .ships
-                    .add_ships(&flight.ships)?;
-            } else {
-                flights.push(flight.clone());
+                flights_to_delete.push(flight.clone());
+                self.ships
+                    .values_mut()
+                    .find(|ship| ship.flight_id == Some(flight.id.clone()))
+                    .map(|ship| {
+                        ship.flight_id = None;
+                        ship.position_id = flight.to_id.clone();
+                    });
             }
         }
 
-        self.flights = flights;
+        self.flights.retain(|_, flight| flight.arrival_time > now);
 
-        Ok(())
-    } */
+        Ok(flights_to_delete)
+    }
 
     pub fn create_flight(
         &self,
         id: String,
         from_id: String,
         to_id: String,
-        ships: Vec<String>,
+        ships: Vec<Ship>,
         mission: MissionType,
         speed_ratio: usize,
     ) -> Result<Flight> {

@@ -2,10 +2,11 @@ use std::sync::Arc;
 
 use ogame_core::flight::Flight;
 
-use crate::{db::*, db_model::DbModel, error::*};
+use crate::{db::*, db_model::DbModel, error::*, ShipsInFlight};
 
 impl From<flight::Data> for Flight {
     fn from(db_flight: flight::Data) -> Self {
+        println!("db_flight: {:#?}", db_flight);
         Self {
             id: db_flight.id.clone(),
             user_id: db_flight.user_id.clone(),
@@ -13,9 +14,9 @@ impl From<flight::Data> for Flight {
             to_id: db_flight.to_id.clone(),
             ships: db_flight
                 .ships
-                .unwrap()
+                .unwrap_or(vec![])
                 .into_iter()
-                .map(|s| (*s.ship.unwrap().unwrap()).id.clone())
+                .map(|s| s.into())
                 .collect(),
             arrival_time: db_flight.arrival_time as usize,
             return_time: db_flight
@@ -48,6 +49,14 @@ impl DbModel for Flight {
 
         self.id = db_flight.id.clone();
 
+        for ship in self.ships.iter_mut() {
+            println!("ship: {:#?}", ship);
+            ship.flight_id = Some(self.id.clone());
+            ship.position_id = "".to_string();
+            ship.save(conn).await?;
+            println!("ship after: {:#?}", ship);
+        }
+
         Ok(self)
     }
 
@@ -64,7 +73,7 @@ impl DbModel for Flight {
     async fn fetch(id: String, conn: &Arc<PrismaClient>) -> Result<Self> {
         let db_flight = conn
             .flight()
-            .find_first(vec![flight::id::equals(id.clone())])
+            .find_unique(flight::id::equals(id.clone()))
             .with(flight::ships::fetch(vec![]))
             .exec()
             .await
@@ -72,5 +81,22 @@ impl DbModel for Flight {
             .ok_or(Error::CannotFetch(format!("Flight {} not found", id)))?;
 
         Ok(Self::from(db_flight))
+    }
+
+    async fn delete(&self, conn: &Arc<PrismaClient>) -> Result<()> {
+        conn.flight()
+            .delete(flight::id::equals(self.id.clone()))
+            .exec()
+            .await
+            .map_err(|e| Error::CannotDelete(e.to_string()))?;
+
+        for ship in self.ships.iter() {
+            let mut ship = ship.clone();
+            ship.flight_id = None;
+            ship.position_id = self.to_id.clone();
+            ship.save(conn).await?;
+        }
+
+        Ok(())
     }
 }

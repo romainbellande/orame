@@ -12,4 +12,7 @@ pub trait DbModel {
     async fn fetch(id: String, conn: &Arc<PrismaClient>) -> Result<Self>
     where
         Self: Sized;
+    async fn delete(&self, conn: &Arc<PrismaClient>) -> Result<()>
+    where
+        Self: Sized;
 }

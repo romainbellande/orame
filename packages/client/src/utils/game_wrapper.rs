@@ -28,7 +28,7 @@ impl GameWrapper {
         })
     } */
 
-    fn action(&mut self, message: Protocol) -> Result<()> {
+    pub fn action(&mut self, message: Protocol) -> Result<()> {
         self.game.process_message(message.clone())?;
 
         let mut socket_sender = self.socket_sender.clone();
