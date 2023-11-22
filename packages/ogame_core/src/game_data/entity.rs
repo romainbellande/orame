@@ -8,6 +8,22 @@ pub enum Entity {
     Station(Station),
 }
 
+impl Entity {
+    pub fn id(&self) -> String {
+        match self {
+            Entity::Planet(planet) => planet.id.clone(),
+            Entity::Station(station) => station.id.clone(),
+        }
+    }
+
+    pub fn name(&self) -> String {
+        match self {
+            Entity::Planet(planet) => planet.name.clone(),
+            Entity::Station(station) => station.name.clone(),
+        }
+    }
+}
+
 impl PositionedEntity for Entity {
     fn get_real_position(&self) -> (i32, i32) {
         match self {

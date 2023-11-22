@@ -39,7 +39,7 @@ pub fn TreeRow<T>(
 where
     T: IntoTreeItem + Clone + 'static,
 {
-    let tree_item = store_value(tree_item.into_tree_item());
+    let tree_item = create_memo(move |_| tree_item.into_tree_item());
 
     if depth == 0 {
         return view! {<div></div>};

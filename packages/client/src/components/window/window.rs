@@ -41,7 +41,7 @@ pub fn WindowInner(children: ChildrenFn, title: &'static str) -> impl IntoView {
         let fullscreen_class = if fullscreen() {
             "fixed top-0 left-0 w-screen h-screen"
         } else {
-            "top-1/2 left-1/2 transform -translate-y/2 -translate-x-2"
+            "top-24 left-24 transform -translate-y/2 -translate-x-2"
         };
 
         let resize_class = if fullscreen() || collapsed() {

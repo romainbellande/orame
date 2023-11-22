@@ -149,7 +149,7 @@ impl DbModel for User {
             .user()
             .find_first(vec![user::id::equals(id.clone())])
             .with(user::ships::fetch(vec![]))
-            .with(user::flights::fetch(vec![]))
+            .with(user::flights::fetch(vec![]).with(flight::ships::fetch(vec![])))
             .with(user::storages::fetch(vec![]))
             .exec()
             .await
