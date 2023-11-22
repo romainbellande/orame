@@ -4,7 +4,7 @@ use crate::{error::*, ship::Ship, PositionedEntity};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub enum MissionType {
     Attack,
     Transport,
@@ -50,7 +50,7 @@ impl From<String> for MissionType {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct Flight {
     pub id: String,
     pub user_id: String,

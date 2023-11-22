@@ -8,12 +8,8 @@ use ogame_core::{
 use crate::{
     components::{
         tree_row::{
-            views::{
-                flights::FlightsTreeItem,
-                send_ship::{
-                    destination_selection::DestinationSelectionTreeItem,
-                    ship_selection::ShipsSelectionTreeItem,
-                },
+            views::flights::{
+                DestinationSelectionTreeItem, FlightsTreeItem, ShipsSelectionTreeItem,
             },
             IntoTreeItem, TreeRow,
         },
@@ -29,16 +25,15 @@ pub fn FlightsWindow() -> impl IntoView {
     let selected_ship = create_rw_signal(None);
     let selected_dest = create_rw_signal(None);
 
-    let ship_selection = create_memo(move |_| {
-        ShipsSelectionTreeItem(state().ships.clone(), selected_ship).into_tree_item()
-    });
+    let ship_selection =
+        create_memo(move |_| ShipsSelectionTreeItem(state().ships.clone(), selected_ship));
 
     let destination_selection = store_value(
         DestinationSelectionTreeItem(ogame_core::GAME_DATA.read().unwrap().clone(), selected_dest)
             .into_tree_item(),
     );
 
-    let flights_tree_view = move || FlightsTreeItem(state().flights.clone());
+    let flights_tree_view = create_memo(move |_| FlightsTreeItem(state().flights.clone()));
 
     let send_ships = move |_| {
         state()
@@ -55,12 +50,12 @@ pub fn FlightsWindow() -> impl IntoView {
     view! {
         <Window title="Flights">
             <div class="space-x-4 mb-4">
-                <TreeRow tree_item=flights_tree_view() />
+                <TreeRow tree_item=flights_tree_view />
             </div>
             <div class="h-40 m-4">
                 <div> Ship selection: </div>
                 <div class="overflow-auto h-40 border border-gray-600">
-                    <TreeRow tree_item=ship_selection() />
+                    <TreeRow tree_item=ship_selection />
                 </div>
             </div>
             <div class="h-40 m-4 mt-4">
