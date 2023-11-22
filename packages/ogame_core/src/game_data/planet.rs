@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{GameData, PlanetId, PositionedEntity, SystemId};
+use super::{PlanetId, PositionedEntity, SystemId};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Planet {

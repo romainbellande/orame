@@ -6,7 +6,6 @@ use crate::{db::*, db_model::DbModel, error::*};
 
 impl From<flight::Data> for Flight {
     fn from(db_flight: flight::Data) -> Self {
-        println!("db_flight: {:#?}", db_flight);
         Self {
             id: db_flight.id.clone(),
             user_id: db_flight.user_id.clone(),
@@ -50,11 +49,9 @@ impl DbModel for Flight {
         self.id = db_flight.id.clone();
 
         for ship in self.ships.iter_mut() {
-            println!("ship: {:#?}", ship);
             ship.flight_id = Some(self.id.clone());
             ship.position_id = "".to_string();
             ship.save(conn).await?;
-            println!("ship after: {:#?}", ship);
         }
 
         Ok(self)

@@ -1,17 +1,12 @@
 use leptos::*;
 
-use crate::{
-    components::{
-        tree_row::{views::universe::UniverseTreeItem, TreeRow},
-        window::Window,
-    },
-    utils::GameWrapper,
+use crate::components::{
+    tree_row::{views::universe::UniverseTreeItem, TreeRow},
+    window::Window,
 };
 
 #[component]
 pub fn UniverseWindow() -> impl IntoView {
-    let state = expect_context::<RwSignal<GameWrapper>>();
-
     let universe_tree_view =
         move || UniverseTreeItem(ogame_core::GAME_DATA.read().unwrap().clone());
 

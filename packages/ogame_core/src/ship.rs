@@ -1,7 +1,4 @@
-use crate::{
-    game_data::{GameData, PositionedEntity},
-    ship_type::ShipType,
-};
+use crate::{game_data::PositionedEntity, ship_type::ShipType};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]

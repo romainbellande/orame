@@ -1,6 +1,3 @@
-use std::sync::{Arc, RwLock};
-
-use lazy_static::lazy_static;
 use leptos::*;
 
 mod components;

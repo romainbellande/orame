@@ -4,11 +4,10 @@ use futures::Future;
 use ogame_core::{game::Game, protocol::Protocol};
 use prisma_client::{DbModel, PrismaClient, User};
 
-// use super::handle_flight;
 use crate::connected_users::ConnectedUsers;
 use crate::error::*;
 
-pub async fn apply_to_game_with<F: FnMut(&mut Game) -> Result<T>, T>(
+/* pub async fn apply_to_game_with<F: FnMut(&mut Game) -> Result<T>, T>(
     user_id: String,
     conn: &Arc<PrismaClient>,
     mut cb: F,
@@ -27,7 +26,7 @@ pub async fn apply_to_game_with<F: FnMut(&mut Game) -> Result<T>, T>(
     user.save(conn).await?;
 
     ret
-}
+} */
 
 pub async fn apply_to_game_with_async<Fut: Future<Output = Result<Game>>, F: FnMut(Game) -> Fut>(
     user_id: String,
@@ -38,7 +37,6 @@ pub async fn apply_to_game_with_async<Fut: Future<Output = Result<Game>>, F: FnM
 
     let flights_to_delete = game.tick()?;
 
-    println!("Flights to delete: {:?}", flights_to_delete);
     for flight in flights_to_delete {
         flight.delete(conn).await?;
     }
