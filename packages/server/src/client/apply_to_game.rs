@@ -14,7 +14,6 @@ pub async fn apply_to_game_with<F: FnMut(&mut Game) -> Result<T>, T>(
     mut cb: F,
 ) -> Result<T> {
     let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
-    game.game_data = crate::GAME_DATA.clone();
 
     let flights_to_delete = game.tick()?;
     for flight in flights_to_delete {
@@ -36,7 +35,6 @@ pub async fn apply_to_game_with_async<Fut: Future<Output = Result<Game>>, F: FnM
     mut cb: F,
 ) -> Result<()> {
     let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
-    game.game_data = crate::GAME_DATA.clone();
 
     let flights_to_delete = game.tick()?;
 

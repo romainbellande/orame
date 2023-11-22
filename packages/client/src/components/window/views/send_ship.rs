@@ -27,7 +27,7 @@ pub fn SendShipWindow() -> impl IntoView {
     });
 
     let destination_selection = store_value(
-        DestinationSelectionTreeItem(crate::GAME_DATA.read().unwrap().clone(), selected_dest)
+        DestinationSelectionTreeItem(ogame_core::GAME_DATA.read().unwrap().clone(), selected_dest)
             .into_tree_item(),
     );
 
@@ -66,7 +66,7 @@ pub fn SendShipWindow() -> impl IntoView {
                 { move ||
                     if let Some(ship) = selected_ship() {
                         if let Some(dest) = selected_dest() {
-                            let distance = ship.distance_to(&dest, &crate::GAME_DATA.read().unwrap().clone());
+                            let distance = ship.distance_to(&dest);
                             view! {
                                 #[allow_unused(braces)]
                                 { distance }

@@ -28,9 +28,13 @@ impl Ship {
 }
 
 impl PositionedEntity for Ship {
-    fn get_real_position(&self, game_data: &GameData) -> (i32, i32) {
-        let item = game_data.get_item_at_position(&self.position_id).unwrap();
+    fn get_real_position(&self) -> (i32, i32) {
+        let item = crate::GAME_DATA
+            .read()
+            .unwrap()
+            .get_item_at_position(&self.position_id)
+            .unwrap();
 
-        item.get_real_position(game_data)
+        item.get_real_position()
     }
 }

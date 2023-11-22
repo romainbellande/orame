@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 use leptos::*;
 
 use ogame_core::flight::Flight;
+use web_time::Duration;
 
 use crate::components::tree_row::{IntoTreeItem, TreeItem};
 
@@ -43,12 +44,15 @@ impl IntoTreeItem for FlightTreeItem {
     fn into_tree_item(&self) -> TreeItem {
         #[allow(unused_braces)]
         let view = view! {
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-6 gap-4">
                 <span> {self.0.from_id.clone()} </span>
                 <span> {self.0.to_id.clone()} </span>
                 <span> {self.0.ships.iter().map(|ship| ship.id.clone()).collect::<String>()} </span>
                 <span> {self.0.mission.to_string()} </span>
-                <span> {self.0.arrival_time.clone()} </span>
+                <span> {
+                    { self.0.get_formated_duration() }
+                } </span>
+                // <span> {self.0.arrival_time.clone()} </span>
                 <span> {self.0.speed_ratio.clone()} </span>
             </div>
 

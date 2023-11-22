@@ -11,15 +11,11 @@ pub async fn send_initial_game(
     conn: &Arc<PrismaClient>,
 ) -> Result<()> {
     let mut game: Game = User::fetch(user_id.clone(), conn).await?.into();
-    game.game_data = crate::GAME_DATA.clone();
 
     let flights_to_delete = game.tick()?;
     for flight in flights_to_delete {
         flight.delete(conn).await?;
     }
-
-    // We don't send the game data to the client
-    game.game_data = ogame_core::GameData::default();
 
     connected_users
         .send(user_id.clone(), Protocol::Game(game.clone()))

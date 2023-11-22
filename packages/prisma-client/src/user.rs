@@ -31,7 +31,7 @@ impl User {
     pub async fn fetch_by_email(email: String, conn: &Arc<PrismaClient>) -> Result<Self> {
         let db_user = conn
             .user()
-            .find_first(vec![user::email::equals(email.clone())])
+            .find_unique(user::email::equals(email.clone()))
             .with(user::ships::fetch(vec![]))
             .with(user::flights::fetch(vec![]))
             .with(user::storages::fetch(vec![]))
@@ -81,7 +81,6 @@ impl From<User> for ogame_core::game::Game {
             ships: user.ships,
             flights: user.flights,
             storages: user.storages,
-            game_data: Default::default(),
         }
     }
 }

@@ -12,8 +12,14 @@ pub struct Planet {
 }
 
 impl PositionedEntity for Planet {
-    fn get_real_position(&self, game_data: &GameData) -> (i32, i32) {
-        let system = game_data.systems.get(&self.system_id).unwrap();
+    fn get_real_position(&self) -> (i32, i32) {
+        let system = crate::GAME_DATA
+            .read()
+            .unwrap()
+            .systems
+            .get(&self.system_id)
+            .unwrap()
+            .clone();
 
         (system.x + self.x, system.y + self.y)
     }

@@ -12,7 +12,8 @@ use crate::{
 pub fn UniverseWindow() -> impl IntoView {
     let state = expect_context::<RwSignal<GameWrapper>>();
 
-    let universe_tree_view = move || UniverseTreeItem(state().game_data.clone());
+    let universe_tree_view =
+        move || UniverseTreeItem(ogame_core::GAME_DATA.read().unwrap().clone());
 
     view! {
         <Window title="Universe">
