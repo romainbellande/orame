@@ -9,10 +9,10 @@ pub enum Entity {
 }
 
 impl PositionedEntity for Entity {
-    fn get_real_position(&self, game_data: &GameData) -> (i32, i32) {
+    fn get_real_position(&self) -> (i32, i32) {
         match self {
-            Entity::Planet(planet) => planet.get_real_position(game_data),
-            Entity::Station(station) => station.get_real_position(game_data),
+            Entity::Planet(planet) => planet.get_real_position(),
+            Entity::Station(station) => station.get_real_position(),
         }
     }
 }

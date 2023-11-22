@@ -30,7 +30,7 @@ pub async fn login(
         return Err(AuthError::MissingCredentials.into());
     }
 
-    let my_user = User::fetch(credentials.email.clone(), conn).await?;
+    let my_user = User::fetch_by_email(credentials.email.clone(), conn).await?;
 
     if credentials.password != my_user.password {
         return Err(AuthError::WrongCredentials.into());
@@ -49,7 +49,6 @@ pub async fn register(
     }
 
     if let Ok(_) = User::fetch_by_email(credentials.email.clone(), conn).await {
-        println!("User already exists");
         return Err(AuthError::UserAlreadyExists.into());
     }
 

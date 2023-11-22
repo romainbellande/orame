@@ -2,6 +2,8 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
+use crate::PositionedEntity;
+
 use super::{Entity, Planet, PlanetId, Recipe, RecipeId, Station, StationId, System, SystemId};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
@@ -39,5 +41,12 @@ impl GameData {
         }
 
         None
+    }
+
+    pub fn distance_between_ids(&self, id1: &str, id2: &str) -> i64 {
+        let item1 = self.get_item_at_position(id1).unwrap();
+        let item2 = self.get_item_at_position(id2).unwrap();
+
+        item1.distance_to(&item2)
     }
 }

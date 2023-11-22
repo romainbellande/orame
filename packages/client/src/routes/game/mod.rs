@@ -29,7 +29,7 @@ fn set_tick_interval(game: RwSignal<GameWrapper>) {
     cb.forget(); // leak the closure
 }
 
-pub async fn get_game_data() -> Result<ogame_core::GameData> {
+pub async fn get_game_data() -> Result<()> {
     let data = Request::get("/public/game_data.cbor")
         .send()
         .await?
@@ -37,17 +37,16 @@ pub async fn get_game_data() -> Result<ogame_core::GameData> {
         .await?;
 
     let game_data: ogame_core::GameData = serde_cbor::from_slice(&data[..])?;
-    *crate::GAME_DATA.write().unwrap() = game_data.clone();
+    *ogame_core::GAME_DATA.write().unwrap() = game_data;
 
-    Ok(game_data)
+    Ok(())
 }
 
 pub async fn init_game(game: RwSignal<GameWrapper>, new_game: Game) -> Result<()> {
-    let game_data = get_game_data().await?;
+    get_game_data().await?;
 
     game.update(|game| {
         **game = new_game;
-        game.game_data = game_data;
     });
 
     set_tick_interval(game);

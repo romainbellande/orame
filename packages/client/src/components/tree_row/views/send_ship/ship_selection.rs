@@ -73,7 +73,7 @@ impl IntoTreeItem for ShipTreeItem {
             }
         };
 
-        let position_name = crate::GAME_DATA
+        let position_name = ogame_core::GAME_DATA
             .read()
             .unwrap()
             .get_position_name(&self.0.position_id);

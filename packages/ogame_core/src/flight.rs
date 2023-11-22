@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-use crate::{error::*, ship::Ship};
+use crate::{error::*, ship::Ship, PositionedEntity};
 
 use serde::{Deserialize, Serialize};
 
@@ -96,7 +96,8 @@ impl Flight {
         mission: MissionType,
         speed_ratio: usize,
     ) -> Result<Self> {
-        let duration = 10;
+        let duration = Self::duration_of_flight(&from_id, &to_id, speed_ratio);
+
         let now = web_time::SystemTime::now()
             .duration_since(web_time::UNIX_EPOCH)?
             .as_secs() as usize;
@@ -120,12 +121,31 @@ impl Flight {
         })
     }
 
-    /* fn calc_flight_duration(from: String, to: String, speed_ratio: usize) -> usize {
-        let distance = from.distance(to);
+    pub fn duration_of_flight(id1: &str, id2: &str, speed_ratio: usize) -> usize {
+        let distance = crate::GAME_DATA
+            .read()
+            .unwrap()
+            .distance_between_ids(id1, id2);
 
-        // FIXME: the 1 is a placeholder for the speed of the slowest ship
-        ((10 + (3500 / speed_ratio) * 10 * distance) as f64)
+        ((10 + (3500 / speed_ratio) * 10 * distance as usize) as f64)
             .sqrt()
             .floor() as usize
-    } */
+    }
+
+    pub fn get_formated_duration(&self) -> String {
+        let now = web_time::SystemTime::now()
+            .duration_since(web_time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        let duration = self.arrival_time.clone() as u64 - now;
+        Self::formated_duration(duration as usize)
+    }
+
+    pub fn formated_duration(duration: usize) -> String {
+        let seconds = duration % 60;
+        let minutes = (duration / 60) % 60;
+        let hours = (duration / 60) / 60;
+
+        format!("{:0>2}:{:0>2}:{:0>2}", hours, minutes, seconds).to_string()
+    }
 }
