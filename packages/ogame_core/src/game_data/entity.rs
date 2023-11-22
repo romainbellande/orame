@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{GameData, Planet, PositionedEntity, Station};
+use super::{Planet, PositionedEntity, Station};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Entity {

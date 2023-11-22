@@ -1,5 +1,3 @@
-use super::GameData;
-
 pub trait PositionedEntity {
     fn get_real_position(&self) -> (i32, i32);
     fn distance_to<T: PositionedEntity>(&self, item: &T) -> i64 {

@@ -9,43 +9,14 @@ use crate::components::tree_row::{IntoTreeItem, TreeItem};
 pub struct Destination(pub Entity);
 
 impl Destination {
-    pub fn id(&self) -> &PlanetId {
-        match &self.0 {
-            Entity::Planet(planet) => &planet.id,
-            Entity::Station(station) => &station.id,
-        }
-    }
-
-    pub fn view(&self) -> impl IntoView {
-        match &self.0 {
-            Entity::Planet(planet) => {
-                view! {
-                    <span class="grid grid-cols-3 gap-4 hover:bg-gray-400">
-                        <span> Planet </span>
-                        <span> {planet.name.clone()} </span>
-                        <span> "(" {planet.x.clone()} , {planet.y.clone()} ")" </span>
-                    </span>
-                }
-            }
-            Entity::Station(station) => {
-                view! {
-                    <span class="grid grid-cols-3 gap-4 hover:bg-gray-400">
-                        <span> Station </span>
-                        <span> {station.name.clone()} </span>
-                        <span> "(" {station.x.clone()} , {station.y.clone()} ")" </span>
-                    </span>
-                }
-            }
-        }
+    pub fn id(&self) -> PlanetId {
+        self.0.id().clone()
     }
 }
 
 impl PositionedEntity for Destination {
     fn get_real_position(&self) -> (i32, i32) {
-        match &self.0 {
-            Entity::Planet(planet) => planet.get_real_position(),
-            Entity::Station(station) => station.get_real_position(),
-        }
+        self.0.get_real_position()
     }
 }
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{GameData, PositionedEntity, StationId, SystemId};
+use super::{PositionedEntity, StationId, SystemId};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Station {

@@ -20,27 +20,25 @@ impl GameData {
     }
 
     pub fn get_position_name(&self, id: &str) -> String {
-        let mut name = String::new();
-
         if let Some(system) = self.systems.get(id) {
-            name += &system.name;
+            system.name.clone()
         } else if let Some(planet) = self.planets.get(id) {
-            name += &planet.name;
+            planet.name.clone()
         } else if let Some(station) = self.stations.get(id) {
-            name += &station.name;
+            station.name.clone()
+        } else {
+            panic!("Invalid position id");
         }
-
-        name
     }
 
     pub fn get_item_at_position(&self, id: &str) -> Option<Entity> {
         if let Some(planet) = self.planets.get(id) {
-            return Some(Entity::Planet(planet.clone()));
+            Some(Entity::Planet(planet.clone()))
         } else if let Some(station) = self.stations.get(id) {
-            return Some(Entity::Station(station.clone()));
+            Some(Entity::Station(station.clone()))
+        } else {
+            None
         }
-
-        None
     }
 
     pub fn distance_between_ids(&self, id1: &str, id2: &str) -> i64 {

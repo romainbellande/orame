@@ -46,7 +46,6 @@ impl User {
 
 impl From<user::Data> for User {
     fn from(db_user: user::Data) -> Self {
-        println!("USER {:#?}", db_user);
         Self {
             id: db_user.id.clone(),
             name: db_user.name.clone(),

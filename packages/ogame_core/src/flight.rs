@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-use crate::{error::*, ship::Ship, PositionedEntity};
+use crate::{error::*, ship::Ship};
 
 use serde::{Deserialize, Serialize};
 

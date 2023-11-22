@@ -50,14 +50,13 @@ impl Game {
             }
             Protocol::Flight(flight) => {
                 self.flights.insert(flight.id.clone(), flight.clone());
-                println!("FLIGHT {:#?}", flight);
                 for ship in flight.ships {
                     self.ships.insert(ship.id.clone(), ship.clone());
                 }
             }
 
             // Client -> Server
-            Protocol::SendShips { from_id, ships, .. } => {
+            Protocol::SendShips { .. } => {
                 // TODO: do various checks
             }
         }

@@ -69,22 +69,6 @@ impl IntoResponse for WebError {
     }
 }
 
-pub enum UserError {
-    NotFound { email: String },
-}
-
-impl From<UserError> for WebError {
-    fn from(e: UserError) -> WebError {
-        match e {
-            UserError::NotFound { email } => WebError {
-                code: 404,
-                status: HyperStatusCode::NOT_FOUND,
-                message: format!("user with email {} not found", email),
-            },
-        }
-    }
-}
-
 impl From<prisma_client::Error> for WebError {
     fn from(e: prisma_client::Error) -> Self {
         WebError {

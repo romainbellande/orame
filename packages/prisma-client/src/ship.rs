@@ -41,8 +41,7 @@ impl DbModel for Ship {
     }
 
     async fn save(&self, conn: &Arc<PrismaClient>) -> Result<&Self> {
-        let ship_saved = conn
-            .ship()
+        conn.ship()
             .update(
                 ship::id::equals(self.id.clone()),
                 vec![
@@ -53,8 +52,6 @@ impl DbModel for Ship {
             .exec()
             .await
             .map_err(|e| Error::CannotSave(e.to_string()))?;
-
-        println!("ship_saved: {:#?}", ship_saved);
 
         Ok(self)
     }
@@ -68,8 +65,6 @@ impl DbModel for Ship {
             .await
             .map_err(|e| Error::CannotFetch(e.to_string()))?
             .ok_or(Error::CannotFetch(format!("Ship {} not found", id)))?;
-
-        println!("db_ship {:#?}", db_ship);
 
         Ok(Self::from(db_ship))
     }

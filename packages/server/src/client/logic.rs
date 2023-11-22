@@ -3,7 +3,6 @@ use std::sync::Arc;
 use ogame_core::protocol::Protocol;
 use prisma_client::{DbModel, PrismaClient};
 
-use crate::connected_users::ConnectedUsers;
 use crate::error::*;
 
 pub async fn db_msg_handling(

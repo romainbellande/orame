@@ -18,6 +18,7 @@ use crate::{
     utils::GameWrapper,
 };
 
+#[allow(unused_braces)]
 #[component]
 pub fn FlightsWindow() -> impl IntoView {
     let state = expect_context::<RwSignal<GameWrapper>>();
